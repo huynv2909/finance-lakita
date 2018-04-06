@@ -1,0 +1,6 @@
+RewriteEngine on
+RewriteBase /finance-lakita
+RewriteCond $1 !^(index\.php|resources|robots\.txt)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /finance-lakita/index.php/$1 [L,QSA]
