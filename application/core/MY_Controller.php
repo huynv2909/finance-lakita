@@ -9,37 +9,22 @@
 		{
 			parent::__construct();
 
-			$controller = $this->uri->segment(1);
-			$controller = strtolower($controller);
-
-			switch ($controller) {
-				// Admin
-				case 'admin':
-					$this->load->library('session');
-					$this->load->helper('admin');
-
-					$this->check();
-					break;
-				// Blog
-				default:
-					// Load file libraries, helper,...
-					# code...
-					break;
-			}
+			$this->check();
 		}
 
+		// Check user loged_in
 		private function check()
 		{
-			$controller = $this->uri->rsegment('1');
+			$controller = strtolower($this->uri->rsegment('1'));
 
-			$loged_in = $this->session->userdata('user');
+			$loged_in = $this->session->userdata('username');
 
 			if ($loged_in && $controller == 'login') {
-				redirect(admin_url('home'));
+				redirect(base_url('dashboard'));
 			}
 
 			if (!$loged_in && $controller != 'login') {
-				redirect(admin_url('login'));
+				redirect(base_url('login'));
 			}
 		}
 	}
