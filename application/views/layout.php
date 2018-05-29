@@ -10,7 +10,12 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header"><?php echo $title; ?></h1>
-                        <p class="alert alert-success"><?php if (isset($message) && $message) echo $message; ?></p>
+                        <?php if (isset($message_errors) && $message_errors) {
+                          echo '<p class="alert alert-danger">' . $message_errors . '</p>';
+                        } ?>
+                        <?php if (isset($message_success) && $message_success) {
+                          echo '<p class="alert alert-success">' . $message_success . '</p>';
+                        } ?>
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
@@ -29,7 +34,7 @@
 
         <!-- Metis Menu Plugin JavaScript -->
         <script src="<?php echo public_url(); ?>js/metisMenu.min.js"></script>
-        
+
         <?php if ($active == "dashboard"): ?>
             <!-- Morris Charts JavaScript -->
             <script src="<?php echo public_url(); ?>js/raphael.min.js"></script>

@@ -1,0 +1,42 @@
+/* Style for create receipt */
+.container-both {
+   position: relative;
+}
+
+.receipt , .transaction {
+   position: absolute;
+   width: 100%;
+}
+
+.transaction, #move-left, #transaction-title {
+   display: none;
+}
+
+.move {
+   font-size: 40px;
+   color: #e7e7e7;
+}
+
+.move button {
+   background: transparent;
+   border: none;
+}
+
+#move-left {
+   color: #5cb85c;
+}
+
+#move-left:hover {
+   color: green;
+}
+
+.row-tr {
+   border: 1px solid lightblue;
+   border-radius: 5px;
+   margin: 10px 0px;
+}
+
+h5 {
+   margin-left: 10px;
+}
+/* END create receipt */

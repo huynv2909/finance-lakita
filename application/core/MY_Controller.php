@@ -1,4 +1,4 @@
-<?php 
+<?php
 	if (!defined('BASEPATH')) die('Bad request!');
 
 	class MY_Controller extends CI_Controller
