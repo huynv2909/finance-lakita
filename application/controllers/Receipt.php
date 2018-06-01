@@ -29,35 +29,26 @@
 			// When submit form
 			if ($this->input->post()) {
 				if ($this->checkInput()) {
-					// Check value is number
-					$value_str = $this->input->post('value');
-					$value = str_replace(".","",$value_str);
-
-					if (!is_numeric($value)) {
-						$this->session->set_flashdata('message_errors', 'Hãy nhập tiền là định dạng số!');
-						redirect(base_url('receipt/create'));
-					}
 
 					$code = trim($this->input->post('receipt_code'));
-					if (empty($code)) {
-						$type = NULL;
-						foreach ($this->data['receipt_type'] as $item) {
-							if ($item->id == $this->input->post('receipt_type')) {
-								$type = $item->code;
-								break;
-							}
+					$type = NULL;
+					foreach ($this->data['receipt_type'] as $item) {
+						if ($item->id == $this->input->post('receipt_type')) {
+							$type = $item->code;
+							break;
 						}
-						$code = $this->GenerateCode($type);
 					}
+					$code = $this->GenerateCode($type);
 
 					$data = array(
 						'code' => $code,
+						'code_real' => $this->input->post('code_real'),
 						'type_id' => $this->input->post('receipt_type'),
 						'content' => $this->input->post('content'),
-						'tot' => $this->input->post('tot'),
-						'toa' => $this->input->post('toa'),
+						'TOT' => $this->input->post('tot'),
+						'TOA' => $this->input->post('toa'),
 						'executor' => $this->input->post('executor'),
-						'value' => $value,
+						'value' => $this->input->post('value'),
 						'owner' => 1,
 						'date' => $this->input->post('date'),
 						'note' => $this->input->post('note')
@@ -65,11 +56,30 @@
 
 					$this->load->model('Receipt_model');
 					if ($this->Receipt_model->create($data)) {
+						$receipt_id = $this->Receipt_model->get_insert_id();
+
+						$index_max = $this->input->post('index_max');
+
+						$this->load->model('Transaction_model');
+						for ($i=1; $i <= $index_max; $i++) {
+							if ($this->input->post('hide-' . $i) == 'true') {
+								$trans = array(
+									'receipt_id' => $receipt_id,
+									'TOT' => $this->input->post('tot-' . $i),
+									'TOA' => $this->input->post('toa-' . $i),
+									'value' => str_replace(".","",$this->input->post('value-' . $i)),
+									'note' => $this->input->post('note-' . $i)
+								);
+
+								$this->Transaction_model->create($trans);
+							}
+						}
 						$this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
+						redirect(base_url('receipt/create'));
 					}
-					else {
-						$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
-					}
+				}
+				else {
+					$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra khi nhập dữ liệu!');
 					redirect(base_url('receipt/create'));
 				}
 			}
@@ -114,13 +124,45 @@
 			}
 		}
 
+		public function add_transaction()
+		{
+			if ($this->input->post()) {
+				$count = $this->input->post('count');
+				$tot = $this->input->post('tot');
+				$toa = $this->input->post('toa');
+				$data['sequence'] = $count + 1;
+				$data['tot'] = $tot;
+				$data['toa'] = $toa;
+				$this->load->view('receipt/transaction_form/transaction-added', $data);
+			}
+		}
+
 		private function checkInput() {
+			$value_str = $this->input->post('value');
+			$value = str_replace(".","",$value_str);
+
+			if (!is_numeric($value)) {
+				return false;
+			}
 			$this->form_validation->set_rules('receipt_type', 'Receip type', 'required');
-			$this->form_validation->set_rules('value', 'Money', 'required');
-			$this->form_validation->set_rules('tot', 'Receip type', 'required');
-			$this->form_validation->set_rules('toa', 'Receip type', 'required');
+			$this->form_validation->set_rules('tot', 'TOT', 'required');
+			$this->form_validation->set_rules('toa', 'TOA', 'required');
 			$this->form_validation->set_rules('executor', 'Executor', 'required');
 			$this->form_validation->set_rules('date', 'Date', 'required');
+
+			$index_max = $this->input->post('index_max');
+			for ($i=1; $i <= $index_max; $i++) {
+				if ($this->input->post('hide-' . $i) == 'true') {
+					$value_str = $this->input->post('value-' . $i);
+					$value = str_replace(".","",$value_str);
+
+					if (!is_numeric($value)) {
+						return false;
+					}
+					$this->form_validation->set_rules('tot-' . $i, 'TOT', 'required');
+					$this->form_validation->set_rules('toa-' . $i, 'TOA', 'required');
+				}
+			}
 
 			return $this->form_validation->run();
 		}

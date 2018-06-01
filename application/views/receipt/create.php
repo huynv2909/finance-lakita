@@ -30,10 +30,10 @@
 					    </div>
 				  	</div>
 				  	<div class="form-group">
-					    <label for="receipt-code" class="col-sm-3 control-label">Mã chứng từ</label>
+					    <label for="code-real" class="col-sm-3 control-label">Mã chứng từ</label>
 					    <div class="col-sm-9">
-					      	<input type="text" name="receipt_code" class="form-control" id="receipt-code" placeholder="Mã chứng từ (Bỏ qua nếu không có)" value="<?php echo set_value('receipt_code'); ?>">
-					      	<div class="text-danger"><?php echo form_error('receipt_code'); ?></div>
+					      	<input type="text" name="code_real" class="form-control" id="code-real" placeholder="Mã chứng từ (thực tế nếu có)" value="<?php echo set_value('code_real'); ?>">
+					      	<div class="text-danger"><?php echo form_error('code_real'); ?></div>
 					    </div>
 				  	</div>
 				  	<div class="form-group">
@@ -99,6 +99,7 @@
 			    	<input class="form-control btn btn-success" type="button" id="receipt-done" disabled value="Xác nhận">
 			    </div>
 		  	</div>
+			<input type="hidden" name="index_max" id="index-max">
 		</div>
 		<div class="transaction">
 			<!-- Using ajax to insert form -->

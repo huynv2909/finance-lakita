@@ -28,36 +28,15 @@ $('#receipt-done, #move-right').on("click", function() {
 	}, 700);
 
 	// Fill value into transaction
-	$('.value').val('');
-	var total = parseInt($('#value').val().split('.').join(''));
-	var value_tags = $('.value');
-	var sub = 0;
+	FillValue();
 
-	for (var i = 0; i < value_tags.length; i++) {
-		if ($(value_tags[i]).data('default') != '') {
-			var ratio = $(value_tags[i]).data('default');
-			if ($.isNumeric(ratio)) {
-				var value = ratio * total;
-				sub += value;
-				$(value_tags[i]).val(convertToCurrency(value.toString()));
-			}
-			else {
-				if (ratio.indexOf('/1tr') != -1) {
-					var def = parseInt(ratio.replace("/1tr", ""));
-					var value = Math.ceil(total/1000000*def);
-					sub += value;
-					$(value_tags[i]).val(convertToCurrency(value.toString()));
-				}
-			}
-		}
-	}
+	// Fill tot & TOA
+	$('.tot').val($('#tot').val());
+	$('.toa').val($('#toa').val());
 
-	var empty_value = $('.value').filter(function() { return $(this).val() == ""; });
-	$(empty_value[0]).val(convertToCurrency(total.toString()));
-	for (var i = 1; i < empty_value.length; i++) {
-		$(empty_value[i]).val('0');
-	}
+	checkToEnableSubmit();
 
+	$('#index-max').val($('.row-tr').length);
 });
 
 $('#move-left').on("click", function() {
@@ -111,7 +90,82 @@ $('#receipt-type, #value, #executor, #tot, #toa, #date').change(function() {
 		$('#move-right').hover(function(){$('#move-right').css('color', '#e7e7e7')})
 	}
 });
+
+$(document).on("mouseenter", ".row-tr", function(){
+	if ($(".row-tr:visible").length > 1) {
+		$(this).children(".close").show();
+	}
+});
+$(document).on("mouseleave", ".row-tr", function(){
+	$(this).children(".close").hide();
+});
+
+$(document).on("click", ".close", function(){
+	$(this).parent().children(".alive").val(false);
+	$(this).parent().hide(500);
+
+	// after reduced transaction
+	setTimeout(function(){
+		$('#count-trans').html($('.row-tr:visible').length);
+		FillValue();
+	}, 520);
+});
+
+$(document).on("click", "#add-trans", function(){
+
+	// after reduced transaction
+	$('#count-trans').html(parseInt($('#count-trans').html()) + 1);
+
+	var count_hidden = $('.row-tr:hidden');
+	if ($(count_hidden).length > 0) {
+		$(count_hidden[0]).children(".alive").val('true');
+		$(count_hidden[0]).find(".note").val('');
+		$(count_hidden[0]).find(".value").val('');
+		$(count_hidden[0]).find(".value").data('default', '');
+		$(count_hidden[0]).show();
+		return;
+	}
+
+
+	var url = $(this).data('url');
+	var count = $('.row-tr').length;
+
+	$.ajax({
+		url : url,
+		method : "post",
+		data : {
+			count : count,
+			tot : $('#tot').val(),
+			toa : $('#toa').val()
+		},
+		success : function(result) {
+			$('#ok-area').before(result);
+			$('#index-max').val($('.row-tr').length);
+		}
+	});
+
+});
+
+// Auto fill last input
+// $(document).on("change", ".value", function(){
+// 	var value_tags = $('.value:visible').filter(function() { return ($(this).data('default') == "" && $(this).val() == ""); });
+// 	if ($(value_tags).length == 1) {
+// 		var total = parseInt($('#value').val().split('.').join(''));
+// 		var value_fill = total - GetTotalFilled();
+// 		if (value_fill >= 0) {
+// 			$(value_tags[0]).val(convertToCurrency(value_fill));
+// 		}
+// 		else {
+// 			$(value_tags[0]).val('(Giá trị âm!)');
+// 		}
+// 	}
+// });
 // end effect create receipt
+
+// Check full info and enable submit
+$(document).on("change", ".tot, .toa", checkToEnableSubmit);
+
+$(document).on("keyup", ".value", checkToEnableSubmit);
 
 // Ajax load transaction
 $('#receipt-type').change(function(){
@@ -130,6 +184,87 @@ $('#receipt-type').change(function(){
 });
 
 
+function checkToEnableSubmit()
+{
+	var flag = true;
+	// check value
+	var empty_value = $('.value:visible').filter(function() { return $.trim($(this).val().toString()) == ""; });
+	if (empty_value.length > 0) {
+		flag = false;
+	}
+
+	var value_tags = $('.value:visible');
+	for (var i = 0; i < value_tags.length; i++) {
+		if (!$.isNumeric($(value_tags[i]).val().split('.').join(''))) {
+			flag = false;
+			break;
+		}
+	}
+
+	var empty_tot = $('.tot:visible').filter(function() { return $(this).val() == ''; });
+	if (empty_tot.length > 0) {
+		flag = false;
+	}
+
+	var empty_toa = $('.toa:visible').filter(function() { return $(this).val() == ''; });
+	if (empty_toa.length > 0) {
+		flag = false;
+	}
+
+	if (flag) {
+		$('#ok').prop('disabled', false);
+	}
+	else {
+		$('#ok').prop('disabled', true);
+	}
+}
+
+function GetTotalFilled()
+{
+	var value_tags = $('.value:visible').filter(function() { return ($(this).data('default') == "" && $(this).val() != ""); });
+	var total = 0;
+	for (var i = 0; i < value_tags.length; i++) {
+		total += parseInt($(value_tags[i]).val().split('.').join(''));
+	}
+	return total;
+}
+
+function FillValue()
+{
+	$('.value').val('');
+	var total = parseInt($('#value').val().split('.').join(''));
+	var value_tags = $('.value:visible');
+	if (value_tags.length == 1) {
+		$(value_tags[0]).val(convertToCurrency(total.toString()));
+		return;
+	}
+	var sub = 0;
+
+	for (var i = 0; i < value_tags.length; i++) {
+		if ($(value_tags[i]).data('default') != '') {
+			var ratio = $(value_tags[i]).data('default');
+			if ($.isNumeric(ratio)) {
+				var value = ratio * total;
+				sub += value;
+				$(value_tags[i]).val(convertToCurrency(value.toString()));
+			}
+			else {
+				if (ratio.indexOf('/1tr') != -1) {
+					var def = parseInt(ratio.replace("/1tr", ""));
+					var value = Math.ceil(total/1000000*def);
+					sub += value;
+					$(value_tags[i]).val(convertToCurrency(value.toString()));
+				}
+			}
+		}
+	}
+
+	var empty_value = $('.value:visible').filter(function() { return $(this).val() == ""; });
+	$(empty_value[0]).val(convertToCurrency(total.toString()));
+	for (var i = 1; i < empty_value.length; i++) {
+		$(empty_value[i]).val('0');
+	}
+}
 
 function oneDot(input) {
   var value = input.value,
