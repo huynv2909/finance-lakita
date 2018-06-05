@@ -1,4 +1,4 @@
-<?php 
+<?php
 	/**
 	 * Dashboard
 	 */
@@ -7,7 +7,7 @@
 		public function index()
 		{
 			$this->data['title'] = "Dashboard";
-			$this->data['templete'] = 'dashboard/index';
+			$this->data['template'] = 'dashboard/index';
 			$this->data['active'] = 'dashboard';
 
 			$this->load->view('layout', $this->data);

@@ -4,13 +4,30 @@
 	 */
 	class Receipt extends MY_Controller
 	{
+		public function index() {
+			$this->data['title'] = "Sổ kế toán";
+			$this->data['template'] = "receipt/index";
+			$this->data['active'] = "receipt";
+
+			$this->load->model('Receipt_model');
+			$this->data['receipts'] = $this->Receipt_model->get_list();
+
+			$this->load->model('ReceiptType_model');
+			$this->data['receipt_types'] = $this->ReceiptType_model->get_list();
+
+			$this->load->model('User_model');
+			$this->data['users'] = $this->User_model->get_list();
+
+			$this->load->view('layout', $this->data);
+		}
+
 		public function create()
 		{
 			$this->load->helper('form');
 			$this->load->library('form_validation');
 
 			$this->data['title'] = "Thêm chứng từ";
-			$this->data['templete'] = 'receipt/create';
+			$this->data['template'] = 'receipt/create';
 			$this->data['active'] = 'receipt';
 
 			// Get type receipt
@@ -48,7 +65,7 @@
 						'TOT' => $this->input->post('tot'),
 						'TOA' => $this->input->post('toa'),
 						'executor' => $this->input->post('executor'),
-						'value' => $this->input->post('value'),
+						'value' => str_replace(".","",$this->input->post('value')),
 						'owner' => 1,
 						'date' => $this->input->post('date'),
 						'note' => $this->input->post('note')
@@ -85,6 +102,35 @@
 			}
 
 			$this->load->view('layout', $this->data);
+		}
+
+		public function view_more() {
+			if ($this->input->post()) {
+				$receipt_id = $this->input->post('id');
+				$input = array(
+					'where' => array('id' => $receipt_id)
+				);
+
+				$this->load->model('Receipt_model');
+				$receipt = $this->Receipt_model->get_list($input)[0];
+				$this->data['receipt'] = $receipt;
+
+				$this->load->model('ReceiptType_model');
+				$this->data['receipt_types'] = $this->ReceiptType_model->get_list();
+
+				$this->load->model('User_model');
+				$this->data['users'] = $this->User_model->get_list();
+
+				$this->load->model('Transaction_model');
+				$input = array(
+					'where' => array('receipt_id' => $receipt->id)
+				);
+				$this->data['transactions'] = $this->Transaction_model->get_list($input);
+
+				$this->load->view('receipt/more/receipt', $this->data);
+				$this->load->view('receipt/more/transaction', $this->data);
+
+			}
 		}
 
 		public function load_form()

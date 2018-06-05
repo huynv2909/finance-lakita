@@ -19,7 +19,7 @@
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
-                <?php $this->load->view($templete); ?>
+                <?php $this->load->view($template); ?>
             </div>
             <!-- /#page-wrapper -->
 
@@ -42,8 +42,21 @@
             <script src="<?php echo public_url(); ?>js/morris-data.js"></script>
         <?php endif ?>
 
+        <!-- DataTables JavaScript -->
+        <script src="<?php echo public_url(); ?>js/dataTables/jquery.dataTables.min.js"></script>
+        <script src="<?php echo public_url(); ?>js/dataTables/dataTables.bootstrap.min.js"></script>
+
         <!-- Custom Theme JavaScript -->
         <script src="<?php echo public_url(); ?>js/startmin.js"></script>
+
+        <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+        <script>
+            $(document).ready(function() {
+                $('#dataTables-example').DataTable({
+                        responsive: true
+                });
+            });
+        </script>
 
         <!-- My Js file -->
         <script type="text/javascript" src="<?php echo public_url(); ?>js/myscript.js"></script>

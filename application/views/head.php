@@ -16,6 +16,12 @@
     <!-- Timeline CSS -->
     <link href="<?php echo public_url(); ?>css/timeline.css" rel="stylesheet">
 
+    <!-- DataTables CSS -->
+     <link href="<?php echo public_url(); ?>css/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+
+     <!-- DataTables Responsive CSS -->
+     <link href="<?php echo public_url(); ?>css/dataTables/dataTables.responsive.css" rel="stylesheet">
+
     <!-- Custom CSS -->
     <link href="<?php echo public_url(); ?>css/startmin.css" rel="stylesheet">
 

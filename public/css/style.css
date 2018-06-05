@@ -48,3 +48,15 @@ h5 {
    display: none;
 }
 /* END create receipt */
+
+.re-row {
+   cursor: pointer;
+}
+
+.bd {
+   background-color: #d9edf7;
+}
+
+table.more td {
+   width: 50%;
+}

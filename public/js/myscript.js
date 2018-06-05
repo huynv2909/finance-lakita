@@ -183,6 +183,25 @@ $('#receipt-type').change(function(){
 	});
 });
 
+// Ajax load view receipt
+$('.re-row').click(function(){
+	var url = $(this).data('url');
+	var id = $(this).data('id');
+
+	$.ajax({
+		url : url,
+		method : "post",
+		data : {
+			id : id
+		},
+		success : function(result) {
+			$('#data-insert').html(result);
+			$('#view-modal').modal('show');
+		}
+	});
+});
+
+
 
 function checkToEnableSubmit()
 {
