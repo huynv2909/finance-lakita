@@ -102,7 +102,7 @@
                     <!-- /input-group -->
                 </li>
                 <li>
-                    <a href="index.html" <?php if ($active == "dashboard") echo 'class="active"'; ?> ><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                    <a href="index.html"?><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                 </li>
                 <li>
                    <a href="#"><i class="fa fa-file-text-o fa-fw"></i>Hóa đơn/Chứng từ<span class="fa arrow"></span></a>
@@ -112,6 +112,9 @@
                        </li>
                        <li>
                           <a href="<?php echo base_url('Receipt/create') ?>">Nhập chứng từ</a>
+                       </li>
+                       <li>
+                          <a href="<?php echo base_url('Receipt/type') ?>">Loại chứng từ</a>
                        </li>
                    </ul>
                 </li>

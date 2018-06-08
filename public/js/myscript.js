@@ -201,8 +201,6 @@ $('.re-row').click(function(){
 	});
 });
 
-
-
 function checkToEnableSubmit()
 {
 	var flag = true;
@@ -262,19 +260,23 @@ function FillValue()
 	for (var i = 0; i < value_tags.length; i++) {
 		if ($(value_tags[i]).data('default') != '') {
 			var ratio = $(value_tags[i]).data('default');
-			if ($.isNumeric(ratio)) {
-				var value = ratio * total;
-				sub += value;
-				$(value_tags[i]).val(convertToCurrency(value.toString()));
-			}
-			else {
-				if (ratio.indexOf('/1tr') != -1) {
-					var def = parseInt(ratio.replace("/1tr", ""));
-					var value = Math.ceil(total/1000000*def);
-					sub += value;
-					$(value_tags[i]).val(convertToCurrency(value.toString()));
-				}
-			}
+			var frac = ratio.split('/');
+			var value = Math.ceil(total/parseInt(frac[1])*parseInt(frac[0]));
+			sub += value;
+			$(value_tags[i]).val(convertToCurrency(value.toString()));
+			// if ($.isNumeric(ratio)) {
+			// 	var value = ratio * total;
+			// 	sub += value;
+			// 	$(value_tags[i]).val(convertToCurrency(value.toString()));
+			// }
+			// else {
+			// 	if (ratio.indexOf('/1tr') != -1) {
+			// 		var def = parseInt(ratio.replace("/1tr", ""));
+			// 		var value = Math.ceil(total/1000000*def);
+			// 		sub += value;
+			// 		$(value_tags[i]).val(convertToCurrency(value.toString()));
+			// 	}
+			// }
 		}
 	}
 

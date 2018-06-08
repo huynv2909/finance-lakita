@@ -20,8 +20,8 @@
                               </tr>
                         </thead>
                         <tbody>
-                           <?php foreach ($receipts as $item): $temp = substr($item->code, 0, 2); ?>
-                              <tr role="row" data-url="<?php echo base_url('Receipt/view_more'); ?>" data-id="<?php echo $item->id; ?>" class="re-row <?php if ($temp == 'PT') echo 'success'; ?>">
+                           <?php foreach ($receipts as $item): ?>
+                              <tr role="row" data-url="<?php echo base_url('Receipt/view_more'); ?>" data-id="<?php echo $item->id; ?>" class="re-row <?php if ($item->income == 1) echo 'success'; ?>">
                                   <td><?php echo $item->TOT; ?></td>
                                   <td>
                                      <?php

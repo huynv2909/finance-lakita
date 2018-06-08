@@ -7,7 +7,7 @@
 		public function index() {
 			$this->data['title'] = "Sổ kế toán";
 			$this->data['template'] = "receipt/index";
-			$this->data['active'] = "receipt";
+			$this->data['active'] = 'receipt';
 
 			$this->load->model('Receipt_model');
 			$this->data['receipts'] = $this->Receipt_model->get_list();
@@ -100,6 +100,14 @@
 					redirect(base_url('receipt/create'));
 				}
 			}
+
+			$this->load->view('layout', $this->data);
+		}
+
+		public function type() {
+			$this->data['title'] = "Loại chứng từ";
+			$this->data['template'] = "receipt/type";
+			$this->data['active'] = 'receipt';
 
 			$this->load->view('layout', $this->data);
 		}
