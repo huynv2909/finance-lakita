@@ -3,12 +3,12 @@
    position: relative;
 }
 
-.receipt , .transaction {
+.receipt , .act-entry {
    position: absolute;
    width: 100%;
 }
 
-.transaction, #move-left, #transaction-title {
+.act-entry, #move-left, #act-entry-title {
    display: none;
 }
 

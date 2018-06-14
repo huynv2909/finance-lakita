@@ -10,7 +10,7 @@ $('#tot').change(function() {
 $('#receipt-done, #move-right').on("click", function() {
 	$('#move-right').hide();
 	$('#move-left').show();
-	$('#transaction-title').show();
+	$('#act-entry-title').show();
 	$('#receipt-title').hide();
 
 	$('.receipt')
@@ -18,16 +18,16 @@ $('#receipt-done, #move-right').on("click", function() {
 			'left': '-' + $('.receipt').outerWidth() + 'px',
 			'opacity': '0'
 		}, 700);
-	$('.transaction')
+	$('.act-entry')
 		.show()
 		.css({
-			'right': '-' + $('.transaction').outerWidth() + 'px'
+			'right': '-' + $('.act-entry').outerWidth() + 'px'
 		})
 		.animate({
       	right: '0px'
 	}, 700);
 
-	// Fill value into transaction
+	// Fill value into accounting entry
 	FillValue();
 
 	// Fill tot & TOA
@@ -42,10 +42,10 @@ $('#receipt-done, #move-right').on("click", function() {
 $('#move-left').on("click", function() {
 	$('#move-left').hide();
 	$('#move-right').show();
-	$('#transaction-title').hide();
+	$('#act-entry-title').hide();
 	$('#receipt-title').show();
 
-	$('.transaction')
+	$('.act-entry')
 		.animate({
 			'right': '-' + $('.receipt').outerWidth() + 'px'
 		}, 700)
@@ -104,7 +104,7 @@ $(document).on("click", ".close", function(){
 	$(this).parent().children(".alive").val(false);
 	$(this).parent().hide(500);
 
-	// after reduced transaction
+	// after reduced accounting entry
 	setTimeout(function(){
 		$('#count-trans').html($('.row-tr:visible').length);
 		FillValue();
@@ -113,7 +113,7 @@ $(document).on("click", ".close", function(){
 
 $(document).on("click", "#add-trans", function(){
 
-	// after reduced transaction
+	// after reduced accounting entry
 	$('#count-trans').html(parseInt($('#count-trans').html()) + 1);
 
 	var count_hidden = $('.row-tr:hidden');
@@ -167,7 +167,7 @@ $(document).on("change", ".tot, .toa", checkToEnableSubmit);
 
 $(document).on("keyup", ".value", checkToEnableSubmit);
 
-// Ajax load transaction
+// Ajax load accounting entry
 $('#receipt-type').change(function(){
 	var url = $(this).data('url');
 
@@ -178,7 +178,7 @@ $('#receipt-type').change(function(){
 			id : $(this).val()
 		},
 		success : function(result) {
-			$('.transaction').html(result);
+			$('.act-entry').html(result);
 		}
 	});
 });

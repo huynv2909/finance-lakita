@@ -7,7 +7,7 @@
 				</div>
 				<div class="col-xs-4">
 					<h3 id="receipt-title" class="text-center">Thông tin chứng từ</h3>
-					<h3 id="transaction-title"  class="text-center">Ghi nhận bút toán</h3>
+					<h3 id="act-entry-title"  class="text-center">Ghi nhận bút toán</h3>
 				</div>
 				<div class="col-xs-4 move text-right">
 					<button id="move-right" type="button" name="" disabled><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></button>
@@ -101,7 +101,7 @@
 		  	</div>
 			<input type="hidden" name="index_max" id="index-max">
 		</div>
-		<div class="transaction">
+		<div class="act-entry">
 			<!-- Using ajax to insert form -->
 		</div>
 	</div>

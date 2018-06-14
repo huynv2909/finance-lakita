@@ -12,7 +12,7 @@
                         <thead>
                               <tr role="row">
                                  <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="Time on transaction: activate to sort column ascending" style="width: 12%;">TOT</th>
-                                 <th class="sorting_desc" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="Reiceipt type: activate to sort column ascending" style="width: 20%;" aria-sort="descending">Loại chứng từ</th>
+                                 <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="Reiceipt type: activate to sort column ascending" style="width: 20%;">Loại chứng từ</th>
                                  <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="Value: activate to sort column ascending" style="width: 14%;">Số tiền</th>
                                  <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="Content: activate to sort column ascending" style="width: 28%;">Nội dung</th>
                                  <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="Executor: activate to sort column ascending" style="width: 14%;">Người giao dịch</th>
@@ -49,7 +49,7 @@
                               </tr>
                            <?php endforeach; ?>
                               <tr class="gradeA odd" role="row">
-                                 <td class="">Gecko</td>
+                                 <td class="">00</td>
                                  <td class="sorting_1">Seamonkey 1.1</td>
                                  <td class="">Win 98+ / OSX.2+</td>
                                  <td class="center">1.8</td>
@@ -57,7 +57,7 @@
                                  <td class="center">A</td>
                              </tr>
                              <tr class="gradeA even" role="row">
-                                 <td class="">Webkit</td>
+                                 <td class="">00</td>
                                  <td class="sorting_1">Safari 3.0</td>
                                  <td class="">OSX.4+</td>
                                  <td class="center">522.1</td>
@@ -65,7 +65,7 @@
                                  <td class="center">A</td>
                              </tr>
                              <tr class="gradeA odd" role="row">
-                                 <td class="">Webkit</td>
+                                 <td class="">00</td>
                                  <td class="sorting_1">Safari 2.0</td>
                                  <td class="">OSX.4+</td>
                                  <td class="center">419.3</td>
@@ -73,7 +73,7 @@
                                  <td class="center">A</td>
                              </tr>
                              <tr class="gradeA even" role="row">
-                                 <td class="">Webkit</td>
+                                 <td class="">00</td>
                                  <td class="sorting_1">Safari 1.3</td>
                                  <td class="">OSX.3</td>
                                  <td class="center">312.8</td>
@@ -81,7 +81,7 @@
                                  <td class="center">A</td>
                              </tr>
                              <tr class="gradeA odd" role="row">
-                                 <td class="">Webkit</td>
+                                 <td class="">00</td>
                                  <td class="sorting_1">Safari 1.2</td>
                                  <td class="">OSX.3</td>
                                  <td class="center">125.5</td>
@@ -89,7 +89,7 @@
                                  <td class="center">A</td>
                              </tr>
                              <tr class="gradeA even" role="row">
-                                 <td class="">Webkit</td>
+                                 <td class="">00</td>
                                  <td class="sorting_1">S60</td>
                                  <td class="">S60</td>
                                  <td class="center">413</td>
@@ -97,7 +97,7 @@
                                  <td class="center">A</td>
                              </tr>
                              <tr class="gradeC odd" role="row">
-                                 <td class="">Misc</td>
+                                 <td class="">00</td>
                                  <td class="sorting_1">PSP browser</td>
                                  <td class="">PSP</td>
                                  <td class="center">-</td>
@@ -105,7 +105,7 @@
                                  <td class="center">C</td>
                              </tr>
                              <tr class="gradeA even" role="row">
-                                 <td class="">Presto</td>
+                                 <td class="">00</td>
                                  <td class="sorting_1">Opera for Wii</td>
                                  <td class="">Wii</td>
                                  <td class="center">-</td>
@@ -113,7 +113,7 @@
                                  <td class="center">A</td>
                              </tr>
                              <tr class="gradeA odd" role="row">
-                                 <td class="">Presto</td>
+                                 <td class="">00</td>
                                  <td class="sorting_1">Opera 9.5</td>
                                  <td class="">Win 88+ / OSX.3+</td>
                                  <td class="center">-</td>
@@ -121,7 +121,7 @@
                                  <td class="center">A</td>
                              </tr>
                              <tr class="gradeA even" role="row">
-                                 <td>Presto</td>
+                                 <td>00</td>
                                  <td>Opera 9.2</td>
                                  <td>Win 88+ / OSX.3+</td>
                                  <td>-</td>
@@ -129,7 +129,7 @@
                                  <td>A</td>
                              </tr>
                              <tr role="row">
-                                 <td>HuyNV</td>
+                                 <td>0000</td>
                                  <td>Firefox 60</td>
                                  <td>Ubuntu</td>
                                  <td>-</td>

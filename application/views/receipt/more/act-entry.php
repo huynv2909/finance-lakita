@@ -1,4 +1,4 @@
-<?php foreach ($transactions as $item): ?>
+<?php foreach ($accounting_entries as $item): ?>
 <div class="row bd">
    <div class="col-md-4">
       <table class="table table-hover more">

@@ -2,7 +2,7 @@
    /**
     *
     */
-   class transaction extends MY_Controller
+   class AccountingEntry extends MY_Controller
    {
       function index()
       {

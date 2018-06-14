@@ -77,7 +77,7 @@
 
 						$index_max = $this->input->post('index_max');
 
-						$this->load->model('Transaction_model');
+						$this->load->model('AccountingEntry_model');
 						for ($i=1; $i <= $index_max; $i++) {
 							if ($this->input->post('hide-' . $i) == 'true') {
 								$trans = array(
@@ -88,7 +88,7 @@
 									'note' => $this->input->post('note-' . $i)
 								);
 
-								$this->Transaction_model->create($trans);
+								$this->AccountingEntry_model->create($trans);
 							}
 						}
 						$this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
@@ -129,14 +129,14 @@
 				$this->load->model('User_model');
 				$this->data['users'] = $this->User_model->get_list();
 
-				$this->load->model('Transaction_model');
+				$this->load->model('AccountingEntry_model');
 				$input = array(
 					'where' => array('receipt_id' => $receipt->id)
 				);
-				$this->data['transactions'] = $this->Transaction_model->get_list($input);
+				$this->data['accounting_entries'] = $this->AccountingEntry_model->get_list($input);
 
 				$this->load->view('receipt/more/receipt', $this->data);
-				$this->load->view('receipt/more/transaction', $this->data);
+				$this->load->view('receipt/more/act-entry', $this->data);
 
 			}
 		}
@@ -148,28 +148,28 @@
 
 				$this->load->model('ReceiptType_model');
 				$input = array(
-					'select' => array('transaction_type_list_id'),
+					'select' => array('act_type_list_id'),
 					'where' => array('id' => $id)
 				);
 				if ($response = $this->ReceiptType_model->get_list($input)) {
-					$list = $response[0]->transaction_type_list_id;
+					$list = $response[0]->act_type_list_id;
 					$files = explode(',', $list);
 					$data['count'] = count($files);
-					$this->load->view('receipt/transaction_form/info-and-custom', $data);
+					$this->load->view('receipt/act_form/info-and-custom', $data);
 
-					$this->load->model('TransactionType_model');
+					$this->load->model('ActEntryType_model');
 					$sequence = 1;
 					foreach ($files as $item ) {
 						$input = array(
 							'where' => array('id' => $item)
 						);
 
-						$data['info_tr'] = $this->TransactionType_model->get_list($input)[0];
+						$data['info_tr'] = $this->ActEntryType_model->get_list($input)[0];
 						$data['sequence'] = $sequence;
 						$sequence++;
-						$this->load->view('receipt/transaction_form/' . $item, $data);
+						$this->load->view('receipt/act_form/' . $item, $data);
 					}
-					$this->load->view('receipt/transaction_form/submit');
+					$this->load->view('receipt/act_form/submit');
 				}
 				else {
 					echo "Errors: Empty information!";
@@ -178,7 +178,7 @@
 			}
 		}
 
-		public function add_transaction()
+		public function add_act_entry()
 		{
 			if ($this->input->post()) {
 				$count = $this->input->post('count');
@@ -187,7 +187,7 @@
 				$data['sequence'] = $count + 1;
 				$data['tot'] = $tot;
 				$data['toa'] = $toa;
-				$this->load->view('receipt/transaction_form/transaction-added', $data);
+				$this->load->view('receipt/act_form/act-added', $data);
 			}
 		}
 

@@ -53,7 +53,8 @@
         <script>
             $(document).ready(function() {
                 $('#dataTables-example').DataTable({
-                        responsive: true
+                        responsive: true,
+                        "order" : [[0, 'desc'], [5, 'desc']]
                 });
             });
         </script>

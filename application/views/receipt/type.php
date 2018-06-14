@@ -5,7 +5,7 @@
         <ul class="nav nav-tabs">
             <li class="active"><a href="#recreipt" data-toggle="tab" aria-expanded="true">Các loại chứng từ</a>
             </li>
-            <li class=""><a href="#transaction" data-toggle="tab" aria-expanded="false">Bút toán</a>
+            <li class=""><a href="#act-entry" data-toggle="tab" aria-expanded="false">Bút toán</a>
             </li>
         </ul>
 
@@ -20,10 +20,10 @@
                   <option value="">Phiếu chi sinh hoạt chung</option>
                </select>
                <div class="trans">
-                  
+
                </div>
             </div>
-            <div class="tab-pane fade" id="transaction">
+            <div class="tab-pane fade" id="accounting-entry-list">
 
             </div>
         </div>
