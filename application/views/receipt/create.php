@@ -92,6 +92,16 @@
 					    	<div class="text-danger"><?php echo form_error('date'); ?></div>
 					    </div>
 				  	</div>
+					<div class="form-group">
+					    <label for="income" class="col-sm-3 control-label"><span class="text-danger">(*)</span> Loại</label>
+					    <div class="col-sm-9">
+					    	<select class="form-control" name="income" id="income" >
+					    		<option value="0" selected>Chi</option>
+					    		<option value="1">Thu</option>
+					    	</select>
+					    	<div class="text-danger"><?php echo form_error('income'); ?></div>
+					    </div>
+				  	</div>
 				</div>
 			</div>
 			<div class="form-group">

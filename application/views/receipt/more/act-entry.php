@@ -19,7 +19,7 @@
          <tbody>
             <tr>
                <td class="text-right"><strong>Giá trị:</strong></td>
-               <td><?php echo $item->value; ?></td>
+               <td><?php echo number_format($item->value, 0, ",", "."); ?></td>
             </tr>
             <tr>
                <td class="text-right"><strong>Ghi chú:</strong></td>
@@ -38,6 +38,19 @@
             <tr>
                <td class="text-right"><strong>TK có:</strong></td>
                <td><?php echo $item->TK_co; ?></td>
+            </tr>
+            <tr>
+               <td colspan="2" class="text-center">
+                  <?php if ($item->income == 1): ?>
+                     <div class="in-div">
+                        Thu
+                     </div>
+                  <?php else: ?>
+                     <div class="out-div">
+                        Chi
+                     </div>
+                  <?php endif; ?>
+               </td>
             </tr>
          </tbody>
       </table>

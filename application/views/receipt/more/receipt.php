@@ -86,6 +86,19 @@
                <td class="text-right"><strong>Ghi chú:</strong></td>
                <td><?php if (!empty($receipt->note)) echo $receipt->note; else echo '(trống)' ?></td>
             </tr>
+            <tr>
+               <td class="text-right"><strong>Loại:</strong></td>
+               <td>
+                  <?php
+                     if ($receipt->income == 1) {
+                        echo 'Phiếu thu';
+                     }
+                     else {
+                        echo 'Phiếu chi';
+                     }
+                  ?>
+               </td>
+            </tr>
          </tbody>
       </table>
    </div>

@@ -47,6 +47,36 @@ h5 {
    right: 0;
    display: none;
 }
+
+#income {
+   width: 70px;
+   background-color: #fdd600;
+   color: black;
+}
+
+.in-div {
+   background-color: #80db91;
+}
+
+.out-div {
+   background-color: #fdd600;
+}
+
+.in-div, .out-div {
+   width: 50px;
+   border-radius: 5px;
+   border: 1px solid #fff;
+   display: inline-block;
+}
+
+.income {
+   width: 45px;
+   color: black;
+   display: inline;
+   height: 20px;
+   padding: 0;
+}
+
 /* END create receipt */
 
 .re-row {

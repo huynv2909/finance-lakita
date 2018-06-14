@@ -162,6 +162,15 @@ $(document).on("click", "#add-trans", function(){
 // });
 // end effect create receipt
 
+$(document).on("change", ".income, #income", function() {
+	if ($(this).val() == 1) {
+		$(this).css('background-color', '#9aeaa8');
+	}
+	else {
+		$(this).css('background-color', '#fdd600');
+	}
+});
+
 // Check full info and enable submit
 $(document).on("change", ".tot, .toa", checkToEnableSubmit);
 
@@ -169,6 +178,16 @@ $(document).on("keyup", ".value", checkToEnableSubmit);
 
 // Ajax load accounting entry
 $('#receipt-type').change(function(){
+	var code = $('#receipt-type :selected').text().substring(0,2);
+	if (code == 'PT') {
+		$('#income').val('1');
+		$('#income').css('background-color', '#9aeaa8');
+	}
+	else {
+		$('#income').val('0');
+		$('#income').css('background-color', '#fdd600');
+	}
+
 	var url = $(this).data('url');
 
 	$.ajax({
@@ -264,24 +283,16 @@ function FillValue()
 			var value = Math.ceil(total/parseInt(frac[1])*parseInt(frac[0]));
 			sub += value;
 			$(value_tags[i]).val(convertToCurrency(value.toString()));
-			// if ($.isNumeric(ratio)) {
-			// 	var value = ratio * total;
-			// 	sub += value;
-			// 	$(value_tags[i]).val(convertToCurrency(value.toString()));
-			// }
-			// else {
-			// 	if (ratio.indexOf('/1tr') != -1) {
-			// 		var def = parseInt(ratio.replace("/1tr", ""));
-			// 		var value = Math.ceil(total/1000000*def);
-			// 		sub += value;
-			// 		$(value_tags[i]).val(convertToCurrency(value.toString()));
-			// 	}
-			// }
 		}
 	}
 
 	var empty_value = $('.value:visible').filter(function() { return $(this).val() == ""; });
-	$(empty_value[0]).val(convertToCurrency(total.toString()));
+	if ($('#income').val() == 0) {
+		$(empty_value[0]).val(convertToCurrency(total.toString()));
+	}
+	else {
+		$(empty_value[0]).val(convertToCurrency((total - sub).toString()));
+	}
 	for (var i = 1; i < empty_value.length; i++) {
 		$(empty_value[i]).val('0');
 	}

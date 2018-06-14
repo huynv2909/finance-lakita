@@ -13,7 +13,12 @@
 			$this->data['receipts'] = $this->Receipt_model->get_list();
 
 			$this->load->model('ReceiptType_model');
-			$this->data['receipt_types'] = $this->ReceiptType_model->get_list();
+			$input = array(
+				'where' => array(
+					'active' => 1
+				)
+			);
+			$this->data['receipt_types'] = $this->ReceiptType_model->get_list($input);
 
 			$this->load->model('User_model');
 			$this->data['users'] = $this->User_model->get_list();
@@ -25,14 +30,18 @@
 		{
 			$this->load->helper('form');
 			$this->load->library('form_validation');
-
 			$this->data['title'] = "Thêm chứng từ";
 			$this->data['template'] = 'receipt/create';
 			$this->data['active'] = 'receipt';
 
 			// Get type receipt
 			$this->load->model('ReceiptType_model');
-			$this->data['receipt_type'] = $this->ReceiptType_model->get_list();
+			$input = array(
+				'where' => array(
+					'active' => 1
+				)
+			);
+			$this->data['receipt_type'] = $this->ReceiptType_model->get_list($input);
 			// Get employee
 			$this->load->model('User_model');
 			$this->data['employees'] = $this->User_model->get_list();
@@ -68,7 +77,8 @@
 						'value' => str_replace(".","",$this->input->post('value')),
 						'owner' => 1,
 						'date' => $this->input->post('date'),
-						'note' => $this->input->post('note')
+						'note' => $this->input->post('note'),
+						'income' => $this->input->post('income')
 						);
 
 					$this->load->model('Receipt_model');
@@ -85,7 +95,8 @@
 									'TOT' => $this->input->post('tot-' . $i),
 									'TOA' => $this->input->post('toa-' . $i),
 									'value' => str_replace(".","",$this->input->post('value-' . $i)),
-									'note' => $this->input->post('note-' . $i)
+									'note' => $this->input->post('note-' . $i),
+									'income' => $this->input->post('income-' . $i)
 								);
 
 								$this->AccountingEntry_model->create($trans);
@@ -124,7 +135,12 @@
 				$this->data['receipt'] = $receipt;
 
 				$this->load->model('ReceiptType_model');
-				$this->data['receipt_types'] = $this->ReceiptType_model->get_list();
+				$input = array(
+					'where' => array(
+						'active' => 1
+					)
+				);
+				$this->data['receipt_types'] = $this->ReceiptType_model->get_list($input);
 
 				$this->load->model('User_model');
 				$this->data['users'] = $this->User_model->get_list();
@@ -141,6 +157,7 @@
 			}
 		}
 
+		// Load accounting entry form
 		public function load_form()
 		{
 			if ($this->input->post()) {
@@ -161,7 +178,8 @@
 					$sequence = 1;
 					foreach ($files as $item ) {
 						$input = array(
-							'where' => array('id' => $item)
+							'where' => array('id' => $item),
+							'active' => 1
 						);
 
 						$data['info_tr'] = $this->ActEntryType_model->get_list($input)[0];
@@ -193,9 +211,9 @@
 
 		private function checkInput() {
 			$value_str = $this->input->post('value');
-			$value = str_replace(".","",$value_str);
+			$value_total = str_replace(".","",$value_str);
 
-			if (!is_numeric($value)) {
+			if (!is_numeric($value_total)) {
 				return false;
 			}
 			$this->form_validation->set_rules('receipt_type', 'Receip type', 'required');
@@ -203,6 +221,8 @@
 			$this->form_validation->set_rules('toa', 'TOA', 'required');
 			$this->form_validation->set_rules('executor', 'Executor', 'required');
 			$this->form_validation->set_rules('date', 'Date', 'required');
+
+			$value_act = 0;
 
 			$index_max = $this->input->post('index_max');
 			for ($i=1; $i <= $index_max; $i++) {
@@ -213,8 +233,16 @@
 					if (!is_numeric($value)) {
 						return false;
 					}
+					$value_act += $value;
+
 					$this->form_validation->set_rules('tot-' . $i, 'TOT', 'required');
 					$this->form_validation->set_rules('toa-' . $i, 'TOA', 'required');
+				}
+			}
+
+			if ($this->input->post('income') == 1) {
+				if ($value_total != $value_act) {
+					return false;
 				}
 			}
 
