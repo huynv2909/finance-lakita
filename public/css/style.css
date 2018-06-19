@@ -1,4 +1,5 @@
 /* Style for create receipt */
+/*  ====================================================================== */
 .container-both {
    position: relative;
 }
@@ -89,4 +90,145 @@ h5 {
 
 table.more td {
    width: 50%;
+}
+/* ========================================================================= */
+
+/* BEGIN Receipt Type */
+/* ========================================================================= */
+#panel-act, #panel-receipt {
+   width: 50%;
+   float: left;
+}
+
+#panel-receipt .panel-body, #panel-act .panel-body {
+   max-height: 500px;
+   overflow-y: scroll;
+}
+
+.receipt-item {
+   padding: 10px 5px;
+   background-color: aliceblue;
+   border-radius: 5px;
+   margin-bottom: 5px;
+}
+
+.receipt-item:hover {
+   cursor: pointer;
+   background-color: beige !important;
+}
+
+.name-receipt {
+   font-size: 16px;
+   padding-left: 10px;
+   color: black;
+}
+
+.receipt-item .switch {
+   float: right;
+   margin-right: 10px;
+}
+
+.status-text {
+   display: block;
+   margin-top: -11px;
+   margin-left: 6px;
+   font-size: 10px;
+}
+
+.in-out {
+   margin-left: 11px;
+}
+
+
+/* ========================================================================= */
+/* END Receipt Type */
+
+/* Component */
+/* ===================================================================== */
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 43px;
+  height: 23px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider {
+   background-color: #ccc;
+}
+
+.slider-cus {
+   background-color: #fdd600;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 15px;
+  width: 15px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:checked + .slider-cus {
+  background-color: #80db91;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+/* ===================================================================== */
+
+/* Responsive */
+@media only screen and (max-width: 1200px) {
+   .name-receipt {
+      font-size: 15px;
+   }
+}
+
+@media only screen and (max-width: 992px) {
+   .name-receipt {
+      display: inherit;
+   }
+
+   .receipt-item .switch {
+      margin-top: 15px;
+   }
 }

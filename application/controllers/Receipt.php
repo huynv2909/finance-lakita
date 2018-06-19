@@ -120,6 +120,12 @@
 			$this->data['template'] = "receipt/type";
 			$this->data['active'] = 'receipt';
 
+			$input = array(
+				'order' => array('active', 'desc')
+			);
+			$this->load->model('ReceiptType_model');
+			$this->data['receipt_types'] = $this->ReceiptType_model->get_list($input);
+
 			$this->load->view('layout', $this->data);
 		}
 

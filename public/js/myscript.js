@@ -1,3 +1,6 @@
+// Thêm chứng từ
+// BEGIN
+// -------------------------------------------------------------------------
 $('#tot').change(function() {
 
 	if ($('#toa').val() > $('#tot').val()) {
@@ -189,6 +192,38 @@ $('.re-row').click(function(){
 			$('#view-modal').modal('show');
 		}
 	});
+});
+// END Thêm chứng từ
+// --------------------------------------------------------------------------------------
+
+// BEGIN Receipt type
+$(document).on("click", ".slider", function(){
+	var text = $(this).children()[0];
+	var class_list = $(text).attr("class").split(' ');
+	var checkbox = $(this).parent().children('[type=checkbox]')[0];
+	if ($(checkbox).val() == 'on') {
+		$(checkbox).val('off');
+		if ($.inArray('in-out', class_list) == 1) {
+			$(text).prop('title', 'Chi');
+			$(text).html('Chi');
+		}
+	}
+	else {
+		$(checkbox).val('on');
+		if ($.inArray('in-out', class_list) == 1) {
+			$(text).prop('title', 'Thu');
+			$(text).html('Thu');
+		}
+	}
+	$(text).fadeIn();
+});
+
+$(document).on("click", ".receipt-item", function(){
+	$('.receipt-item').css('background-color', 'aliceblue');
+	$('.name-receipt').css('color', 'black');
+
+	$(this).css('background-color', 'beige');
+	$(this).children('.name-receipt').css('color', 'brown');
 });
 
 function checkToEnableOk() {
