@@ -57,39 +57,10 @@ $('#move-left').on("click", function() {
 	}, 700);
 });
 
-$('#receipt-type, #value, #executor, #tot, #toa, #date').change(function() {
-	var flag = true;
-	if ($('#receipt-type').val() == '') {
-		flag = false;
-	}
-	if ($.trim($('#value').val()) == '') {
-		flag = false;
-	}
-	if ($('#executor').val() == '') {
-		flag = false;
-	}
-	if ($('#tot').val() == '') {
-		flag = false;
-	}
-	if ($('#toa').val() == '') {
-		flag = false;
-	}
-	if ($('#date').val() == '') {
-		flag = false;
-	}
-	if (flag) {
-		$('#receipt-done').prop('disabled', false);
-		$('#move-right').prop('disabled', false);
-		$('#move-right').css('color', '#5cb85c');
-		$('#move-right').hover(function(){$('#move-right').css('color', 'green')}, function(){$('#move-right').css('color', '#5cb85c')})
-	}
-	else {
-		$('#receipt-done').prop('disabled', true);
-		$('#move-right').prop('disabled', true);
-		$('#move-right').css('color', '#e7e7e7');
-		$('#move-right').hover(function(){$('#move-right').css('color', '#e7e7e7')})
-	}
-});
+// When change, check valid input
+$('#receipt-type, #value, #executor, #tot, #toa, #date').change(checkToEnableOk);
+
+$('#value').keyup(checkToEnableOk);
 
 $(document).on("mouseenter", ".row-tr", function(){
 	if ($(".row-tr:visible").length > 1) {
@@ -219,6 +190,46 @@ $('.re-row').click(function(){
 		}
 	});
 });
+
+function checkToEnableOk() {
+	var flag = true;
+	if ($('#receipt-type').val() == '') {
+		flag = false;
+	}
+	var str_value = $('#value').val();
+	if ($.trim(str_value) == '') {
+		flag = false;
+	}
+	str_value = str_value.split('.').join('');
+	if (!$.isNumeric(str_value)) {
+		flag = false;
+	}
+
+	if ($('#executor').val() == '') {
+		flag = false;
+	}
+	if ($('#tot').val() == '') {
+		flag = false;
+	}
+	if ($('#toa').val() == '') {
+		flag = false;
+	}
+	if ($('#date').val() == '') {
+		flag = false;
+	}
+	if (flag) {
+		$('#receipt-done').prop('disabled', false);
+		$('#move-right').prop('disabled', false);
+		$('#move-right').css('color', '#5cb85c');
+		$('#move-right').hover(function(){$('#move-right').css('color', 'green')}, function(){$('#move-right').css('color', '#5cb85c')})
+	}
+	else {
+		$('#receipt-done').prop('disabled', true);
+		$('#move-right').prop('disabled', true);
+		$('#move-right').css('color', '#e7e7e7');
+		$('#move-right').hover(function(){$('#move-right').css('color', '#e7e7e7')})
+	}
+}
 
 function checkToEnableSubmit()
 {

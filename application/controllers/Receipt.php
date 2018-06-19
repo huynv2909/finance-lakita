@@ -185,7 +185,7 @@
 						$data['info_tr'] = $this->ActEntryType_model->get_list($input)[0];
 						$data['sequence'] = $sequence;
 						$sequence++;
-						$this->load->view('receipt/act_form/' . $item, $data);
+						$this->load->view('receipt/act_form/main', $data);
 					}
 					$this->load->view('receipt/act_form/submit');
 				}

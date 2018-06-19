@@ -40,7 +40,7 @@
 					    <label for="value" class="col-sm-3 control-label"><span class="text-danger">(*)</span> Số tiền</label>
 					    <div class="col-sm-9">
 					      	<input onkeyup="oneDot(this)" type="text" name="value" class="form-control" id="value" value="<?php echo set_value('value'); ?>">
-					      	<div class="text-danger"><?php echo form_error('value'); ?></div>
+					      	<div class="text-danger" id="text-danger-value"><?php echo form_error('value'); ?></div>
 					    </div>
 				  	</div>
 				  	<div class="form-group">
