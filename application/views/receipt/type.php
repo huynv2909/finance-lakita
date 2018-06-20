@@ -10,7 +10,7 @@
         </ul>
 
         <!-- Tab panes -->
-        <div class="tab-content">
+        <div class="tab-content pos-rel">
             <div role="tabpanel"  class="tab-pane fade active in" id="recreipt-tab">
                   <div class="panel panel-primary" id="panel-receipt">
                      <div class="panel-heading">
@@ -76,19 +76,66 @@
                        Panel footer
                     </div>
                   </div>
-                  <!-- <select id="rc-list" name="">
-                     <option value="">Phiếu thu các khóa học từ COD</option>
-                     <option value="">Phiếu chi ứng tiền</option>
-                     <option value="">Phiếu chi văn phòng</option>
-                     <option value="">Phiếu thu các khóa học từ chuyển khoản</option>
-                     <option value="">Phiếu chi sinh hoạt chung</option>
-                  </select> -->
+
                   <div class="panel panel-info" id="panel-act">
                      <div class="panel-heading">
                         <h3 class="panel-title text-center">Bút toán tương ứng</h3>
                     </div>
                      <div class="panel-body">
-                        Panel content
+                        <div class="act-item">
+                           <table>
+                              <tr>
+                                 <td class="check-col">
+                                    <input type="checkbox" name="act-choose" value="">
+                                 </td>
+                                 <td class="name-col">
+                                    <div class="out-div">
+                                       Chi
+                                    </div>
+                                    <span>Thue gia tri gia tang</span>
+                                 </td>
+                                 <td class="default-col">
+                                    <span>10%</span>
+                                 </td>
+                              </tr>
+                           </table>
+                        </div>
+                        <div class="act-item">
+                           <table>
+                              <tr>
+                                 <td class="check-col">
+                                    <input type="checkbox" name="act-choose" value="">
+                                 </td>
+                                 <td class="name-col">
+                                    <div class="in-div">
+                                       Thu
+                                    </div>
+                                    <span>Ghi nhan doanh thu</span>
+                                 </td>
+                                 <td class="default-col">
+                                    <span>100%</span>
+                                 </td>
+                              </tr>
+                           </table>
+                        </div>
+                        <div class="act-item">
+                           <table>
+                              <tr>
+                                 <td class="check-col">
+                                    <input type="checkbox" name="act-choose" value="">
+                                 </td>
+                                 <td class="name-col">
+                                    <div class="out-div">
+                                       Chi
+                                    </div>
+                                    <span>Chi phí COD</span>
+                                 </td>
+                                 <td>
+                                    <span>30.000/295.000</span>
+                                 </td>
+                              </tr>
+                           </table>
+                        </div>
                      </div>
                     <div class="panel-footer">
                        Panel footer
@@ -97,7 +144,10 @@
                   <div class="clearfix"></div>
             </div>
             <div role="tabpanel" class="tab-pane fade" id="accounting-entry-list">
-               DDM
+
+            </div>
+            <div class="wait-ajax" id="wait-choose-act">
+               <i class="fas fa-circle-notch fa-spin fa-5x"></i>
             </div>
         </div>
     </div>

@@ -68,6 +68,7 @@ h5 {
    border-radius: 5px;
    border: 1px solid #fff;
    display: inline-block;
+   text-align: center;
 }
 
 .income {
@@ -101,7 +102,7 @@ table.more td {
 }
 
 #panel-receipt .panel-body, #panel-act .panel-body {
-   max-height: 500px;
+   height: 500px;
    overflow-y: scroll;
 }
 
@@ -137,6 +138,49 @@ table.more td {
 
 .in-out {
    margin-left: 11px;
+}
+
+.check-col {
+   width: 10%;
+}
+
+.act-item {
+   padding: 10px;
+   border-radius: 5px;
+   margin: 5px 0;
+   background-color: floralwhite;
+    color: black;
+}
+
+.act-item table {
+   width: 100%;
+}
+
+.name-col {
+   width: 70%;
+}
+
+.default-col {
+   width: 20%;
+}
+
+.wait-ajax {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   top: 0;
+   left: 0;
+   background-color: rgba(255,255,255,0.5);
+   display: none;
+}
+
+.pos-rel {
+   position: relative;
+}
+
+.wait-ajax i {
+   margin-left: 45%;
+   margin-top: 16%;
 }
 
 
@@ -213,6 +257,25 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+/* Checkbox larger css */
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(2); /* IE */
+  -moz-transform: scale(2); /* FF */
+  -webkit-transform: scale(2); /* Safari and Chrome */
+  -o-transform: scale(2); /* Opera */
+  padding: 10px;
+}
+
+/* Might want to wrap a span around your checkbox text */
+.checkboxtext
+{
+  /* Checkbox text */
+  font-size: 110%;
+  display: inline;
 }
 /* ===================================================================== */
 

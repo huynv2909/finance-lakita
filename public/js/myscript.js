@@ -224,6 +224,11 @@ $(document).on("click", ".receipt-item", function(){
 
 	$(this).css('background-color', 'beige');
 	$(this).children('.name-receipt').css('color', 'brown');
+
+	$('#wait-choose-act').css('display', 'block');
+	setTimeout(function(){
+		$('#wait-choose-act').css('display', 'none');
+	}, 1000);
 });
 
 function checkToEnableOk() {
