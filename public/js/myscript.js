@@ -219,17 +219,124 @@ $(document).on("click", ".slider", function(){
 });
 
 $(document).on("click", ".receipt-item", function(){
+	// enable list add act
+	$('#act-to-add').prop('disabled', false);
+	$('#act-update-btn').prop('disabled', true);
+
 	$('.receipt-item').css('background-color', 'aliceblue');
 	$('.name-receipt').css('color', 'black');
+	$('.receipt-item').data('chosen', 0);
 
 	$(this).css('background-color', 'beige');
 	$(this).children('.name-receipt').css('color', 'brown');
+	$(this).data('chosen', 1);
 
-	$('#wait-choose-act').css('display', 'block');
-	setTimeout(function(){
-		$('#wait-choose-act').css('display', 'none');
-	}, 1000);
+	var url = $('#url-ajax').val();
+	var id = $(this).data('id');
+
+	$.ajax({
+		method: "POST",
+		url: url,
+		data: {
+			id : id
+		},
+		beforeSend: function() {
+			$('#wait-choose-act').css('display', 'block');
+		},
+		success: function(result) {
+			$('#act-load').html(result);
+		},
+		complete: function() {
+			$('#wait-choose-act').css('display', 'none');
+		}
+	});
 });
+
+$(document).on("click", ".rm-icon", function(){
+	// Hide
+	var id_item = $(this).data('id');
+	$('#act-item-' + id_item).fadeOut();
+	// update new list
+	var index = $('#list-new').val().split(',').indexOf(id_item.toString());
+	var arr = $('#list-new').val().split(',');
+	arr.splice(index, 1);
+	if (arr.length == 0) {
+		$('#act-load').prepend('<h3 class="text-center deep-note">(Trống)</h3>');
+	}
+
+	$('#list-new').val(arr.join(','));
+
+	checkToEnableUpdateReceiptType();
+});
+
+$('#act-to-add').change(function(){
+	if ($(this).val() == 0) {
+		$('#act-add-btn').prop('disabled', true);
+	} else {
+		$('#act-add-btn').prop('disabled', false);
+	}
+});
+
+$('#act-add-btn').click(function(){
+	var url = $(this).data('url');
+	var id = $('#act-to-add').val();
+
+	$.ajax({
+		method: "POST",
+		url: url,
+		data: {
+			id : id
+		},
+		beforeSend: function() {
+			$('#wait-choose-act').css('display', 'block');
+		},
+		success: function(result) {
+			// update new list
+			var arr = $('#list-new').val().split(',');
+			arr.push(id.toString());
+			$('#list-new').val(arr.join(','));
+
+			checkToEnableUpdateReceiptType();
+
+			$('#act-load').append(result);
+		},
+		complete: function() {
+			$('#wait-choose-act').css('display', 'none');
+		}
+	});
+});
+
+function checkToEnableUpdateReceiptType() {
+	if ($('#list-new').val() !== $('#list-act-ori').val()) {
+		$('#act-update-btn').prop('disabled', false);
+		$('#act-update-btn').css({
+			'animation': 'shake 5s cubic-bezier(.36,.07,.19,.97) both',
+			'transform': 'translate3d(0, 0, 0)',
+			'backface-visibility': 'hidden',
+			'perspective': '1000px'
+		});
+		setTimeout(function(){
+			$('#act-update-btn').css('animation', 'none');
+		},3000);
+	}
+	else {
+		$('#act-update-btn').prop('disabled', true);
+	}
+}
+
+function checkChosenReceipt() {
+	var list_choose = $('.receipt-item');
+	var flag = false;
+	for (var i = 0; i < list_choose.length; i++) {
+		if ($(list_choose[i]).data('chosen') == '1') {
+			console.log($(list_choose[i]).data('chosen'));
+			flag = true;
+			break;
+		}
+	}
+
+	return flag;
+}
 
 function checkToEnableOk() {
 	var flag = true;

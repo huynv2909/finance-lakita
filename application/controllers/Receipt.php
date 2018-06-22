@@ -125,6 +125,13 @@
 			);
 			$this->load->model('ReceiptType_model');
 			$this->data['receipt_types'] = $this->ReceiptType_model->get_list($input);
+			$input = array(
+				'where' => array(
+					'active' => 1
+				)
+			);
+			$this->load->model('ActEntryType_model');
+			$this->data['act_entry_types'] = $this->ActEntryType_model->get_list($input);
 
 			$this->load->view('layout', $this->data);
 		}
@@ -160,6 +167,37 @@
 				$this->load->view('receipt/more/receipt', $this->data);
 				$this->load->view('receipt/more/act-entry', $this->data);
 
+			}
+		}
+
+		// Load accounting entry types when click receipt.
+		public function load_act_type() {
+			if ($this->input->post()) {
+				$id = $this->input->post('id');
+
+				$this->load->model('ReceiptType_model');
+				$input = array(
+					'select' => array('act_type_list_id'),
+					'where' => array('id' => $id)
+				);
+
+				if ($response = $this->ReceiptType_model->get_list($input)) {
+					$list = $response[0]->act_type_list_id;
+					echo '<input type="hidden" name="list-act-ori" id="list-act-ori" value="' . $list . '">';
+					echo '<input type="hidden" name="list-new" id="list-new" value="' . $list . '">';
+					$id_list = explode(',', $list);
+					foreach ($id_list as $item) {
+						$this->load_a_act_type_and_show($item);
+					}
+				}
+			}
+		}
+
+		// Load act type info to edit receipt type
+		public function load_act_type_info() {
+			if ($this->input->post()) {
+				$id = $this->input->post('id');
+				$this->load_a_act_type_and_show($id);
 			}
 		}
 
@@ -213,6 +251,12 @@
 				$data['toa'] = $toa;
 				$this->load->view('receipt/act_form/act-added', $data);
 			}
+		}
+
+		private function load_a_act_type_and_show($id) {
+			$this->load->model('ActEntryType_model');
+			$data['act_type'] = $this->ActEntryType_model->get_info($id);
+			$this->load->view('receipt/load/act_list', $data);
 		}
 
 		private function checkInput() {

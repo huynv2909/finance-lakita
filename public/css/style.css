@@ -96,6 +96,22 @@ table.more td {
 
 /* BEGIN Receipt Type */
 /* ========================================================================= */
+
+.deep-note {
+   font-weight: bold;
+   color: grey;
+}
+
+.edit-icon {
+   margin-right: 20px;
+   margin-top: 5px;
+   color: darkgray;
+}
+
+#act-to-add {
+   height: 34px;
+}
+
 #panel-act, #panel-receipt {
    width: 50%;
    float: left;
@@ -140,8 +156,13 @@ table.more td {
    margin-left: 11px;
 }
 
-.check-col {
+.rm-col {
    width: 10%;
+}
+
+.rm-icon:hover {
+   cursor: pointer;
+   background-color: brown;
 }
 
 .act-item {
@@ -189,6 +210,33 @@ table.more td {
 
 /* Component */
 /* ===================================================================== */
+/* button shake */
+@keyframes wiggle {
+    0% { transform: rotate(0deg); }
+   80% { transform: rotate(0deg); }
+   85% { transform: rotate(5deg); }
+   95% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
 /* The switch - the box around the slider */
 .switch {
   position: relative;
