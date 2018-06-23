@@ -21,7 +21,7 @@
                      <div class="panel-body">
                         <?php if (isset($receipt_types) && !empty($receipt_types)): ?>
                            <?php foreach ($receipt_types as $type): ?>
-                              <div class="receipt-item" data-id="<?php echo $type->id; ?>" data-chosen="0">
+                              <div class="receipt-item" data-active_ori="<?php echo $type->active; ?>" data-id="<?php echo $type->id; ?>" data-chosen="0">
                                  <?php if ($type->income == 1): ?>
                                     <div class="in-div">
                                        Thu
@@ -79,7 +79,7 @@
                        <button type="button" class="btn btn-primary" title="Thêm" id="act-add-btn" data-url="<?php echo base_url('Receipt/load_act_type_info'); ?>" disabled>
                           <i class="fa fa-fw" aria-hidden="true" title="Thêm"></i>
                        </button>
-                       <button type="button" class="btn btn-success pull-right shake shake-constant" id="act-update-btn" title="Lưu thay đổi" disabled>
+                       <button type="button" class="btn btn-success pull-right shake shake-constant" data-url="<?php echo base_url('Receipt/update_list_act'); ?>" id="act-update-btn" title="Lưu thay đổi" disabled>
                           <i class="fa fa-check" title="Lưu thay đổi"></i>
                        </button>
                        <div class="clearfix"></div>
@@ -91,7 +91,8 @@
 
             </div>
             <div class="wait-ajax" id="wait-choose-act">
-               <i class="fas fa-circle-notch fa-spin fa-5x"></i>
+               <i class="fas fa-circle-notch fa-spin fa-5x wait"></i>
+               <i class="fa fa-fw fa-5x success" aria-hidden="true" title="Success"></i>
             </div>
         </div>
     </div>

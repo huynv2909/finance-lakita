@@ -150,6 +150,8 @@ $(document).on("change", ".tot, .toa", checkToEnableSubmit);
 
 $(document).on("keyup", ".value", checkToEnableSubmit);
 
+$(document).on("keyup", "#value", function() { $('#value-show').html(convertToCurrency($('#value').val().split('.').join(''))); })
+
 // Ajax load accounting entry
 $('#receipt-type').change(function(){
 	var code = $('#receipt-type :selected').text().substring(0,2);
@@ -218,17 +220,21 @@ $(document).on("click", ".slider", function(){
 	$(text).fadeIn();
 });
 
+$(document).on("change", ".active-check", function() {
+	console.log('aaa');
+});
+
 $(document).on("click", ".receipt-item", function(){
 	// enable list add act
 	$('#act-to-add').prop('disabled', false);
 	$('#act-update-btn').prop('disabled', true);
 
 	$('.receipt-item').css('background-color', 'aliceblue');
-	$('.name-receipt').css('color', 'black');
+	$('.name-receipt').css({'color': 'black', 'font-weight': 'normal'});
 	$('.receipt-item').data('chosen', 0);
 
 	$(this).css('background-color', 'beige');
-	$(this).children('.name-receipt').css('color', 'brown');
+	$(this).children('.name-receipt').css({'color': 'brown', 'font-weight': 'bold'});
 	$(this).data('chosen', 1);
 
 	var url = $('#url-ajax').val();
@@ -255,7 +261,8 @@ $(document).on("click", ".receipt-item", function(){
 $(document).on("click", ".rm-icon", function(){
 	// Hide
 	var id_item = $(this).data('id');
-	$('#act-item-' + id_item).fadeOut();
+	$(this).parent().parent().parent().parent().parent().fadeOut();
+
 	// update new list
 	var index = $('#list-new').val().split(',').indexOf(id_item.toString());
 	var arr = $('#list-new').val().split(',');
@@ -292,7 +299,13 @@ $('#act-add-btn').click(function(){
 		},
 		success: function(result) {
 			// update new list
-			var arr = $('#list-new').val().split(',');
+			if ($('#list-new').val() == '') {
+				var arr = [];
+			}
+			else {
+				var arr = $('#list-new').val().split(',');
+			}
+			console.log(arr);
 			arr.push(id.toString());
 			$('#list-new').val(arr.join(','));
 
@@ -304,6 +317,44 @@ $('#act-add-btn').click(function(){
 			$('#wait-choose-act').css('display', 'none');
 		}
 	});
+});
+
+// click save button
+$('#act-update-btn').click(function(){
+	var url = $(this).data('url');
+
+	var element_chosen = $('.receipt-item').filter(function() { return ($(this).data('chosen') == '1'); });
+	// when a receipt was chosen
+	if ($(element_chosen).length == 1) {
+		var list = $('#list-new').val();
+		var id = $(element_chosen).data('id');
+
+		$.ajax({
+			method: "POST",
+			url: url,
+			data: {
+				id : id,
+				list : list
+			},
+			beforeSend: function() {
+				$('#wait-choose-act').css('display', 'block');
+			},
+			success : function(result) {
+				console.log(result);
+				$('#wait-choose-act').children('.wait').css('display', 'none');
+				$('#wait-choose-act').children('.success').css('display', 'inline-block');
+			},
+			complete: function() {
+				setTimeout(function(){
+					$('#wait-choose-act').css('display', 'none');
+					$('#wait-choose-act').children('.success').css('display', 'none');
+					$('#wait-choose-act').children('.wait').css('display', 'inline-block');
+
+					$('#act-update-btn').prop('disabled', true);
+				},2000);
+			}
+		});
+	}
 });
 
 function checkToEnableUpdateReceiptType() {

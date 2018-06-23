@@ -7,7 +7,7 @@
 				</div>
 				<div class="col-xs-4">
 					<h3 id="receipt-title" class="text-center">Thông tin chứng từ</h3>
-					<h3 id="act-entry-title"  class="text-center">Ghi nhận bút toán</h3>
+					<h3 id="act-entry-title"  class="text-center">Ghi nhận bút toán: <span id="value-show"></span> vnd</h3>
 				</div>
 				<div class="col-xs-4 move text-right">
 					<button id="move-right" type="button" name="" disabled><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></button>

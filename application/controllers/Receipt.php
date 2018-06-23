@@ -136,6 +136,25 @@
 			$this->load->view('layout', $this->data);
 		}
 
+		// Update list accounting entry type of receipt type
+		public function update_list_act() {
+			if ($this->input->post()) {
+				$id_type = $this->input->post('id');
+				$new_list = $this->input->post('list');
+
+				$this->load->model('ReceiptType_model');
+				$data = array(
+					'act_type_list_id' => $new_list
+				);
+				if ($this->ReceiptType_model->update($id_type, $data)) {
+					echo 'success';
+				}
+				else {
+					echo 'failed';
+				}
+			}
+		}
+
 		public function view_more() {
 			if ($this->input->post()) {
 				$receipt_id = $this->input->post('id');
@@ -216,20 +235,25 @@
 					$list = $response[0]->act_type_list_id;
 					$files = explode(',', $list);
 					$data['count'] = count($files);
+					if (trim($list, " ") == '') {
+						$data['count'] = 0;
+					}
 					$this->load->view('receipt/act_form/info-and-custom', $data);
 
-					$this->load->model('ActEntryType_model');
-					$sequence = 1;
-					foreach ($files as $item ) {
-						$input = array(
-							'where' => array('id' => $item),
-							'active' => 1
-						);
+					if ($data['count'] > 0) {
+						$this->load->model('ActEntryType_model');
+						$sequence = 1;
+						foreach ($files as $item ) {
+							$input = array(
+								'where' => array('id' => $item),
+								'active' => 1
+							);
 
-						$data['info_tr'] = $this->ActEntryType_model->get_list($input)[0];
-						$data['sequence'] = $sequence;
-						$sequence++;
-						$this->load->view('receipt/act_form/main', $data);
+							$data['info_tr'] = $this->ActEntryType_model->get_list($input)[0];
+							$data['sequence'] = $sequence;
+							$sequence++;
+							$this->load->view('receipt/act_form/main', $data);
+						}
 					}
 					$this->load->view('receipt/act_form/submit');
 				}
@@ -249,7 +273,7 @@
 				$data['sequence'] = $count + 1;
 				$data['tot'] = $tot;
 				$data['toa'] = $toa;
-				$this->load->view('receipt/act_form/act-added', $data);
+				$this->load->view('receipt/act_form/main', $data);
 			}
 		}
 

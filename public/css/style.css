@@ -42,6 +42,10 @@ h5 {
    margin-left: 10px;
 }
 
+#act-entry-title span {
+   font-weight: bold;
+}
+
 .close {
    position: absolute;
    top: 0;
@@ -106,6 +110,10 @@ table.more td {
    margin-right: 20px;
    margin-top: 5px;
    color: darkgray;
+}
+
+.edit-icon:hover {
+   color: black;
 }
 
 #act-to-add {
@@ -192,6 +200,11 @@ table.more td {
    top: 0;
    left: 0;
    background-color: rgba(255,255,255,0.5);
+   display: none;
+}
+
+.wait-ajax .success {
+   color: green;
    display: none;
 }
 

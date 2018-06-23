@@ -102,7 +102,7 @@
                     <!-- /input-group -->
                 </li>
                 <li>
-                    <a href="index.html"?><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                    <a href="index.html"?><i class="fa fa-fw" aria-hidden="true" title="Dashboard"></i> Dashboard</a>
                 </li>
                 <li>
                    <a href="#"><i class="fa fa-file-text-o fa-fw"></i>Hóa đơn/Chứng từ<span class="fa arrow"></span></a>
