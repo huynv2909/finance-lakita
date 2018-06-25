@@ -136,6 +136,88 @@
 			$this->load->view('layout', $this->data);
 		}
 
+		// Create new type receipt by ajax
+		public function create_type_receipt() {
+			if ($this->input->post()) {
+				$this->load->model('ReceiptType_model');
+				$input = array(
+					'select' => array('code')
+				);
+
+				$this->data['list_code'] = $this->ReceiptType_model->get_list($input);
+				$this->load->view('receipt/load/create_type_form', $this->data);
+			}
+		}
+
+		// Delete a type receipt by Ajax
+		public function delete_type() {
+			if ($this->input->post()) {
+				$id = $this->input->post('id');
+				$this->load->model('ReceiptType_model');
+
+				if ($this->ReceiptType_model->delete($id)) {
+					$response = array(
+						'success' => true,
+						'message' => "Đã xóa!"
+					);
+				} else {
+					$response = array(
+						'success' => false,
+						'message' => "Đã có lỗi xảy ra!"
+					);
+				}
+				die(json_encode($response));
+			}
+		}
+
+		// Update name receipt type
+		public function update_name() {
+			if ($this->input->post()) {
+				$id = $this->input->post('id');
+				$name = $this->input->post('name');
+
+				$data = array(
+					'name' => $name
+					);
+				$this->load->model('ReceiptType_model');
+
+				if ($this->ReceiptType_model->update($id, $data)) {
+					echo 'success';
+				} else {
+					echo 'failed';
+				}
+			}
+		}
+
+		// Update status of receitpt_type by ajax
+		public function change_status() {
+			if ($this->input->post()) {
+				$list_change = json_decode($this->input->post('list_change'));
+				$this->load->model('ReceiptType_model');
+
+				foreach ($list_change as $key => $value) {
+					$input = array(
+						'active' => $value
+					);
+					$this->ReceiptType_model->update($key, $input);
+				}
+			}
+		}
+
+		// when updated status of receipt type, we reload list receipt type by ajax
+		public function load_new_status() {
+			if ($this->input->post()) {
+				$input = array(
+					'order' => array('active', 'desc')
+				);
+				$this->load->model('ReceiptType_model');
+				$this->data['receipt_types'] = $this->ReceiptType_model->get_list($input);
+
+				$this->load->view('receipt/load/receipt_list', $this->data);
+
+			}
+		}
+
 		// Update list accounting entry type of receipt type
 		public function update_list_act() {
 			if ($this->input->post()) {

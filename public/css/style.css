@@ -217,6 +217,14 @@ table.more td {
    margin-top: 16%;
 }
 
+.edit-name-box {
+   width: 50%;
+}
+
+.click-show {
+   display: none;
+}
+
 
 /* ========================================================================= */
 /* END Receipt Type */

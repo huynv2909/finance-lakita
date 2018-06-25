@@ -14,47 +14,20 @@
         <!-- Tab panes -->
         <div class="tab-content pos-rel">
             <div role="tabpanel"  class="tab-pane fade active in" id="recreipt-tab">
+                  <input type="hidden" name="have-change" value="0" id="have-change">
                   <div class="panel panel-primary" id="panel-receipt">
                      <div class="panel-heading">
                         <h3 class="panel-title text-center">Chứng từ</h3>
                     </div>
-                     <div class="panel-body">
-                        <?php if (isset($receipt_types) && !empty($receipt_types)): ?>
-                           <?php foreach ($receipt_types as $type): ?>
-                              <div class="receipt-item" data-active_ori="<?php echo $type->active; ?>" data-id="<?php echo $type->id; ?>" data-chosen="0">
-                                 <?php if ($type->income == 1): ?>
-                                    <div class="in-div">
-                                       Thu
-                                    </div>
-                                 <?php else: ?>
-                                    <div class="out-div">
-                                       Chi
-                                    </div>
-                                 <?php endif; ?>
-                                 <span class="name-receipt" title="<?php echo $type->code; ?>"><?php echo $type->name; ?></span>
-                                 <label class="switch">
-                                   <input type="checkbox" class="active-check"
-                                       <?php
-                                          if ($type->active) {
-                                             echo "checked";
-                                          }
-                                          else {
-                                             echo 'value="off"';
-                                          }
-                                       ?>
-                                   >
-                                   <span class="slider round">
-                                      <span class="status-text" title="Status">Active</span>
-                                   </span>
-                                 </label>
-                                 <i class="fa fa-fw pull-right edit-icon" aria-hidden="true" title="Chỉnh sửa"></i>
-                                 <div class="clearfix"></div>
-                              </div>
-                           <?php endforeach; ?>
-                        <?php endif; ?>
+                     <div class="panel-body" id="list-receipt">
+                        <!-- have load by ajax -->
+                        <?php $this->load->view('receipt/load/receipt_list'); ?>
                      </div>
                     <div class="panel-footer">
-                       <button type="button" class="btn btn-success pull-right" title="Lưu thay đổi" disabled>
+                       <button type="button" class="btn btn-primary" id="type-add-btn" title="Thêm loại chứng từ mới" data-url="<?php echo base_url('Receipt/create_type_receipt'); ?>" >
+                          <i class="fa fa-fw" aria-hidden="true" title="Thêm mới"></i> Thêm mới
+                       </button>
+                       <button type="button" class="btn btn-success pull-right" id="status-change-btn" title="Lưu lại các thay đổi" data-url="<?php echo base_url('Receipt/change_status'); ?>" data-url_load="<?php echo base_url('Receipt/load_new_status'); ?>" disabled>
                           <i class="fa fa-check" title="Lưu thay đổi"></i> Lưu thay đổi
                        </button>
                        <div class="clearfix"></div>

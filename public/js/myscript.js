@@ -120,21 +120,6 @@ $(document).on("click", "#add-trans", function(){
 
 });
 
-// Auto fill last input
-// $(document).on("change", ".value", function(){
-// 	var value_tags = $('.value:visible').filter(function() { return ($(this).data('default') == "" && $(this).val() == ""); });
-// 	if ($(value_tags).length == 1) {
-// 		var total = parseInt($('#value').val().split('.').join(''));
-// 		var value_fill = total - GetTotalFilled();
-// 		if (value_fill >= 0) {
-// 			$(value_tags[0]).val(convertToCurrency(value_fill));
-// 		}
-// 		else {
-// 			$(value_tags[0]).val('(Giá trị âm!)');
-// 		}
-// 	}
-// });
-// end effect create receipt
 
 $(document).on("change", ".income, #income", function() {
 	if ($(this).val() == 1) {
@@ -221,7 +206,21 @@ $(document).on("click", ".slider", function(){
 });
 
 $(document).on("change", ".active-check", function() {
-	console.log('aaa');
+	if (checkHaveChangeActive()) {
+		$('#status-change-btn').prop('disabled', false);
+		$('#status-change-btn').css({
+			'animation': 'shake 5s cubic-bezier(.36,.07,.19,.97) both',
+			'transform': 'translate3d(0, 0, 0)',
+			'backface-visibility': 'hidden',
+			'perspective': '1000px'
+		});
+		setTimeout(function(){
+			$('#status-change-btn').css('animation', 'none');
+		},3000);
+	} else {
+		$('#status-change-btn').prop('disabled', true);
+	}
+
 });
 
 $(document).on("click", ".receipt-item", function(){
@@ -305,7 +304,6 @@ $('#act-add-btn').click(function(){
 			else {
 				var arr = $('#list-new').val().split(',');
 			}
-			console.log(arr);
 			arr.push(id.toString());
 			$('#list-new').val(arr.join(','));
 
@@ -341,14 +339,12 @@ $('#act-update-btn').click(function(){
 			},
 			success : function(result) {
 				console.log(result);
-				$('#wait-choose-act').children('.wait').css('display', 'none');
-				$('#wait-choose-act').children('.success').css('display', 'inline-block');
+				$('#list-act-ori').val(list);
+				showSuccess();
 			},
 			complete: function() {
 				setTimeout(function(){
-					$('#wait-choose-act').css('display', 'none');
-					$('#wait-choose-act').children('.success').css('display', 'none');
-					$('#wait-choose-act').children('.wait').css('display', 'inline-block');
+					resetSuccess();
 
 					$('#act-update-btn').prop('disabled', true);
 				},2000);
@@ -356,6 +352,223 @@ $('#act-update-btn').click(function(){
 		});
 	}
 });
+
+// Click save change status button
+$('#status-change-btn').click(function(){
+	$(this).prop('disabled', true);
+
+	var have_change = $('#have-change').val();
+	if (have_change !== '0') {
+		var url = $(this).data('url');
+
+		var url_load = $(this).data('url_load');
+
+		$.ajax({
+			method: "POST",
+			url: url,
+			data: {
+				list_change : have_change
+			},
+			beforeSend: function() {
+				$('#wait-choose-act').css('display', 'block');
+			},
+			success: function(result) {
+				$.ajax({
+					method: "POST",
+					url: url_load,
+					data: {
+						'reload' : 1
+					},
+					success: function(result_load) {
+						$('#list-receipt').html(result_load);
+						$('#act-load').html('<h3 class="text-center deep-note">(Hãy lựa chọn chứng từ)</h3>');
+						$('#act-to-add').prop('disabled', true);
+						showSuccess();
+					}
+				});
+			},
+			complete: function() {
+				setTimeout(function(){
+					resetSuccess();
+
+					$('#status-change-btn').prop('disabled', true);
+				},2000);
+			}
+		});
+	}
+});
+
+$(document).on("click", ".edit-icon", function(){
+	resetEditReceiptName();
+
+	// Set current item
+	var main_item = $(this).parent();
+	$(main_item).children('.click-hide').css('display', 'none');
+	$(main_item).children('.click-show').css('display', 'inline-block');
+	var text_box = $(main_item).children('.edit-name-box')[0];
+	$(text_box).focus();
+	var temp = $(text_box).val();
+	$(text_box).val('');
+	$(text_box).val(temp);
+});
+
+$(document).on("click", ".save-name",function(){
+	var id = $(this).data('id');
+	var main_item = $(this).parent();
+	var new_name = $.trim($('#txt-edit-name-' + id.toString()).val());
+
+	if (new_name !== $(this).data('name_ori')) {
+		$(this).data('name_ori', new_name);
+		var url = $(this).data('url');
+
+		$.ajax({
+			method: "POST",
+			url: url,
+			data: {
+				id : id,
+				name : new_name
+			},
+			beforeSend: function() {
+				$('#wait-choose-act').css('display', 'block');
+			},
+			success : function(result) {
+				console.log(result);
+				$(main_item).children('.name-receipt').html(new_name);
+				resetEditReceiptName();
+				showSuccess();
+			},
+			complete: function() {
+				setTimeout(function(){
+					resetSuccess();
+
+					$('#act-update-btn').prop('disabled', true);
+				},2000);
+			}
+		});
+	} else {
+		resetEditReceiptName();
+	}
+});
+
+$(document).on("click", ".delete-type", function(){
+	var main_item = $(this).parent();
+	console.log(main_item);
+	var id = $(this).data('id');
+	var url = $(this).data('url');
+	$.confirm({
+	    title: 'Xóa!',
+	    content: 'Chỉ có thể xóa khi không có chứng từ nào cùng loại, Xác nhận xóa dữ liệu?',
+	    buttons: {
+			 Ok: {
+				  btnClass: 'btn-blue',
+				  action: function(){
+					  $.ajax({
+						  method: "POST",
+						  url: url,
+						  dataType: 'json',
+						  data: {
+							  id : id
+						  },
+						  success: function(result){
+							  if (result.success) { $(main_item).fadeOut(); }
+							  resetEditReceiptName();
+							  $.alert({
+								    content: result.message,
+								});
+						  }
+					  });
+				  }
+			 },
+			 cancel: function(){
+				 resetEditReceiptName();
+			 }
+	    }
+	});
+});
+
+$('#type-add-btn').click(function(){
+	var url = $(this).data('url');
+	$.confirm({
+	    content: function () {
+	        var self = this;
+	        return $.ajax({
+	            url: url,
+	            method: 'post',
+					data: {
+						'load' : 1
+					},
+	        }).done(function (response) {
+	            self.setContent(response);
+	            // self.setContentAppend('<br>Version: ' + response.version);
+	            self.setTitle('Thêm loại chứng từ mới');
+	        }).fail(function(){
+	            self.setContent('Something went wrong.');
+	        });
+	    },
+		 buttons : {
+			 Ok: {
+	            text: 'Ok',
+	            keys: ['enter'],
+					btnClass: 'btn-blue',
+	            action: function(){
+	                $.alert('Shift or Alt was pressed');
+	            }
+	        },
+	 		 close : {
+	 			 specialKey: {
+	 				  text: 'Close',
+	 				  keys: ['esc'],
+	 				  action: function(){
+	 						$.alert('A or B was pressed');
+	 				  }
+	 			 }
+	 		 }
+		 },
+	});
+});
+
+function resetEditReceiptName() {
+	$('.click-show').css('display', 'none');
+	$('.click-hide').css('display', 'inline-block');
+}
+
+function showSuccess() {
+	$('#wait-choose-act').children('.wait').css('display', 'none');
+	$('#wait-choose-act').children('.success').css('display', 'inline-block');
+}
+
+function resetSuccess() {
+	$('#wait-choose-act').css('display', 'none');
+	$('#wait-choose-act').children('.success').css('display', 'none');
+	$('#wait-choose-act').children('.wait').css('display', 'inline-block');
+}
+
+function checkHaveChangeActive() {
+	var list_receipt_item = $('.receipt-item');
+	var have_change = false;
+	var json_change = {};
+
+	for (var i = 0; i < list_receipt_item.length; i++) {
+		var value_each_checkbox = $($($(list_receipt_item[i]).children('.switch')[0]).children('.active-check')[0]).val();
+		if ($(list_receipt_item[i]).data('active_ori') !== value_each_checkbox) {
+			have_change = true;
+			var id_change = $(list_receipt_item[i]).data('id');
+			if (value_each_checkbox == 'on') {
+				json_change[id_change] = 1;
+			} else {
+				json_change[id_change] = 0;
+			}
+		}
+	}
+
+	if (have_change) {
+		$('#have-change').val(JSON.stringify(json_change));
+		return true;
+	} else {
+		$('#have-change').val('0');
+		return false;
+	}
+}
 
 function checkToEnableUpdateReceiptType() {
 	if ($('#list-new').val() !== $('#list-act-ori').val()) {
