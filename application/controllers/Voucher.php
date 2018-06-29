@@ -1,16 +1,16 @@
 <?php
 	/**
-	 * Receipt
+	 * Voucher
 	 */
-	class Receipt extends MY_Controller
+	class Voucher extends MY_Controller
 	{
 		public function index() {
 			$this->data['title'] = "Sổ kế toán";
-			$this->data['template'] = "receipt/index";
+			$this->data['template'] = "voucher/index";
 			$this->data['active'] = 'receipt';
 
-			$this->load->model('Receipt_model');
-			$this->data['receipts'] = $this->Receipt_model->get_list();
+			$this->load->model('Voucher_model');
+			$this->data['receipts'] = $this->Voucher_model->get_list();
 
 			$this->load->model('ReceiptType_model');
 			$input = array(
@@ -31,17 +31,19 @@
 			$this->load->helper('form');
 			$this->load->library('form_validation');
 			$this->data['title'] = "Thêm chứng từ";
-			$this->data['template'] = 'receipt/create';
+			$this->data['template'] = 'voucher/create';
 			$this->data['active'] = 'receipt';
 
+			$this->load->model('Voucher_model');
+			$this->data['vouchers'] = $this->Voucher_model->get_list();
 			// Get type receipt
-			$this->load->model('ReceiptType_model');
+			$this->load->model('VoucherType_model');
 			$input = array(
 				'where' => array(
 					'active' => 1
 				)
 			);
-			$this->data['receipt_type'] = $this->ReceiptType_model->get_list($input);
+			$this->data['receipt_type'] = $this->VoucherType_model->get_list($input);
 			// Get employee
 			$this->load->model('User_model');
 			$this->data['employees'] = $this->User_model->get_list();
@@ -81,9 +83,9 @@
 						'income' => $this->input->post('income')
 						);
 
-					$this->load->model('Receipt_model');
+					$this->load->model('Voucher_model');
 					if ($this->Receipt_model->create($data)) {
-						$receipt_id = $this->Receipt_model->get_insert_id();
+						$receipt_id = $this->Voucher_model->get_insert_id();
 
 						$index_max = $this->input->post('index_max');
 
@@ -123,7 +125,7 @@
 			$input = array(
 				'order' => array('active', 'desc')
 			);
-			$this->load->model('ReceiptType_model');
+			$this->load->model('VoucherType_model');
 			$this->data['receipt_types'] = $this->ReceiptType_model->get_list($input);
 			$input = array(
 				'where' => array(
@@ -374,27 +376,10 @@
 			}
 			$this->form_validation->set_rules('receipt_type', 'Receip type', 'required');
 			$this->form_validation->set_rules('tot', 'TOT', 'required');
-			$this->form_validation->set_rules('toa', 'TOA', 'required');
 			$this->form_validation->set_rules('executor', 'Executor', 'required');
 			$this->form_validation->set_rules('date', 'Date', 'required');
 
 			$value_act = 0;
-
-			$index_max = $this->input->post('index_max');
-			for ($i=1; $i <= $index_max; $i++) {
-				if ($this->input->post('hide-' . $i) == 'true') {
-					$value_str = $this->input->post('value-' . $i);
-					$value = str_replace(".","",$value_str);
-
-					if (!is_numeric($value)) {
-						return false;
-					}
-					$value_act += $value;
-
-					$this->form_validation->set_rules('tot-' . $i, 'TOT', 'required');
-					$this->form_validation->set_rules('toa-' . $i, 'TOA', 'required');
-				}
-			}
 
 			if ($this->input->post('income') == 1) {
 				if ($value_total != $value_act) {

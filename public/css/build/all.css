@@ -1,0 +1,84 @@
+#page-wrapper {
+   background-color: #aee4ea;
+   padding-bottom: 20px;
+}
+
+#voucher_table {
+   background-color: #fff;
+}
+
+.log-table {
+   background-color: #fff;
+   padding: 25px 0;
+   border-radius: 5px;
+   margin-bottom: 20px;
+}
+
+#voucher_table thead {
+   background-color: #00bcd4;
+   color: #fff;
+}
+
+.info-box {
+   background-color: #fff;
+   border: 1px solid black;
+   width: 100%;
+}
+
+#voucher-box {
+   min-height: 200px;
+}
+
+#act-box {
+   min-height: 90px;
+}
+
+.date-col tr:nth-child(2n+1) td {
+   padding: 15px 0;
+}
+
+.info-box table {
+   width: 100%;
+}
+
+.info-box table tr td:nth-child(1) {
+   text-align: right;
+   color: #02909d;
+   font-style: italic;
+   padding-right: 5px;
+}
+
+.info-box .pull-left table {
+   margin: 10px 0;
+}
+
+.info-box table tr td:nth-child(2) {
+   font-weight: bold;
+   padding-left: 10px;
+}
+
+.row-25-50 col:nth-child(1) {
+   width: 40%;
+}
+
+.row-25-50 col:nth-child(2) {
+   width: 60%;
+}
+
+.row-50-50 col:nth-child(1) {
+   width: 40%;
+}
+
+.row-50-50 col:nth-child(2) {
+   width: 60%;
+}
+
+.btn {
+   font-size: 20px;
+}
+
+.choose-box {
+   width: 100%;
+    height: 30px;
+    background-color: #fff;
+}

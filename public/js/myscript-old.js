@@ -9,8 +9,59 @@ $('#tot').change(function() {
 	$('#toa').attr('max', $(this).val());
 });
 
+// effect create receipt
+$('#receipt-done, #move-right').on("click", function() {
+	$('#move-right').hide();
+	$('#move-left').show();
+	$('#act-entry-title').show();
+	$('#receipt-title').hide();
+
+	$('.receipt')
+		.animate({
+			'left': '-' + $('.receipt').outerWidth() + 'px',
+			'opacity': '0'
+		}, 700);
+	$('.act-entry')
+		.show()
+		.css({
+			'right': '-' + $('.act-entry').outerWidth() + 'px'
+		})
+		.animate({
+      	right: '0px'
+	}, 700);
+
+	// Fill value into accounting entry
+	FillValue();
+
+	// Fill tot & TOA
+	$('.tot').val($('#tot').val());
+	$('.toa').val($('#toa').val());
+
+	checkToEnableSubmit();
+
+	$('#index-max').val($('.row-tr').length);
+});
+
+$('#move-left').on("click", function() {
+	$('#move-left').hide();
+	$('#move-right').show();
+	$('#act-entry-title').hide();
+	$('#receipt-title').show();
+
+	$('.act-entry')
+		.animate({
+			'right': '-' + $('.receipt').outerWidth() + 'px'
+		}, 700)
+		.css('display', 'none');
+	$('.receipt')
+		.animate({
+      	left: '0px',
+			opacity: '1'
+	}, 700);
+});
+
 // When change, check valid input
-$('#receipt-type, #value, #executor, #tot, #date').change(checkToEnableOk);
+$('#receipt-type, #value, #executor, #tot, #toa, #date').change(checkToEnableOk);
 
 $('#value').keyup(checkToEnableOk);
 
@@ -571,14 +622,23 @@ function checkToEnableOk() {
 	if ($('#tot').val() == '') {
 		flag = false;
 	}
+	if ($('#toa').val() == '') {
+		flag = false;
+	}
 	if ($('#date').val() == '') {
 		flag = false;
 	}
 	if (flag) {
 		$('#receipt-done').prop('disabled', false);
+		$('#move-right').prop('disabled', false);
+		$('#move-right').css('color', '#5cb85c');
+		$('#move-right').hover(function(){$('#move-right').css('color', 'green')}, function(){$('#move-right').css('color', '#5cb85c')})
 	}
 	else {
 		$('#receipt-done').prop('disabled', true);
+		$('#move-right').prop('disabled', true);
+		$('#move-right').css('color', '#e7e7e7');
+		$('#move-right').hover(function(){$('#move-right').css('color', '#e7e7e7')})
 	}
 }
 

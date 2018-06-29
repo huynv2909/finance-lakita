@@ -23,7 +23,12 @@
 <link href="<?php echo public_url(); ?>css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
 <!-- My style -->
-<link href="<?php echo public_url(); ?>css/style.css" rel="stylesheet" type="text/css">
+<link href="<?php echo public_url(); ?>css/build/all.css" rel="stylesheet" type="text/css">
+<link href="<?php echo public_url(); ?>css/build/component.css" rel="stylesheet" type="text/css">
+<link href="<?php echo public_url(); ?>css/build/screen-415.css" rel="stylesheet" type="text/css">
+<link href="<?php echo public_url(); ?>css/build/screen-768.css" rel="stylesheet" type="text/css">
+<link href="<?php echo public_url(); ?>css/build/screen-992.css" rel="stylesheet" type="text/css">
+<link href="<?php echo public_url(); ?>css/build/screen-1200.css" rel="stylesheet" type="text/css">
 
 <!-- Jquery confirm -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">

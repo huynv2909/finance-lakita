@@ -26,7 +26,5 @@
         </div>
         <!-- /#wrapper -->
 
-        <?php $this->load->view('javascript_import'); ?>
-
     </body>
 </html>

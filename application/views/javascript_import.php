@@ -24,7 +24,7 @@
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 <script>
     $(document).ready(function() {
-        $('#dataTables-example').DataTable({
+        $('#voucher_table').DataTable({
                 responsive: true,
                 "order" : [[0, 'desc'], [5, 'desc']]
         });
