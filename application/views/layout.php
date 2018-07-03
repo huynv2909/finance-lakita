@@ -10,12 +10,25 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header"><?php echo $title; ?></h1>
-                        <?php if (isset($message_errors) && $message_errors) {
-                          echo '<p class="alert alert-danger">' . $message_errors . '</p>';
-                        } ?>
-                        <?php if (isset($message_success) && $message_success) {
-                          echo '<p class="alert alert-success">' . $message_success . '</p>';
-                        } ?>
+                        <p class="alert <?php
+                           $have = false;
+                           if (isset($message_errors) && $message_errors) {
+                              echo 'alert-danger';
+                              $have = true;
+                           }
+                           if (isset($message_success) && $message_success) {
+                              echo 'alert-success';
+                              $have = true;
+                           }
+                        ?>"><?php
+                           if (isset($message_errors) && $message_errors) {
+                              echo $message_errors;
+                           }
+                           if (isset($message_success) && $message_success) {
+                              echo $message_success;
+                           }
+                           ?></p>
+                           <input type="hidden" id="have-notify" value="<?php echo $have; ?>">
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>

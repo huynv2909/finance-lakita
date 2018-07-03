@@ -1,16 +1,16 @@
-<form class="form-horizontal" method="post">
+<form class="form-horizontal" method="post" action="<?php echo base_url('Voucher/create'); ?>">
 	<div class="row">
 		<div class="col-md-8">
 			<div class="form-group">
-				 <label for="receipt-type" class="col-xs-3 control-label text-right"><span class="text-danger">(*)</span> Loại chứng từ</label>
+				 <label for="voucher-type" class="col-xs-3 control-label text-right"><span class="text-danger">(*)</span> Loại chứng từ</label>
 				 <div class="col-xs-9">
-						<select class="form-control" id="receipt-type" name="receipt_type" data-url="<?php echo base_url(); ?>Receipt/load_form">
+						<select class="form-control" id="voucher-type" name="voucher_type" data-url="<?php echo base_url(); ?>voucher/load_form">
 							<option></option>
-							<?php foreach ($receipt_type as $item): ?>
-							<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('receipt_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")"; ?></option>
+							<?php foreach ($voucher_type as $item): ?>
+							<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('voucher_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")"; ?></option>
 							<?php endforeach ?>
 					</select>
-					<div class="text-danger"><?php echo form_error('receipt_type'); ?></div>
+					<div class="text-danger"><?php echo form_error('voucher_type'); ?></div>
 				 </div>
 			</div>
 			<div class="form-group">
@@ -80,15 +80,15 @@
 	</div>
 	<div class="form-group">
 		 <div class="col-sm-6 col-sm-offset-3">
-			<input class="form-control btn btn-success" type="submit" id="receipt-done" value="Xác nhận">
+			<input class="form-control btn btn-success" type="submit" id="voucher-done" value="Xác nhận">
 		 </div>
 	</div>
 </form>
 
 <h5><strong>Chứng từ đã nhập:</strong></h5>
-<div class="row log-table">
+<div class="row log-box">
 	<div class="col-sm-12">
-		<table class="table table-hover dataTable no-footer" id="voucher_table" role="grid" aria-describedby="voucher_table_info" border="1">
+		<table class="table table-hover dataTable no-footer log-table" id="voucher_table" role="grid" aria-describedby="voucher_table_info" border="1">
 			<thead>
 					<tr role="row">
 						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Date: activate to sort column ascending" style="width: 12%;">Thời gian</th>
@@ -101,11 +101,11 @@
 			</thead>
 			<tbody>
 				<?php foreach ($vouchers as $item): ?>
-					<tr role="row" data-url="<?php echo base_url('Receipt/view_more'); ?>" data-id="<?php echo $item->id; ?>" class="re-row <?php if ($item->income == 1) echo 'success'; ?>">
+					<tr role="row" data-url="<?php echo base_url('voucher/view_more'); ?>" data-id="<?php echo $item->id; ?>" class="re-row <?php if ($item->income == 1) echo 'success'; ?>">
 						 <td><?php echo $item->date; ?></td>
 						 <td>
 							 <?php
-								foreach ($receipt_type as $type) {
+								foreach ($voucher_type as $type) {
 									if ($item->type_id == $type->id) {
 										echo $type->name;
 										break;
@@ -130,5 +130,11 @@
 				<?php endforeach; ?>
 			  </tbody>
 		</table>
+		<script type="text/javascript">
+			$('#voucher_table').DataTable({
+					  responsive: true,
+					  "order" : [[0, 'desc'], [5, 'desc']]
+			});
+		</script>
 	</div>
 </div>

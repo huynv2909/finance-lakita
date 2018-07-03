@@ -1,6 +1,174 @@
 // Thêm chứng từ
 // BEGIN
 // -------------------------------------------------------------------------
+$(document).ready(function(){
+	if ($('#have-notify').val() == '1') {
+		$('.alert').fadeIn();
+		setTimeout(function(){
+			$('.alert').fadeOut();
+		}, 3000);
+	}
+
+	$('#voucher-choose').change(function(){
+		var id = $(this).val();
+		var url = $(this).data('url');
+
+		if (id != 0) {
+			$('#act-add-btn').prop('disabled', false);
+
+			// Set id chosen
+			$('#act-add-btn').data('id', id);
+
+			$.ajax({
+				method: "POST",
+				url: url,
+				dataType: "JSON",
+				data: {
+					id : id
+				},
+				beforeSend: function() {
+					$('.load-info').css('display', 'flex');
+				},
+				success: function(result) {
+					$('.contain-voucher-info').html(result.voucher);
+					$('#voucher_id').val(result.voucher_id);
+					$('#TOT').val(result.TOT);
+
+					var table = $('#act_table').DataTable();
+					table.row().remove().draw();
+					var html = '<option value="0">(Chọn bút toán)</option>';
+					for (var i = 0; i < result.act.length; i++) {
+						table.row.add([result.act[i].TOA,result.act[i].content,convertToCurrency(result.act[i].value) + ' đ',result.act[i].debit_acc,result.act[i].credit_acc]).draw();
+						// Only distribution
+						html += '<option value="' + result.act[i].id + '">' + result.act[i].TOT + ':' + result.act[i].content + ':' + convertToCurrency(result.act[i].value) + '</option>';
+					}
+					$('#act-choose').html(html);
+				},
+				complete: function() {
+					$('.load-info').css('display', 'none');
+				}
+			});
+
+		} else {
+			$('.contain-voucher-info').html('<h2 class="empty-info">(Hãy lựa chọn chứng từ)</h2>');
+
+			var table = $('#act_table').DataTable();
+			table.row().remove().draw();
+
+			$('#act-add-btn').prop('disabled', true);
+		}
+
+	});
+
+	$('#act-add-btn').click(function(){
+		$(this).prop('disabled', true);
+		var id = $(this).data('id');
+		var url = $(this).data('url');
+
+
+		$('#act_table').DataTable().row.add([
+			'<input id="TOA" type="date" name="TOA" value="" style="width:100%; line-height: normal;">',
+			'<textarea id="content" name="content" rows="2" style="width: 100%;"></textarea>',
+			'<input id="value" onkeyup="oneDot(this)" type="text" name="value" value="" style="width:100%;">',
+			'<input id="debit_acc" type="number" name="debit_acc" value="" style="width:100%;">',
+			'<input id="credit_acc" type="number" name="credit_acc" value="" style="width:100%;">'
+		]).draw();
+
+		$('#update-act-btn').click(function(){
+			var data = {
+				'voucher_id' : $('#voucher_id').val(),
+				'TOT' : $('#TOT').val(),
+				'TOA' : $('#TOA').val(),
+				'value' : $('#value').val(),
+				'debit_acc' : $('#debit_acc').val(),
+				'credit_acc' : $('#credit_acc').val(),
+				'content' : $('#content').val()
+			};
+			var url = $(this).data('url');
+
+			$.ajax({
+				url : url,
+				method : "POST",
+				dataType : "JSON",
+				data : data,
+				beforeSend: function() {
+					$('.load-info-act').css('display', 'flex');
+				},
+				success : function(result) {
+					$('.alert').html(result.message);
+					if (result.success) {
+						var table = $('#act_table').DataTable();
+						var form_row = $('.contain-act-row').children()[0];
+						table.row(form_row).remove().draw();
+						$('#act-add-btn').prop('disabled', false);
+
+						$('#act_table').DataTable().row.add([data.TOA,data.content,data.value,data.debit_acc,data.credit_acc]).draw();
+
+						$('.alert').addClass('alert-success');
+					} else {
+						$('.alert').addClass('alert-danger');
+					}
+
+					$('.alert').fadeIn();
+					setTimeout(function(){
+						$('.alert').fadeOut();
+						$('.alert').removeClass('alert-success alert-danger');
+					}, 3000);
+				},
+				complete: function() {
+					$('.load-info-act').css('display', 'none');
+				}
+			});
+
+		});
+
+
+	});
+
+	// Distribution Fill site
+	$('#act-choose').change(function(){
+		var id = $(this).val();
+		var url = $(this).data('url');
+
+		if (id != 0) {
+			$('#distribute-btn').prop('disabled', false);
+
+			$.ajax({
+				url : url,
+				method : "POST",
+				dataType : "json",
+				data : {
+					id : id
+				},
+				beforeSend : function(){
+					$('.load-info').css('display', 'flex');
+				},
+				success : function(result){
+					$('.contain-act-info').html(result.act);
+
+					var table = $('#distribution_table').DataTable();
+					table.row().remove().draw();
+					for (var i = 0; i < result.distributes.length; i++) {
+						table.row.add([result.distributes[i]['dimensional_id'],convertToCurrency(result.distributes[i]['value']) + ' đ',result.distributes[i]['content']]).draw();
+					}
+				},
+				complete : function(){
+					$('.load-info').css('display', 'none');
+				}
+			});
+
+		} else {
+			$('#distribute-btn').prop('disabled', true);
+		}
+	});
+
+	// When change, check valid input
+	$(document).on("change", "#TOA, #value, #debit_acc, #credit_acc", checkToEnableOk);
+	$(document).on("keyup", "#value, #debit_acc, #credit_acc", checkToEnableOk);
+
+	//  CHECK DEBIT vs CREDIT
+});
+
 $('#tot').change(function() {
 
 	if ($('#toa').val() > $('#tot').val()) {
@@ -9,487 +177,16 @@ $('#tot').change(function() {
 	$('#toa').attr('max', $(this).val());
 });
 
-// When change, check valid input
-$('#receipt-type, #value, #executor, #tot, #date').change(checkToEnableOk);
-
-$('#value').keyup(checkToEnableOk);
-
-$(document).on("mouseenter", ".row-tr", function(){
-	if ($(".row-tr:visible").length > 1) {
-		$(this).children(".close").show();
-	}
-});
-$(document).on("mouseleave", ".row-tr", function(){
-	$(this).children(".close").hide();
-});
-
-$(document).on("click", ".close", function(){
-	$(this).parent().children(".alive").val(false);
-	$(this).parent().hide(500);
-
-	// after reduced accounting entry
-	setTimeout(function(){
-		$('#count-trans').html($('.row-tr:visible').length);
-		FillValue();
-	}, 520);
-});
-
-$(document).on("click", "#add-trans", function(){
-
-	// after reduced accounting entry
-	$('#count-trans').html(parseInt($('#count-trans').html()) + 1);
-
-	var count_hidden = $('.row-tr:hidden');
-	if ($(count_hidden).length > 0) {
-		$(count_hidden[0]).children(".alive").val('true');
-		$(count_hidden[0]).find(".note").val('');
-		$(count_hidden[0]).find(".value").val('');
-		$(count_hidden[0]).find(".value").data('default', '');
-		$(count_hidden[0]).show();
-		return;
-	}
-
-
-	var url = $(this).data('url');
-	var count = $('.row-tr').length;
-
-	$.ajax({
-		url : url,
-		method : "post",
-		data : {
-			count : count,
-			tot : $('#tot').val(),
-			toa : $('#toa').val()
-		},
-		success : function(result) {
-			$('#ok-area').before(result);
-			$('#index-max').val($('.row-tr').length);
-		}
-	});
-
-});
-
-
-$(document).on("change", ".income, #income", function() {
-	if ($(this).val() == 1) {
-		$(this).css('background-color', '#9aeaa8');
-	}
-	else {
-		$(this).css('background-color', '#fdd600');
-	}
-});
-
-// Check full info and enable submit
-$(document).on("change", ".tot, .toa", checkToEnableSubmit);
-
-$(document).on("keyup", ".value", checkToEnableSubmit);
-
-$(document).on("keyup", "#value", function() { $('#value-show').html(convertToCurrency($('#value').val().split('.').join(''))); })
-
-// Ajax load accounting entry
-$('#receipt-type').change(function(){
-	var code = $('#receipt-type :selected').text().substring(0,2);
-	if (code == 'PT') {
-		$('#income').val('1');
-		$('#income').css('background-color', '#9aeaa8');
-	}
-	else {
-		$('#income').val('0');
-		$('#income').css('background-color', '#fdd600');
-	}
-
-	var url = $(this).data('url');
-
-	$.ajax({
-		url : url,
-		method : "post",
-		data : {
-			id : $(this).val()
-		},
-		success : function(result) {
-			$('.act-entry').html(result);
-		}
-	});
-});
-
-// Ajax load view receipt
-$('.re-row').click(function(){
-	var url = $(this).data('url');
-	var id = $(this).data('id');
-
-	$.ajax({
-		url : url,
-		method : "post",
-		data : {
-			id : id
-		},
-		success : function(result) {
-			$('#data-insert').html(result);
-			$('#view-modal').modal('show');
-		}
-	});
-});
-// END Thêm chứng từ
-// --------------------------------------------------------------------------------------
-
-// BEGIN Receipt type
-$(document).on("click", ".slider", function(){
-	var text = $(this).children()[0];
-	var class_list = $(text).attr("class").split(' ');
-	var checkbox = $(this).parent().children('[type=checkbox]')[0];
-	if ($(checkbox).val() == 'on') {
-		$(checkbox).val('off');
-		if ($.inArray('in-out', class_list) == 1) {
-			$(text).prop('title', 'Chi');
-			$(text).html('Chi');
-		}
-	}
-	else {
-		$(checkbox).val('on');
-		if ($.inArray('in-out', class_list) == 1) {
-			$(text).prop('title', 'Thu');
-			$(text).html('Thu');
-		}
-	}
-	$(text).fadeIn();
-});
-
-$(document).on("change", ".active-check", function() {
-	if (checkHaveChangeActive()) {
-		$('#status-change-btn').prop('disabled', false);
-		$('#status-change-btn').css({
-			'animation': 'shake 5s cubic-bezier(.36,.07,.19,.97) both',
-			'transform': 'translate3d(0, 0, 0)',
-			'backface-visibility': 'hidden',
-			'perspective': '1000px'
-		});
-		setTimeout(function(){
-			$('#status-change-btn').css('animation', 'none');
-		},3000);
-	} else {
-		$('#status-change-btn').prop('disabled', true);
-	}
-
-});
-
-$(document).on("click", ".receipt-item", function(){
-	// enable list add act
-	$('#act-to-add').prop('disabled', false);
-	$('#act-update-btn').prop('disabled', true);
-
-	$('.receipt-item').css('background-color', 'aliceblue');
-	$('.name-receipt').css({'color': 'black', 'font-weight': 'normal'});
-	$('.receipt-item').data('chosen', 0);
-
-	$(this).css('background-color', 'beige');
-	$(this).children('.name-receipt').css({'color': 'brown', 'font-weight': 'bold'});
-	$(this).data('chosen', 1);
-
-	var url = $('#url-ajax').val();
-	var id = $(this).data('id');
-
-	$.ajax({
-		method: "POST",
-		url: url,
-		data: {
-			id : id
-		},
-		beforeSend: function() {
-			$('#wait-choose-act').css('display', 'block');
-		},
-		success: function(result) {
-			$('#act-load').html(result);
-		},
-		complete: function() {
-			$('#wait-choose-act').css('display', 'none');
-		}
-	});
-});
-
-$(document).on("click", ".rm-icon", function(){
-	// Hide
-	var id_item = $(this).data('id');
-	$(this).parent().parent().parent().parent().parent().fadeOut();
-
-	// update new list
-	var index = $('#list-new').val().split(',').indexOf(id_item.toString());
-	var arr = $('#list-new').val().split(',');
-	arr.splice(index, 1);
-	if (arr.length == 0) {
-		$('#act-load').prepend('<h3 class="text-center deep-note">(Trống)</h3>');
-	}
-
-	$('#list-new').val(arr.join(','));
-
-	checkToEnableUpdateReceiptType();
-});
-
-$('#act-to-add').change(function(){
-	if ($(this).val() == 0) {
-		$('#act-add-btn').prop('disabled', true);
-	} else {
-		$('#act-add-btn').prop('disabled', false);
-	}
-});
-
-$('#act-add-btn').click(function(){
-	var url = $(this).data('url');
-	var id = $('#act-to-add').val();
-
-	$.ajax({
-		method: "POST",
-		url: url,
-		data: {
-			id : id
-		},
-		beforeSend: function() {
-			$('#wait-choose-act').css('display', 'block');
-		},
-		success: function(result) {
-			// update new list
-			if ($('#list-new').val() == '') {
-				var arr = [];
-			}
-			else {
-				var arr = $('#list-new').val().split(',');
-			}
-			arr.push(id.toString());
-			$('#list-new').val(arr.join(','));
-
-			checkToEnableUpdateReceiptType();
-
-			$('#act-load').append(result);
-		},
-		complete: function() {
-			$('#wait-choose-act').css('display', 'none');
-		}
-	});
-});
-
-// click save button
-$('#act-update-btn').click(function(){
-	var url = $(this).data('url');
-
-	var element_chosen = $('.receipt-item').filter(function() { return ($(this).data('chosen') == '1'); });
-	// when a receipt was chosen
-	if ($(element_chosen).length == 1) {
-		var list = $('#list-new').val();
-		var id = $(element_chosen).data('id');
-
-		$.ajax({
-			method: "POST",
-			url: url,
-			data: {
-				id : id,
-				list : list
-			},
-			beforeSend: function() {
-				$('#wait-choose-act').css('display', 'block');
-			},
-			success : function(result) {
-				console.log(result);
-				$('#list-act-ori').val(list);
-				showSuccess();
-			},
-			complete: function() {
-				setTimeout(function(){
-					resetSuccess();
-
-					$('#act-update-btn').prop('disabled', true);
-				},2000);
-			}
-		});
-	}
-});
-
-// Click save change status button
-$('#status-change-btn').click(function(){
-	$(this).prop('disabled', true);
-
-	var have_change = $('#have-change').val();
-	if (have_change !== '0') {
-		var url = $(this).data('url');
-
-		var url_load = $(this).data('url_load');
-
-		$.ajax({
-			method: "POST",
-			url: url,
-			data: {
-				list_change : have_change
-			},
-			beforeSend: function() {
-				$('#wait-choose-act').css('display', 'block');
-			},
-			success: function(result) {
-				$.ajax({
-					method: "POST",
-					url: url_load,
-					data: {
-						'reload' : 1
-					},
-					success: function(result_load) {
-						$('#list-receipt').html(result_load);
-						$('#act-load').html('<h3 class="text-center deep-note">(Hãy lựa chọn chứng từ)</h3>');
-						$('#act-to-add').prop('disabled', true);
-						showSuccess();
-					}
-				});
-			},
-			complete: function() {
-				setTimeout(function(){
-					resetSuccess();
-
-					$('#status-change-btn').prop('disabled', true);
-				},2000);
-			}
-		});
-	}
-});
-
-$(document).on("click", ".edit-icon", function(){
-	resetEditReceiptName();
-
-	// Set current item
-	var main_item = $(this).parent();
-	$(main_item).children('.click-hide').css('display', 'none');
-	$(main_item).children('.click-show').css('display', 'inline-block');
-	var text_box = $(main_item).children('.edit-name-box')[0];
-	$(text_box).focus();
-	var temp = $(text_box).val();
-	$(text_box).val('');
-	$(text_box).val(temp);
-});
-
-$(document).on("click", ".save-name",function(){
-	var id = $(this).data('id');
-	var main_item = $(this).parent();
-	var new_name = $.trim($('#txt-edit-name-' + id.toString()).val());
-
-	if (new_name !== $(this).data('name_ori')) {
-		$(this).data('name_ori', new_name);
-		var url = $(this).data('url');
-
-		$.ajax({
-			method: "POST",
-			url: url,
-			data: {
-				id : id,
-				name : new_name
-			},
-			beforeSend: function() {
-				$('#wait-choose-act').css('display', 'block');
-			},
-			success : function(result) {
-				console.log(result);
-				$(main_item).children('.name-receipt').html(new_name);
-				resetEditReceiptName();
-				showSuccess();
-			},
-			complete: function() {
-				setTimeout(function(){
-					resetSuccess();
-
-					$('#act-update-btn').prop('disabled', true);
-				},2000);
-			}
-		});
-	} else {
-		resetEditReceiptName();
-	}
-});
-
-$(document).on("click", ".delete-type", function(){
-	var main_item = $(this).parent();
-	console.log(main_item);
-	var id = $(this).data('id');
-	var url = $(this).data('url');
-	$.confirm({
-	    title: 'Xóa!',
-	    content: 'Chỉ có thể xóa khi không có chứng từ nào cùng loại, Xác nhận xóa dữ liệu?',
-	    buttons: {
-			 Ok: {
-				  btnClass: 'btn-blue',
-				  action: function(){
-					  $.ajax({
-						  method: "POST",
-						  url: url,
-						  dataType: 'json',
-						  data: {
-							  id : id
-						  },
-						  success: function(result){
-							  if (result.success) { $(main_item).fadeOut(); }
-							  resetEditReceiptName();
-							  $.alert({
-								    content: result.message,
-								});
-						  }
-					  });
-				  }
-			 },
-			 cancel: function(){
-				 resetEditReceiptName();
-			 }
-	    }
-	});
-});
-
-$('#type-add-btn').click(function(){
-	var url = $(this).data('url');
-	$.confirm({
-	    content: function () {
-	        var self = this;
-	        return $.ajax({
-	            url: url,
-	            method: 'post',
-					data: {
-						'load' : 1
-					},
-	        }).done(function (response) {
-	            self.setContent(response);
-	            // self.setContentAppend('<br>Version: ' + response.version);
-	            self.setTitle('Thêm loại chứng từ mới');
-	        }).fail(function(){
-	            self.setContent('Something went wrong.');
-	        });
-	    },
-		 buttons : {
-			 Ok: {
-	            text: 'Ok',
-	            keys: ['enter'],
-					btnClass: 'btn-blue',
-	            action: function(){
-	                $.alert('Shift or Alt was pressed');
-	            }
-	        },
-	 		 close : {
-	 			 specialKey: {
-	 				  text: 'Close',
-	 				  keys: ['esc'],
-	 				  action: function(){
-	 						$.alert('A or B was pressed');
-	 				  }
-	 			 }
-	 		 }
-		 },
-	});
-});
-
-function resetEditReceiptName() {
-	$('.click-show').css('display', 'none');
-	$('.click-hide').css('display', 'inline-block');
-}
 
 function showSuccess() {
-	$('#wait-choose-act').children('.wait').css('display', 'none');
-	$('#wait-choose-act').children('.success').css('display', 'inline-block');
+	$('.load-info-act').children('.waiting').css('display', 'none');
+	$('.load-info-act').children('.success').css('display', 'inline-block');
 }
 
 function resetSuccess() {
-	$('#wait-choose-act').css('display', 'none');
-	$('#wait-choose-act').children('.success').css('display', 'none');
-	$('#wait-choose-act').children('.wait').css('display', 'inline-block');
+	$('.load-info-act').css('display', 'none');
+	$('.load-info-act').children('.success').css('display', 'none');
+	$('.load-info-act').children('.waiting').css('display', 'inline-block');
 }
 
 function checkHaveChangeActive() {
@@ -553,9 +250,7 @@ function checkChosenReceipt() {
 
 function checkToEnableOk() {
 	var flag = true;
-	if ($('#receipt-type').val() == '') {
-		flag = false;
-	}
+
 	var str_value = $('#value').val();
 	if ($.trim(str_value) == '') {
 		flag = false;
@@ -564,21 +259,21 @@ function checkToEnableOk() {
 	if (!$.isNumeric(str_value)) {
 		flag = false;
 	}
+	if ($('#TOA').val() == '') {
+		flag = false;
+	}
+	if ($('#debit_acc').val() == '') {
+		flag = false;
+	}
+	if ($('#credit_acc').val() == '') {
+		flag = false;
+	}
 
-	if ($('#executor').val() == '') {
-		flag = false;
-	}
-	if ($('#tot').val() == '') {
-		flag = false;
-	}
-	if ($('#date').val() == '') {
-		flag = false;
-	}
 	if (flag) {
-		$('#receipt-done').prop('disabled', false);
+		$('#update-act-btn').prop('disabled', false);
 	}
 	else {
-		$('#receipt-done').prop('disabled', true);
+		$('#update-act-btn').prop('disabled', true);
 	}
 }
 

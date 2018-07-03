@@ -108,13 +108,13 @@
                    <a href="#"><i class="fa fa-file-text-o fa-fw"></i>Hóa đơn/Chứng từ<span class="fa arrow"></span></a>
                    <ul class="nav nav-second-level">
                        <li>
-                           <a href="<?php echo base_url('Receipt/index'); ?>">Sổ kế toán</a>
+                           <a href="<?php echo base_url('Voucher/index'); ?>">Sổ kế toán</a>
                        </li>
                        <li>
-                          <a href="<?php echo base_url('Receipt/create'); ?>">Nhập chứng từ</a>
+                          <a href="<?php echo base_url('Voucher/create'); ?>">Nhập chứng từ</a>
                        </li>
                        <li>
-                          <a href="<?php echo base_url('Receipt/type'); ?>">Loại chứng từ</a>
+                          <a href="<?php echo base_url('Voucher/type'); ?>">Loại chứng từ</a>
                        </li>
                        <li>
                           <a href="<?php echo base_url('AccountingEntry/create'); ?>">Nhập bút toán</a>

@@ -22,14 +22,6 @@
 <script src="<?php echo public_url(); ?>js/startmin.js"></script>
 
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
-<script>
-    $(document).ready(function() {
-        $('#voucher_table').DataTable({
-                responsive: true,
-                "order" : [[0, 'desc'], [5, 'desc']]
-        });
-    });
-</script>
 
 <!-- My Js file -->
 <script type="text/javascript" src="<?php echo public_url(); ?>js/myscript.js"></script>

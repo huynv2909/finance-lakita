@@ -1,10 +1,10 @@
-<?php 
+<?php
 	/**
 	 * Login
 	 */
 	class Login extends MY_Controller
 	{
-		
+
 		function index()
 		{
 			$this->load->library('form_validation');
@@ -12,9 +12,10 @@
 			$this->load->helper('security');
 
 			$this->data['title'] = "Đăng nhập vào hệ thống";
+			$this->data['active'] = 'login';
 
 			if ($this->input->post()) {
-				
+
 				if ($this->Authentication()) {
 					redirect(base_url());
 				}
