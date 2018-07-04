@@ -30,7 +30,7 @@
       <label for="act-choose">Chọn bút toán:</label>
    </div>
    <div class="col-xs-10">
-      <select name="act-choose" id="act-choose" class="choose-box" data-url="<?php echo base_url('AccountingEntry/show_info'); ?>">
+      <select name="act-choose" id="act-choose" class="choose-box" data-url="<?php echo base_url('AccountingEntry/show_info'); ?>" disabled>
          <!-- Load by ajax -->
       </select>
    </div>
@@ -60,16 +60,11 @@
 						<th class="sorting" tabindex="0" aria-controls="distribution_table" rowspan="1" colspan="1" aria-label="Content: activate to sort column ascending" style="width: 14%;">Nội dung</th>
 					</tr>
 			</thead>
-			<tbody>
+			<tbody class="contain-distribution-row">
             <tr role="row">
-					 <td>KT240</td>
-					 <td>40.000</td>
-					 <td>Ky thuat quyet toan thue</td>
-				</tr>
-            <tr role="row">
-					 <td>KT</td>
-					 <td>100.000</td>
-					 <td>Nhom ke toan</td>
+					 <td colspan="3"><h5 class="empty-info">(Hãy lựa chọn bút toán)</h5></td>
+					 <td style="display:none;"></td>
+					 <td style="display:none;"></td>
 				</tr>
 	       </tbody>
 		</table>
@@ -83,10 +78,13 @@
       </script>
    </div>
 </div>
-<button type="button" class="btn btn-primary" id="distribute-btn" title="Thêm loại chứng từ mới" data-url="<?php echo base_url('Receipt/create_type_receipt'); ?>" >
+<input type="hidden" name="dimension" id="dimension" value="">
+<input type="hidden" name="tot" id="tot">
+<input type="hidden" name="toa" id="toa">
+<button type="button" class="btn btn-primary" id="distribute-btn" title="Thêm loại chứng từ mới" data-url="<?php echo base_url('Distribution/load_form'); ?>" disabled>
   <i class="fa fa-fw" aria-hidden="true" title="+ Phân bổ mới"></i> Phân bổ
 </button>
-<button type="button" class="btn btn-success pull-right" id="" title="Lưu lại các thay đổi" data-url="<?php echo base_url('Receipt/change_status'); ?>" data-url_load="<?php echo base_url('Receipt/load_new_status'); ?>" disabled>
+<button type="button" class="btn btn-success pull-right" id="distribute-update-btn" title="Lưu lại các thay đổi" data-url="<?php echo base_url('Distribution/create'); ?>" disabled>
   <i class="fa fa-check" title="Lưu thay đổi"></i> Cập nhật
 </button>
 <div class="clearfix"></div>

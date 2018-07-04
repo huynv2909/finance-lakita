@@ -74,10 +74,22 @@
                   'entry_id' => $id
                )
             );
+            $this->data['distribute_list'] = $this->Distribution_model->get_list($input);
+
+            $input = array(
+               'where' => array(
+                  'active' => 1
+               ),
+               'order' => array('code', 'desc')
+            );
+            $this->load->model('DetailDimension_model');
 
             $response = array(
                'act' => $this->load->view('load_by_ajax/act_box', $this->data, true),
-               'distributes' => $this->Distribution_model->get_list($input)
+               'distributes' => $this->data['distribute_list'],
+               'tot' => $this->data['info']->TOT,
+               'toa' => $this->data['info']->TOA,
+               'dimensionals' => $this->DetailDimension_model->get_list($input)
             );
 
             die(json_encode($response));
@@ -85,6 +97,65 @@
 
       }
 
+      public function load_form() {
+         $form = array(
+            array(
+               'type' => 'input',
+               'properties' => array(
+                  'id' => 'TOA',
+                  'type' => 'date',
+                  'style' => 'width:100%; line-height: normal;'
+               ),
+               'options' => ''
+            ),
+            array(
+               'type' => 'textarea',
+               'properties' => array(
+                  'id' => 'content',
+                  'rows' => '2',
+                  'style' => 'width:100%;'
+               ),
+               'options' => ''
+            ),
+            array(
+               'type' => 'input',
+               'properties' => array(
+                  'id' => 'value',
+                  'onkeyup' => 'oneDot(this)',
+                  'type' => 'text',
+                  'style' => 'width:100%;'
+               ),
+               'options' => ''
+            ),
+            array(
+               'type' => 'input',
+               'properties' => array(
+                  'id' => 'debit_acc',
+                  'type' => 'number',
+                  'style' => 'width:100%;'
+               ),
+               'options' => ''
+            ),
+            array(
+               'type' => 'input',
+               'properties' => array(
+                  'id' => 'credit_acc',
+                  'type' => 'number',
+                  'style' => 'width:100%;'
+               ),
+               'options' => ''
+            )
+         );
+
+         $response = array();
+   		foreach ($form as $item) {
+   			$this->data['properties'] = $item['properties'];
+   			$this->data['options'] = $item['options'];
+
+   			array_push($response, $this->load->view('form/' . $item['type'], $this->data, true));
+   		}
+   		die(json_encode($response));
+      }
    }
 
  ?>

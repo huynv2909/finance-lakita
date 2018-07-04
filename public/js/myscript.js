@@ -15,6 +15,7 @@ $(document).ready(function(){
 
 		if (id != 0) {
 			$('#act-add-btn').prop('disabled', false);
+			$('#act-choose').prop('disabled', false);
 
 			// Set id chosen
 			$('#act-add-btn').data('id', id);
@@ -56,72 +57,75 @@ $(document).ready(function(){
 			table.row().remove().draw();
 
 			$('#act-add-btn').prop('disabled', true);
+			$('#act-choose').prop('disabled', true);
 		}
 
 	});
 
 	$('#act-add-btn').click(function(){
 		$(this).prop('disabled', true);
-		var id = $(this).data('id');
 		var url = $(this).data('url');
 
+		$.ajax({
+			url : url,
+			dataType : 'json',
+			success : function(result) {
+				var row = [];
 
-		$('#act_table').DataTable().row.add([
-			'<input id="TOA" type="date" name="TOA" value="" style="width:100%; line-height: normal;">',
-			'<textarea id="content" name="content" rows="2" style="width: 100%;"></textarea>',
-			'<input id="value" onkeyup="oneDot(this)" type="text" name="value" value="" style="width:100%;">',
-			'<input id="debit_acc" type="number" name="debit_acc" value="" style="width:100%;">',
-			'<input id="credit_acc" type="number" name="credit_acc" value="" style="width:100%;">'
-		]).draw();
-
-		$('#update-act-btn').click(function(){
-			var data = {
-				'voucher_id' : $('#voucher_id').val(),
-				'TOT' : $('#TOT').val(),
-				'TOA' : $('#TOA').val(),
-				'value' : $('#value').val(),
-				'debit_acc' : $('#debit_acc').val(),
-				'credit_acc' : $('#credit_acc').val(),
-				'content' : $('#content').val()
-			};
-			var url = $(this).data('url');
-
-			$.ajax({
-				url : url,
-				method : "POST",
-				dataType : "JSON",
-				data : data,
-				beforeSend: function() {
-					$('.load-info-act').css('display', 'flex');
-				},
-				success : function(result) {
-					$('.alert').html(result.message);
-					if (result.success) {
-						var table = $('#act_table').DataTable();
-						var form_row = $('.contain-act-row').children()[0];
-						table.row(form_row).remove().draw();
-						$('#act-add-btn').prop('disabled', false);
-
-						$('#act_table').DataTable().row.add([data.TOA,data.content,data.value,data.debit_acc,data.credit_acc]).draw();
-
-						$('.alert').addClass('alert-success');
-					} else {
-						$('.alert').addClass('alert-danger');
-					}
-
-					$('.alert').fadeIn();
-					setTimeout(function(){
-						$('.alert').fadeOut();
-						$('.alert').removeClass('alert-success alert-danger');
-					}, 3000);
-				},
-				complete: function() {
-					$('.load-info-act').css('display', 'none');
+				for(var i in result) {
+					row.push(result[i]);
 				}
-			});
 
+				$('#act_table').DataTable().row.add(row).draw();
+			}
 		});
 
+	});
+
+	$('#update-act-btn').click(function(){
+		var data = {
+			'voucher_id' : $('#voucher_id').val(),
+			'TOT' : $('#TOT').val(),
+			'TOA' : $('#TOA').val(),
+			'value' : $('#value').val(),
+			'debit_acc' : $('#debit_acc').val(),
+			'credit_acc' : $('#credit_acc').val(),
+			'content' : $('#content').val()
+		};
+		var url = $(this).data('url');
+
+		$.ajax({
+			url : url,
+			method : "POST",
+			dataType : "JSON",
+			data : data,
+			beforeSend: function() {
+				$('.load-info-act').css('display', 'flex');
+			},
+			success : function(result) {
+				$('.alert').html(result.message);
+				var table = $('#act_table').DataTable();
+				var form_row = $('.contain-act-row tr:last-child');
+				table.row(form_row).remove().draw();
+				$('#act-add-btn').prop('disabled', false);
+				if (result.success) {
+					$('#act_table').DataTable().row.add([data.TOA,data.content,data.value,data.debit_acc,data.credit_acc]).draw();
+
+					$('.alert').addClass('alert-success');
+				} else {
+					$('.alert').addClass('alert-danger');
+				}
+
+				$('.alert').fadeIn();
+				setTimeout(function(){
+					$('.alert').fadeOut();
+					$('.alert').removeClass('alert-success alert-danger');
+				}, 3000);
+			},
+			complete: function() {
+				$('.load-info-act').css('display', 'none');
+			}
+		});
 
 	});
 
@@ -132,6 +136,7 @@ $(document).ready(function(){
 
 		if (id != 0) {
 			$('#distribute-btn').prop('disabled', false);
+			$('#distribute-update-btn').data('id', id);
 
 			$.ajax({
 				url : url,
@@ -145,12 +150,21 @@ $(document).ready(function(){
 				},
 				success : function(result){
 					$('.contain-act-info').html(result.act);
+					$('#tot').val(result.tot);
+					$('#toa').val(result.toa);
 
 					var table = $('#distribution_table').DataTable();
 					table.row().remove().draw();
 					for (var i = 0; i < result.distributes.length; i++) {
 						table.row.add([result.distributes[i]['dimensional_id'],convertToCurrency(result.distributes[i]['value']) + ' đ',result.distributes[i]['content']]).draw();
 					}
+
+					var val = "";
+					for (var i = 0; i < result.dimensionals.length; i++) {
+						var temp = result.dimensionals[i].id + "," + result.dimensionals[i].code + "," +  result.dimensionals[i].name + ".";
+						val += temp;
+					}
+					$('#dimension').val(val);
 				},
 				complete : function(){
 					$('.load-info').css('display', 'none');
@@ -158,8 +172,80 @@ $(document).ready(function(){
 			});
 
 		} else {
+			$('.contain-act-info').html('<h2 class="empty-info">(Hãy lựa chọn bút toán)</h2>');
+
+			var table = $('#distribution_table').DataTable();
+			table.row().remove().draw();
+
 			$('#distribute-btn').prop('disabled', true);
 		}
+	});
+
+	$('#distribute-btn').click(function(){
+
+		$(this).prop('disabled', true);
+		var url = $(this).data('url');
+
+		$.ajax({
+			url : url,
+			dataType : 'json',
+			success : function(result) {
+				var row = [];
+
+				for(var i in result) {
+					row.push(result[i]);
+				}
+
+				$('#distribution_table').DataTable().row.add(row).draw();
+			}
+		});
+
+	});
+
+	$('#distribute-update-btn').click(function(){
+		var data = {
+			'entry_id' : $(this).data('id'),
+			'dimen_id' : $('#dimension').val(),
+			'TOT' : $('#tot').val(),
+			'TOA' : $('#toa').val(),
+			'value' : $('#value').val(),
+			'content' : $('#content').val()
+		};
+		var url = $(this).data('url');
+		$.ajax({
+			url : url,
+			method : "POST",
+			dataType : "json",
+			data : data,
+			beforeSend: function() {
+				$('.load-info-act').css('display', 'flex');
+			},
+			success : function(result) {
+				console.log(result.message);
+				$('.alert').html(result.message);
+				var table = $('#distribution_table').DataTable();
+				var form_row = $('.contain-distribution-row tr:last-child');
+				table.row(form_row).remove().draw();
+				$('#distribute-btn').prop('disabled', false);
+				if (result.success) {
+					$('#distribution_table').DataTable().row.add([data.dimen_id,data.value,data.content]).draw();
+
+					$('.alert').addClass('alert-success');
+				} else {
+					$('.alert').addClass('alert-danger');
+				}
+
+				$('.alert').fadeIn();
+				setTimeout(function(){
+					$('.alert').fadeOut();
+					$('.alert').removeClass('alert-success alert-danger');
+				}, 3000);
+			},
+			complete: function() {
+				$('.load-info-act').css('display', 'none');
+			}
+		});
+
 	});
 
 	// When change, check valid input
@@ -250,7 +336,6 @@ function checkChosenReceipt() {
 
 function checkToEnableOk() {
 	var flag = true;
-
 	var str_value = $('#value').val();
 	if ($.trim(str_value) == '') {
 		flag = false;
@@ -271,9 +356,11 @@ function checkToEnableOk() {
 
 	if (flag) {
 		$('#update-act-btn').prop('disabled', false);
+		$('#distribute-update-btn').prop('disabled', false);
 	}
 	else {
 		$('#update-act-btn').prop('disabled', true);
+		$('#distribute-update-btn').prop('disabled', true);
 	}
 }
 
