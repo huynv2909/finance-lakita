@@ -9,6 +9,65 @@ $(document).ready(function(){
 		}, 3000);
 	}
 
+	if ($('#have-a-new-voucher-add').length && $('#have-a-new-voucher-add').val() != '') {
+		var url = $('#have-a-new-voucher-add').data('url');
+
+		setTimeout(function(){
+			$.confirm({
+				 icon: 'fa fa-warning',
+			    title: 'Nhập bút toán?',
+			    content: 'Ghi nhận thành công chứng từ mới, Bạn có muốn nhập bút toán cho chứng từ mới không?',
+				 theme: 'material',
+				 type: 'green',
+			    buttons: {
+			        Ok: {
+			            text: 'Nhập',
+			            btnClass: 'btn-green',
+			            keys: ['enter'],
+			            action: function(){
+			                window.location.href = url;
+			            }
+			        },
+					  later: {
+						  text: 'Để sau',
+						  keys: ['esc'],
+						  action: function(){
+						  }
+					  }
+			    }
+			});
+		}, 1500);
+
+	}
+
+
+
+	$(document).on("click", ".voucher-row", function(){
+		var url = $(this).data('url');
+		var id = $(this).data('id');
+
+		$.ajax({
+			url : url,
+			method : "post",
+			data : {
+				id : id
+			},
+			success : function(result) {
+				$('.data-insert').html(result);
+				$('#view-modal').modal('show');
+			}
+		});
+	});
+
+	$('#voucher-type').change(function(){
+		var code = $('#voucher-type :selected').text().substring(0,2);
+		if (code == 'PT') {
+			$('#income').val('1');
+		} else {
+			$('#income').val('0');
+		}
+	});
+
 	$('#voucher-choose').change(function(){
 		var id = $(this).val();
 		var url = $(this).data('url');
@@ -44,6 +103,10 @@ $(document).ready(function(){
 						html += '<option value="' + result.act[i].id + '">' + result.act[i].TOT + ':' + result.act[i].content + ':' + convertToCurrency(result.act[i].value) + '</option>';
 					}
 					$('#act-choose').html(html);
+					if (result.act.length == 1) {
+						$('#act-choose').val(result.act[0].id);
+						$('#act-choose').trigger("change");
+					}
 				},
 				complete: function() {
 					$('.load-info').css('display', 'none');
@@ -59,6 +122,13 @@ $(document).ready(function(){
 			$('#act-add-btn').prop('disabled', true);
 			$('#act-choose').prop('disabled', true);
 		}
+
+		$('.contain-act-info').html('<h2 class="empty-info">(Hãy lựa chọn bút toán)</h2>');
+
+		var table = $('#distribution_table').DataTable();
+		table.row().remove().draw();
+
+		$('#distribute-btn').prop('disabled', true);
 
 	});
 
@@ -128,6 +198,17 @@ $(document).ready(function(){
 		});
 
 	});
+
+	// When add accounting entry by  get method
+	if ($('#set-voucher').length && $('#set-voucher').val()) {
+		var id_arr = $('#list_id_voucher').val().split(',');
+		var id = $('#set-voucher').val();
+
+		if (id_arr.includes(id)) {
+			$('#voucher-choose').val(id);
+			$('#voucher-choose').trigger("change");
+		}
+	}
 
 	// Distribution Fill site
 	$('#act-choose').change(function(){
@@ -221,7 +302,6 @@ $(document).ready(function(){
 				$('.load-info-act').css('display', 'flex');
 			},
 			success : function(result) {
-				console.log(result.message);
 				$('.alert').html(result.message);
 				var table = $('#distribution_table').DataTable();
 				var form_row = $('.contain-distribution-row tr:last-child');
@@ -249,7 +329,7 @@ $(document).ready(function(){
 	});
 
 	// When change, check valid input
-	$(document).on("change", "#TOA, #value, #debit_acc, #credit_acc", checkToEnableOk);
+	$(document).on("change", "#voucher-type, #executor, #TOA, #value, #debit_acc, #credit_acc", checkToEnableOk);
 	$(document).on("keyup", "#value, #debit_acc, #credit_acc", checkToEnableOk);
 
 	//  CHECK DEBIT vs CREDIT
@@ -340,6 +420,15 @@ function checkToEnableOk() {
 	if ($.trim(str_value) == '') {
 		flag = false;
 	}
+
+	if ($('#voucher-type').val() == 0) {
+		flag = false;
+	}
+
+	if ($('#executor').val() == 0) {
+		flag = false;
+	}
+
 	str_value = str_value.split('.').join('');
 	if (!$.isNumeric(str_value)) {
 		flag = false;
@@ -357,10 +446,12 @@ function checkToEnableOk() {
 	if (flag) {
 		$('#update-act-btn').prop('disabled', false);
 		$('#distribute-update-btn').prop('disabled', false);
+		$('#voucher-done').prop('disabled', false);
 	}
 	else {
 		$('#update-act-btn').prop('disabled', true);
 		$('#distribute-update-btn').prop('disabled', true);
+		$('#voucher-done').prop('disabled', true);
 	}
 }
 

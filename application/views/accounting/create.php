@@ -72,3 +72,11 @@
   <i class="fa fa-check" title="Lưu thay đổi"></i> Cập nhật
 </button>
 <div class="clearfix"></div>
+
+<!-- if have voucher -->
+<input type="hidden" id="list_id_voucher" value="<?php
+   foreach ($vouchers as $item) {
+      echo $item->id . ",";
+   }
+ ?>">
+<input type="hidden" id="set-voucher" value="<?php if (isset($set_voucher) && $set_voucher) echo $set_voucher; ?>">

@@ -5,7 +5,7 @@
 				 <label for="voucher-type" class="col-xs-3 control-label text-right"><span class="text-danger">(*)</span> Loại chứng từ</label>
 				 <div class="col-xs-9">
 						<select class="form-control" id="voucher-type" name="voucher_type" data-url="<?php echo base_url(); ?>voucher/load_form">
-							<option></option>
+							<option value="0">(Chọn loại chứng từ)</option>
 							<?php foreach ($voucher_type as $item): ?>
 							<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('voucher_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")"; ?></option>
 							<?php endforeach ?>
@@ -38,7 +38,7 @@
 				 <label for="executor" class="col-xs-3 control-label text-right"><span class="text-danger">(*)</span> Người giao dịch</label>
 				 <div class="col-xs-5">
 					<select class="form-control" name="executor" id="executor" >
-						<option></option>
+						<option value="0">(Lựa chọn)</option>
 						<?php foreach ($employees as $item): ?>
 							<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('executor')) echo 'selected'; ?> ><?php echo $item->name; ?></option>
 						<?php endforeach ?>
@@ -80,7 +80,7 @@
 	</div>
 	<div class="form-group">
 		 <div class="col-sm-6 col-sm-offset-3">
-			<input class="form-control btn btn-success" type="submit" id="voucher-done" value="Xác nhận">
+			<input class="form-control btn btn-success" type="submit" id="voucher-done" value="Xác nhận" disabled>
 		 </div>
 	</div>
 </form>
@@ -96,12 +96,12 @@
 						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Value: activate to sort column ascending" style="width: 14%;">Số tiền</th>
 						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Content: activate to sort column ascending" style="width: 28%;">Nội dung</th>
 						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Executor: activate to sort column ascending" style="width: 14%;">Người giao dịch</th>
-						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Time on action: activate to sort column ascending" style="width: 12%;">TOA</th>
+						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Time on transaction: activate to sort column ascending" style="width: 12%;">TOT</th>
 					</tr>
 			</thead>
 			<tbody>
 				<?php foreach ($vouchers as $item): ?>
-					<tr role="row" data-url="<?php echo base_url('voucher/view_more'); ?>" data-id="<?php echo $item->id; ?>" class="re-row <?php if ($item->income == 1) echo 'success'; ?>">
+					<tr role="row" data-url="<?php echo base_url('Voucher/view_more'); ?>" data-id="<?php echo $item->id; ?>" class="voucher-row <?php if ($item->income == 1) echo 'success'; ?>">
 						 <td><?php echo $item->date; ?></td>
 						 <td>
 							 <?php
@@ -137,4 +137,15 @@
 			});
 		</script>
 	</div>
+</div>
+
+<!-- have new voucher added -->
+<input type="hidden" id="have-a-new-voucher-add" data-url="<?php echo base_url('AccountingEntry/create?voucher_id=') . $latest_voucher_id; ?>" value="<?php if (isset($latest_voucher_id) && $latest_voucher_id) echo $latest_voucher_id; ?>">
+
+<div class="modal fade" id="view-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content data-insert">
+      <!-- insert by ajax -->
+    </div>
+  </div>
 </div>

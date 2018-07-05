@@ -19,6 +19,10 @@
 			$this->data['template'] = 'accounting/create';
 			$this->data['active'] = 'receipt';
 
+         if ($this->input->get('voucher_id')) {
+				$this->data['set_voucher'] = $this->input->get('voucher_id');
+			}
+
          // When ajax request to create to database
          if ($this->input->post()) {
             $data = array(

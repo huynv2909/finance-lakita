@@ -51,6 +51,7 @@
 			$this->load->model('User_model');
 			$this->data['employees'] = $this->User_model->get_list();
 
+			$this->data['latest_voucher_id'] = $this->session->flashdata('latest_id');
 			// Get notify
 			$message_errors = $this->session->flashdata('message_errors');
 			$message_success = $this->session->flashdata('message_success');
@@ -85,6 +86,7 @@
 
 					$this->load->model('Voucher_model');
 					if ($this->Voucher_model->create($data)) {
+						$this->session->set_flashdata('latest_id', $this->Voucher_model->get_insert_id());
 						$this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
 						redirect(base_url('voucher/create'));
 					}
@@ -257,39 +259,36 @@
 		// 	}
 		// }
 
-		// public function view_more() {
-		// 	if ($this->input->post()) {
-		// 		$receipt_id = $this->input->post('id');
-		// 		$input = array(
-		// 			'where' => array('id' => $receipt_id)
-		// 		);
-		//
-		// 		$this->load->model('Receipt_model');
-		// 		$receipt = $this->Receipt_model->get_list($input)[0];
-		// 		$this->data['receipt'] = $receipt;
-		//
-		// 		$this->load->model('ReceiptType_model');
-		// 		$input = array(
-		// 			'where' => array(
-		// 				'active' => 1
-		// 			)
-		// 		);
-		// 		$this->data['receipt_types'] = $this->ReceiptType_model->get_list($input);
-		//
-		// 		$this->load->model('User_model');
-		// 		$this->data['users'] = $this->User_model->get_list();
-		//
-		// 		$this->load->model('AccountingEntry_model');
-		// 		$input = array(
-		// 			'where' => array('receipt_id' => $receipt->id)
-		// 		);
-		// 		$this->data['accounting_entries'] = $this->AccountingEntry_model->get_list($input);
-		//
-		// 		$this->load->view('receipt/more/receipt', $this->data);
-		// 		$this->load->view('receipt/more/act-entry', $this->data);
-		//
-		// 	}
-		// }
+		public function view_more() {
+			if ($this->input->post()) {
+				$voucher_id = $this->input->post('id');
+
+				$this->load->model('Voucher_model');
+				$voucher = $this->Voucher_model->get_info($voucher_id);
+				$this->data['voucher'] = $voucher;
+
+				$this->load->model('VoucherType_model');
+				$input = array(
+					'where' => array(
+						'active' => 1
+					)
+				);
+				$this->data['voucher_types'] = $this->VoucherType_model->get_list($input);
+
+				$this->load->model('User_model');
+				$this->data['users'] = $this->User_model->get_list();
+
+				$this->load->model('AccountingEntry_model');
+				$input = array(
+					'where' => array('voucher_id' => $voucher->id)
+				);
+				$this->data['accounting_entries'] = $this->AccountingEntry_model->get_list($input);
+
+				$this->load->view('voucher/more/voucher', $this->data);
+				$this->load->view('voucher/more/act-entry', $this->data);
+
+			}
+		}
 
 		// Load accounting entry types when click receipt.
 		// public function load_act_type() {
@@ -392,9 +391,9 @@
 			if (!is_numeric($value_total)) {
 				return false;
 			}
-			$this->form_validation->set_rules('voucher_type', 'Voucher type', 'required');
+			$this->form_validation->set_rules('voucher_type', 'Voucher type', 'required|greater_than[0]');
 			$this->form_validation->set_rules('tot', 'TOT', 'required');
-			$this->form_validation->set_rules('executor', 'Executor', 'required');
+			$this->form_validation->set_rules('executor', 'Executor', 'required|greater_than[0]');
 
 			return $this->form_validation->run();
 		}

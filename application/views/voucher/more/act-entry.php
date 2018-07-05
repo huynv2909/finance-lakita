@@ -33,24 +33,11 @@
          <tbody>
             <tr>
                <td class="text-right"><strong>TK nợ:</strong></td>
-               <td><?php echo $item->TK_no; ?></td>
+               <td><?php echo $item->debit_acc; ?></td>
             </tr>
             <tr>
                <td class="text-right"><strong>TK có:</strong></td>
-               <td><?php echo $item->TK_co; ?></td>
-            </tr>
-            <tr>
-               <td colspan="2" class="text-center">
-                  <?php if ($item->income == 1): ?>
-                     <div class="in-div">
-                        Thu
-                     </div>
-                  <?php else: ?>
-                     <div class="out-div">
-                        Chi
-                     </div>
-                  <?php endif; ?>
-               </td>
+               <td><?php echo $item->credit_acc; ?></td>
             </tr>
          </tbody>
       </table>
