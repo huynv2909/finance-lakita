@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
     <?php $this->load->view('head', $this->data); ?>
+    <style media="screen">
+    html, body {
+         margin: 0;
+         height: 100%;
+         }
+
+      body {
+         background-image: url('<?php echo base_url('public/pedro-lastra-157071-unsplash.jpg'); ?>');
+      }
+    </style>
     <body>
 
         <div class="container">

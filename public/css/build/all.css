@@ -115,3 +115,32 @@
 .voucher-row {
    cursor: pointer;
 }
+
+.padding-0 {
+   padding: 0;
+}
+
+.centering-parent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* input height bootstrap */
+.height-34 {
+   height: 34px;
+   font-size: 16px;
+}
+
+.success {
+   color: #3c763d;
+}
+
+.danger {
+   color: #a94442;
+}
+
+form#type-form {
+   padding: 10px;
+   border: 1px solid beige;
+}

@@ -18,4 +18,13 @@
    .info-box .row {
       margin: 15px 0;
    }
+
+   #type-form .form-group {
+      margin: 0;
+   }
+
+   .padding-lr-10-5 {
+      padding-left: 10px;
+      padding-right: 5px;
+   }
 }

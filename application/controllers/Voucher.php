@@ -136,26 +136,36 @@
 			}
 		}
 
-		// public function type() {
-		// 	$this->data['title'] = "Loại chứng từ";
-		// 	$this->data['template'] = "receipt/type";
-		// 	$this->data['active'] = 'receipt';
-		//
-		// 	$input = array(
-		// 		'order' => array('active', 'desc')
-		// 	);
-		// 	$this->load->model('VoucherType_model');
-		// 	$this->data['receipt_types'] = $this->ReceiptType_model->get_list($input);
-		// 	$input = array(
-		// 		'where' => array(
-		// 			'active' => 1
-		// 		)
-		// 	);
-		// 	$this->load->model('ActEntryType_model');
-		// 	$this->data['act_entry_types'] = $this->ActEntryType_model->get_list($input);
-		//
-		// 	$this->load->view('layout', $this->data);
-		// }
+		public function view_more() {
+			if ($this->input->post()) {
+				$voucher_id = $this->input->post('id');
+
+				$this->load->model('Voucher_model');
+				$voucher = $this->Voucher_model->get_info($voucher_id);
+				$this->data['voucher'] = $voucher;
+
+				$this->load->model('VoucherType_model');
+				$input = array(
+					'where' => array(
+						'active' => 1
+					)
+				);
+				$this->data['voucher_types'] = $this->VoucherType_model->get_list($input);
+
+				$this->load->model('User_model');
+				$this->data['users'] = $this->User_model->get_list();
+
+				$this->load->model('AccountingEntry_model');
+				$input = array(
+					'where' => array('voucher_id' => $voucher->id)
+				);
+				$this->data['accounting_entries'] = $this->AccountingEntry_model->get_list($input);
+
+				$this->load->view('voucher/more/voucher', $this->data);
+				$this->load->view('voucher/more/act-entry', $this->data);
+
+			}
+		}
 
 
 		// Create new type receipt by ajax
@@ -258,37 +268,6 @@
 		// 		}
 		// 	}
 		// }
-
-		public function view_more() {
-			if ($this->input->post()) {
-				$voucher_id = $this->input->post('id');
-
-				$this->load->model('Voucher_model');
-				$voucher = $this->Voucher_model->get_info($voucher_id);
-				$this->data['voucher'] = $voucher;
-
-				$this->load->model('VoucherType_model');
-				$input = array(
-					'where' => array(
-						'active' => 1
-					)
-				);
-				$this->data['voucher_types'] = $this->VoucherType_model->get_list($input);
-
-				$this->load->model('User_model');
-				$this->data['users'] = $this->User_model->get_list();
-
-				$this->load->model('AccountingEntry_model');
-				$input = array(
-					'where' => array('voucher_id' => $voucher->id)
-				);
-				$this->data['accounting_entries'] = $this->AccountingEntry_model->get_list($input);
-
-				$this->load->view('voucher/more/voucher', $this->data);
-				$this->load->view('voucher/more/act-entry', $this->data);
-
-			}
-		}
 
 		// Load accounting entry types when click receipt.
 		// public function load_act_type() {

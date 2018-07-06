@@ -80,6 +80,22 @@
             );
             $this->data['distribute_list'] = $this->Distribution_model->get_list($input);
 
+            $this->load->model('DetailDimension_model');
+            $input = array(
+               'where' => array(
+                  'active' => 1
+               )
+            );
+            $list_dimension = $this->DetailDimension_model->get_list($input);
+            foreach ($this->data['distribute_list'] as $item ) {
+               foreach ($list_dimension as $dimen) {
+                  if ($item->dimensional_id == $dimen->id) {
+                     $item->dimensional_id = $dimen->code;
+                     break;
+                  }
+               }
+            }
+
             $input = array(
                'where' => array(
                   'active' => 1

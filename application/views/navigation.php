@@ -114,7 +114,7 @@
                           <a href="<?php echo base_url('Voucher/create'); ?>">Nhập chứng từ</a>
                        </li>
                        <li>
-                          <a href="<?php echo base_url('Voucher/type'); ?>">Loại chứng từ</a>
+                          <a href="<?php echo base_url('VoucherType/index'); ?>">Loại chứng từ</a>
                        </li>
                        <li>
                           <a href="<?php echo base_url('AccountingEntry/create'); ?>">Nhập bút toán</a>

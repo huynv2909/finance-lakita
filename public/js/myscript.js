@@ -40,7 +40,57 @@ $(document).ready(function(){
 
 	}
 
+	// Voucher type
+	$('#code').keyup(function(){
+		$('.danger').removeClass('hidden').addClass('hidden');
+		$('.success').removeClass('hidden').addClass('hidden');
+		var str = $(this).val();
+		if (str != '') {
+			$('.checking').removeClass('hidden');
+			var code_arr = $('#list_code').val().split(',');
+			setTimeout(function(){
+				if ($.inArray(str, code_arr) == -1 && $.trim(str) != '') {
+					$('.danger').removeClass('hidden').addClass('hidden');
+					$('.checking').addClass('hidden');
+					$('.success').removeClass('hidden');
+					$('#code').data('ok', '1');
+				} else {
+					$('.success').removeClass('hidden').addClass('hidden');
+					$('.checking').addClass('hidden');
+					$('.danger').removeClass('hidden');
+					$('#code').data('ok', '0');
+				}
+			},400);
+		} else {
+			$('#code').data('ok', '0');
+			$('.danger').removeClass('hidden').addClass('hidden');
+			$('.success').removeClass('hidden').addClass('hidden');
+		}
+	});
 
+
+	// >.< because when del too fast
+	$('#code').click(function(){
+		setInterval(function(){
+			if ($('#code').val() == '') {
+				$('.danger').removeClass('hidden').addClass('hidden');
+				$('.success').removeClass('hidden').addClass('hidden');
+			}
+			if ($('.success').is(':hidden')) {
+				$('#add-new-type-btn').prop('disabled', true);
+			}
+		},300);
+	});
+
+	// Check to enable add new voucher type btn
+	$('#code, #name').keyup(function(){
+		console.log($('#code').data('ok'), $.trim($('#name').val()));
+		if ($('#code').data('ok') != '0' && $.trim($('#name').val()) != '') {
+			$('#add-new-type-btn').prop('disabled', false);
+		} else {
+			$('#add-new-type-btn').prop('disabled', true);
+		}
+	});
 
 	$(document).on("click", ".voucher-row", function(){
 		var url = $(this).data('url');
