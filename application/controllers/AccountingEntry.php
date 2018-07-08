@@ -60,7 +60,7 @@
 
          $this->load->model('Voucher_model');
          $input = array(
-            'order' => array('date', 'desc')
+            'order' => 'date desc'
          );
          $this->data['vouchers'] = $this->Voucher_model->get_list($input);
 
@@ -90,7 +90,7 @@
             foreach ($this->data['distribute_list'] as $item ) {
                foreach ($list_dimension as $dimen) {
                   if ($item->dimensional_id == $dimen->id) {
-                     $item->dimensional_id = $dimen->code;
+                     $item->dimensional_id = $dimen->code . " : " . $dimen->name;
                      break;
                   }
                }
@@ -100,7 +100,7 @@
                'where' => array(
                   'active' => 1
                ),
-               'order' => array('code', 'desc')
+               'order' => 'code desc'
             );
             $this->load->model('DetailDimension_model');
 
@@ -118,6 +118,25 @@
       }
 
       public function load_form() {
+         $this->load->model('AccountingSystem');
+
+         $list_account = $this->AccountingSystem->get_list();
+
+         $options = array(
+            array(
+               'innerHTML' => '(Lựa chọn tài khoản)',
+               'value' => 0
+            )
+         );
+
+         foreach ($list_account as $item) {
+            $temp = array(
+               'innerHTML' => $item->number . " : " . $item->description,
+               'value' => $item->number
+            );
+            array_push($options, $temp);
+         }
+
          $form = array(
             array(
                'type' => 'input',
@@ -148,22 +167,20 @@
                'options' => ''
             ),
             array(
-               'type' => 'input',
+               'type' => 'select',
                'properties' => array(
                   'id' => 'debit_acc',
-                  'type' => 'number',
-                  'style' => 'width:100%;'
+                  'style' => 'width:100%; height: 26px;'
                ),
-               'options' => ''
+               'options' => $options
             ),
             array(
-               'type' => 'input',
+               'type' => 'select',
                'properties' => array(
                   'id' => 'credit_acc',
-                  'type' => 'number',
-                  'style' => 'width:100%;'
+                  'style' => 'width:100%; height: 26px;'
                ),
-               'options' => ''
+               'options' => $options
             )
          );
 

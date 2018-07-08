@@ -54,17 +54,24 @@ $(document).ready(function(){
 					$('.checking').addClass('hidden');
 					$('.success').removeClass('hidden');
 					$('#code').data('ok', '1');
+					if ($.trim($('#name').val()) != '') {
+						$('#add-new-type-btn').prop('disabled', false);
+					} else {
+						$('#add-new-type-btn').prop('disabled', true);
+					}
 				} else {
 					$('.success').removeClass('hidden').addClass('hidden');
 					$('.checking').addClass('hidden');
 					$('.danger').removeClass('hidden');
 					$('#code').data('ok', '0');
+					$('#add-new-type-btn').prop('disabled', true);
 				}
-			},400);
+			},300);
 		} else {
 			$('#code').data('ok', '0');
 			$('.danger').removeClass('hidden').addClass('hidden');
 			$('.success').removeClass('hidden').addClass('hidden');
+			$('#add-new-type-btn').prop('disabled', true);
 		}
 	});
 
@@ -76,15 +83,11 @@ $(document).ready(function(){
 				$('.danger').removeClass('hidden').addClass('hidden');
 				$('.success').removeClass('hidden').addClass('hidden');
 			}
-			if ($('.success').is(':hidden')) {
-				$('#add-new-type-btn').prop('disabled', true);
-			}
 		},300);
 	});
 
 	// Check to enable add new voucher type btn
-	$('#code, #name').keyup(function(){
-		console.log($('#code').data('ok'), $.trim($('#name').val()));
+	$('#name').keyup(function(){
 		if ($('#code').data('ok') != '0' && $.trim($('#name').val()) != '') {
 			$('#add-new-type-btn').prop('disabled', false);
 		} else {
@@ -292,10 +295,10 @@ $(document).ready(function(){
 
 					var val = "";
 					for (var i = 0; i < result.dimensionals.length; i++) {
-						var temp = result.dimensionals[i].id + "," + result.dimensionals[i].code + "," +  result.dimensionals[i].name + ".";
+						var temp = result.dimensionals[i].id + "~" + result.dimensionals[i].code + "~" +  result.dimensionals[i].name + "|";
 						val += temp;
 					}
-					$('#dimension').val(val);
+					$('#dimension-list').val(val);
 				},
 				complete : function(){
 					$('.load-info').css('display', 'none');
@@ -354,11 +357,11 @@ $(document).ready(function(){
 			success : function(result) {
 				$('.alert').html(result.message);
 				var table = $('#distribution_table').DataTable();
-				var form_row = $('.contain-distribution-row tr:last-child');
+				var form_row = $('.form-cell').parent().parent();
 				table.row(form_row).remove().draw();
 				$('#distribute-btn').prop('disabled', false);
 				if (result.success) {
-					$('#distribution_table').DataTable().row.add([data.dimen_id,data.value,data.content]).draw();
+					$('#distribution_table').DataTable().row.add([dimenIdToName(data.dimen_id),data.value,data.content]).draw();
 
 					$('.alert').addClass('alert-success');
 				} else {
@@ -382,6 +385,110 @@ $(document).ready(function(){
 	$(document).on("change", "#voucher-type, #executor, #TOA, #value, #debit_acc, #credit_acc", checkToEnableOk);
 	$(document).on("keyup", "#value, #debit_acc, #credit_acc", checkToEnableOk);
 
+
+	// Active a type
+	$(document).on("click", ".exchange-btn", function(){
+		var id = $(this).data('id');
+		var url = $(this).data('url');
+		var active = $(this).data('active');
+
+		var current_tag = $(this);
+
+		$.confirm({
+			 icon: 'fa fa-exchange',
+			 title: 'Chuyển trạng thái?',
+			 content: 'Tiếp tục?',
+			 theme: 'material',
+			 type: 'yellow',
+			 buttons: {
+				  Ok: {
+						text: 'Ok',
+						btnClass: 'btn-green',
+						keys: ['enter'],
+						action: function(){
+							 $.ajax({
+								 url : url,
+								 method : "POST",
+								 data : {
+									 id : id,
+									 active : active
+								 },
+								 success : function(result) {
+									 console.log(result);
+									 if (active == 1) {
+	 									current_tag.data('active', '0');
+	 									current_tag.html('');
+	 									current_tag.removeClass('active-color');
+	 								 } else {
+	 									current_tag.data('active', '1');
+	 									current_tag.html('');
+	 									current_tag.addClass('active-color');
+	 								}
+								 }
+							 });
+						}
+				  },
+				  later: {
+					  text: 'Hủy',
+					  keys: ['esc'],
+					  action: function(){
+					  }
+				  }
+			 }
+		});
+
+	});
+
+	$(document).on("click", ".del-type-btn", function(){
+		var id = $(this).data('id');
+		var url = $(this).data('url');
+
+		$.confirm({
+			 icon: 'fa fa-remove',
+			 title: 'Xóa?',
+			 content: 'Hãy chắc chắn rằng mã chưa từng được sử dụng!',
+			 theme: 'material',
+			 type: 'red',
+			 buttons: {
+				  Ok: {
+						text: 'Ok',
+						btnClass: 'btn-green',
+						keys: ['enter'],
+						action: function(){
+							 $.ajax({
+								 url : url,
+								 method : "POST",
+								 dataType : "JSON",
+								 data : {
+									 id : id
+								 },
+								 success : function(result) {
+									 if (result.success) {
+									 	 var table = $('#voucher_types_table').DataTable();
+						 				 var row = $('#type-' + id.toString());
+										 var old_code = $(row).children('td:first-child').html();
+						 				 table.row(row).remove().draw();
+
+										 $('#list_code').val($('#list_code').val().replace(old_code + ",",''));
+										 // console.log(result.message);
+									 } else {
+										 $.alert(result.message);
+									 }
+								 }
+							 });
+						}
+				  },
+				  cancel: {
+					  text: 'Hủy',
+					  keys: ['esc'],
+					  action: function(){
+					  }
+				  }
+			 }
+		});
+
+	});
+
 	//  CHECK DEBIT vs CREDIT
 });
 
@@ -393,75 +500,19 @@ $('#tot').change(function() {
 	$('#toa').attr('max', $(this).val());
 });
 
+function dimenIdToName($dimen_id) {
+	var dimen_arr = $('#dimension-list').val().split('|');
+	var response = '';
 
-function showSuccess() {
-	$('.load-info-act').children('.waiting').css('display', 'none');
-	$('.load-info-act').children('.success').css('display', 'inline-block');
-}
-
-function resetSuccess() {
-	$('.load-info-act').css('display', 'none');
-	$('.load-info-act').children('.success').css('display', 'none');
-	$('.load-info-act').children('.waiting').css('display', 'inline-block');
-}
-
-function checkHaveChangeActive() {
-	var list_receipt_item = $('.receipt-item');
-	var have_change = false;
-	var json_change = {};
-
-	for (var i = 0; i < list_receipt_item.length; i++) {
-		var value_each_checkbox = $($($(list_receipt_item[i]).children('.switch')[0]).children('.active-check')[0]).val();
-		if ($(list_receipt_item[i]).data('active_ori') !== value_each_checkbox) {
-			have_change = true;
-			var id_change = $(list_receipt_item[i]).data('id');
-			if (value_each_checkbox == 'on') {
-				json_change[id_change] = 1;
-			} else {
-				json_change[id_change] = 0;
-			}
-		}
-	}
-
-	if (have_change) {
-		$('#have-change').val(JSON.stringify(json_change));
-		return true;
-	} else {
-		$('#have-change').val('0');
-		return false;
-	}
-}
-
-function checkToEnableUpdateReceiptType() {
-	if ($('#list-new').val() !== $('#list-act-ori').val()) {
-		$('#act-update-btn').prop('disabled', false);
-		$('#act-update-btn').css({
-			'animation': 'shake 5s cubic-bezier(.36,.07,.19,.97) both',
-			'transform': 'translate3d(0, 0, 0)',
-			'backface-visibility': 'hidden',
-			'perspective': '1000px'
-		});
-		setTimeout(function(){
-			$('#act-update-btn').css('animation', 'none');
-		},3000);
-	}
-	else {
-		$('#act-update-btn').prop('disabled', true);
-	}
-}
-
-function checkChosenReceipt() {
-	var list_choose = $('.receipt-item');
-	var flag = false;
-	for (var i = 0; i < list_choose.length; i++) {
-		if ($(list_choose[i]).data('chosen') == '1') {
-			console.log($(list_choose[i]).data('chosen'));
-			flag = true;
+	for (var i = 0; i < dimen_arr.length; i++) {
+		var attr_arr = dimen_arr[i].split('~');
+		if (attr_arr[0] == $dimen_id) {
+			response = attr_arr[1] + " : " + attr_arr[2];
 			break;
 		}
 	}
 
-	return flag;
+	return response;
 }
 
 function checkToEnableOk() {
@@ -502,84 +553,6 @@ function checkToEnableOk() {
 		$('#update-act-btn').prop('disabled', true);
 		$('#distribute-update-btn').prop('disabled', true);
 		$('#voucher-done').prop('disabled', true);
-	}
-}
-
-function checkToEnableSubmit()
-{
-	var flag = true;
-	// check value
-	var empty_value = $('.value:visible').filter(function() { return $.trim($(this).val().toString()) == ""; });
-	if (empty_value.length > 0) {
-		flag = false;
-	}
-
-	var value_tags = $('.value:visible');
-	for (var i = 0; i < value_tags.length; i++) {
-		if (!$.isNumeric($(value_tags[i]).val().split('.').join(''))) {
-			flag = false;
-			break;
-		}
-	}
-
-	var empty_tot = $('.tot:visible').filter(function() { return $(this).val() == ''; });
-	if (empty_tot.length > 0) {
-		flag = false;
-	}
-
-	var empty_toa = $('.toa:visible').filter(function() { return $(this).val() == ''; });
-	if (empty_toa.length > 0) {
-		flag = false;
-	}
-
-	if (flag) {
-		$('#ok').prop('disabled', false);
-	}
-	else {
-		$('#ok').prop('disabled', true);
-	}
-}
-
-function GetTotalFilled()
-{
-	var value_tags = $('.value:visible').filter(function() { return ($(this).data('default') == "" && $(this).val() != ""); });
-	var total = 0;
-	for (var i = 0; i < value_tags.length; i++) {
-		total += parseInt($(value_tags[i]).val().split('.').join(''));
-	}
-	return total;
-}
-
-function FillValue()
-{
-	$('.value').val('');
-	var total = parseInt($('#value').val().split('.').join(''));
-	var value_tags = $('.value:visible');
-	if (value_tags.length == 1) {
-		$(value_tags[0]).val(convertToCurrency(total.toString()));
-		return;
-	}
-	var sub = 0;
-
-	for (var i = 0; i < value_tags.length; i++) {
-		if ($(value_tags[i]).data('default') != '') {
-			var ratio = $(value_tags[i]).data('default');
-			var frac = ratio.split('/');
-			var value = Math.ceil(total/parseInt(frac[1])*parseInt(frac[0]));
-			sub += value;
-			$(value_tags[i]).val(convertToCurrency(value.toString()));
-		}
-	}
-
-	var empty_value = $('.value:visible').filter(function() { return $(this).val() == ""; });
-	if ($('#income').val() == 0) {
-		$(empty_value[0]).val(convertToCurrency(total.toString()));
-	}
-	else {
-		$(empty_value[0]).val(convertToCurrency((total - sub).toString()));
-	}
-	for (var i = 1; i < empty_value.length; i++) {
-		$(empty_value[i]).val('0');
 	}
 }
 

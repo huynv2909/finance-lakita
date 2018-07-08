@@ -178,9 +178,9 @@
 			if (isset($input['like']) && $input['like']) {
 				$this->db->like($input['like'][0], $input['like'][1]);
 			}
-
-			if (isset($input['order'][0]) && isset($input['order'][1])) {
-				$this->db->order_by($input['order'][0], $input['order'][1]);
+			// 'order' => 'active desc, id desc'
+			if (isset($input['order']) && $input['order']) {
+				$this->db->order_by($input['order']);
 			}
 			else {
 				$this->db->order_by($this->key, 'desc');

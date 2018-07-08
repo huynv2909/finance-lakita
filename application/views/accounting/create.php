@@ -53,6 +53,13 @@
           $(document).ready(function() {
               $('#act_table').DataTable({
                       responsive: true,
+                      "columns" : [
+                        { "width" : "15%" },
+                        { "width" : "50%" },
+                        { "width" : "15%" },
+                        { "width" : "10%" },
+                        { "width" : "10%" }
+                     ],
                       "order" : [[0, 'asc']]
               });
           });

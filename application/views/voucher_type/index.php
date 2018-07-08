@@ -48,3 +48,63 @@
       echo $str;
    }
  ?>">
+ <h5></h5>
+<div class="row log-box">
+   <div class="col-sm-12">
+		<table class="table table-hover dataTable no-footer log-table" id="voucher_types_table" role="grid" aria-describedby="voucher_types_table_info" border="1">
+			<thead>
+					<tr role="row">
+						<th class="sorting text-center" tabindex="0" aria-controls="voucher_types_table" rowspan="1" colspan="1" aria-label="Code: activate to sort column ascending" >Đầu mã</th>
+						<th class="sorting text-center" tabindex="0" aria-controls="voucher_types_table" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending" >Tên gọi</th>
+						<th class="sorting text-center" tabindex="0" aria-controls="voucher_types_table" rowspan="1" colspan="1" aria-label="Type: activate to sort column ascending" >Loại</th>
+						<th class="sorting text-center" tabindex="0" aria-controls="voucher_types_table" rowspan="1" colspan="1" aria-label="Option: activate to sort column ascending" >Thao tác</th>
+					</tr>
+			</thead>
+			<tbody>
+            <?php if (isset($list_types) && $list_types): ?>
+   				<?php foreach ($list_types as $item): ?>
+   					<tr role="row" id="type-<?php echo $item->id; ?>" data-url="<?php echo base_url('Voucher/view_more'); ?>" data-id="<?php echo $item->id; ?>" class="type-row">
+   						 <td><?php echo $item->code; ?></td>
+   						 <td><?php echo $item->name; ?></td>
+   						 <td class="text-center">
+   							 <?php
+   								if ($item->income == 1) {
+                              echo "Phiếu thu";
+                           } else {
+                              echo "Phiếu chi";
+                           }
+   							  ?>
+   						 </td>
+   						 <td class="text-center">
+                        <?php if ($item->active == 1): ?>
+                           <i class="fa fa-fw fa-2x vertical-middle active-color exchange-btn" data-url="<?php echo base_url('VoucherType/change_status'); ?>" data-id="<?php echo $item->id; ?>" data-active="<?php echo $item->active; ?>" aria-hidden="true" title="Click to change!"></i>
+                        <?php else: ?>
+                           <i class="fa fa-fw fa-2x vertical-middle exchange-btn" data-url="<?php echo base_url('VoucherType/change_status'); ?>" data-id="<?php echo $item->id; ?>" data-active="<?php echo $item->active; ?>" aria-hidden="true" title="Click to change!"></i>
+                        <?php endif; ?>
+
+                         <button type="button" class="btn btn-circle del-type-btn" data-url="<?php echo base_url('VoucherType/delete'); ?>" data-id="<?php echo $item->id; ?>"><i class="fa fa-times"></i></button>
+                      </td>
+   					</tr>
+   				<?php endforeach; ?>
+            <?php endif; ?>
+			  </tbody>
+		</table>
+		<script type="text/javascript">
+			$('#voucher_types_table').DataTable({
+					  responsive: true,
+                 "order" : [[3, 'desc']],
+                 "columns" : [
+                    { "width" : "20%" },
+                    { "width" : "45%" },
+                    { "width" : "20%" },
+                    { "width" : "15%" }
+                 ]
+			});
+
+         // Fix 2 column
+         // new $.fn.dataTable.FixedColumns(table ,{
+         //      leftColumns: 2
+         //  });
+		</script>
+	</div>
+</div>

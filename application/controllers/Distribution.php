@@ -39,6 +39,7 @@
                   );
                } else {
                   $response = array(
+                     'var' => $data,
                      'success' => false,
                      'message' => 'Có lỗi xảy ra!'
                   );
@@ -50,7 +51,7 @@
 
          $this->load->model('Voucher_model');
          $input = array(
-            'order' => array('date', 'desc')
+            'order' => 'date desc'
          );
          $this->data['vouchers'] = $this->Voucher_model->get_list($input);
 
@@ -63,7 +64,7 @@
             'where' => array(
                'active' => 1
             ),
-            'order' => array('code', 'asc')
+            'order' => 'code asc'
          );
          $listDimen = $this->DetailDimension_model->get_list($input);
 
@@ -86,6 +87,7 @@
             array(
                'type' => 'select',
                'properties' => array(
+                  'class' => 'form-cell',
                   'id' => 'dimension',
                   'style' => 'width:100%; min-height: 28px; background-color: #fff;'
                ),

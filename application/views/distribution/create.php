@@ -72,15 +72,20 @@
           $(document).ready(function() {
               $('#distribution_table').DataTable({
                       responsive: true,
+                      "columns" : [
+                        { "width" : "40%" },
+                        { "width" : "20%" },
+                        { "width" : "40%" }
+                     ],
                       "order" : [[0, 'asc']]
               });
           });
       </script>
    </div>
 </div>
-<input type="hidden" name="dimension" id="dimension" value="">
-<input type="hidden" name="tot" id="tot">
-<input type="hidden" name="toa" id="toa">
+<input type="hidden" id="dimension-list" value="">
+<input type="hidden" id="tot">
+<input type="hidden" id="toa">
 <button type="button" class="btn btn-primary" id="distribute-btn" title="Thêm loại chứng từ mới" data-url="<?php echo base_url('Distribution/load_form'); ?>" disabled>
   <i class="fa fa-fw" aria-hidden="true" title="+ Phân bổ mới"></i> Phân bổ
 </button>
