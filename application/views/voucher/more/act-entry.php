@@ -4,12 +4,15 @@
       <table class="table table-hover more">
          <tbody>
             <tr>
-               <td class="text-right"><strong>TOT:</strong></td>
-               <td><?php echo $item->TOT; ?></td>
-            </tr>
-            <tr>
                <td class="text-right"><strong>TOA:</strong></td>
                <td><?php echo $item->TOA; ?></td>
+            </tr>
+            <tr>
+               <td class="text-center" colspan="2">
+                  <?php if (!$item->completed): ?>
+                     <a href="<?php echo base_url('Distribution/create?act_id=') .$item->id; ?>" title="Đến phân bổ"><i class="fa fa-fw warning" aria-hidden="true" title="Đến phân bổ"></i></a>
+                  <?php endif; ?>
+               </td>
             </tr>
          </tbody>
       </table>

@@ -25,7 +25,7 @@
 <!-- My style -->
 <link href="<?php echo public_url(); ?>css/build/all.css" rel="stylesheet" type="text/css">
 <link href="<?php echo public_url(); ?>css/build/component.css" rel="stylesheet" type="text/css">
-<link href="<?php echo public_url(); ?>css/build/screen-415.css" rel="stylesheet" type="text/css">
+<link href="<?php echo public_url(); ?>css/build/screen-600.css" rel="stylesheet" type="text/css">
 <link href="<?php echo public_url(); ?>css/build/screen-768.css" rel="stylesheet" type="text/css">
 <link href="<?php echo public_url(); ?>css/build/screen-992.css" rel="stylesheet" type="text/css">
 <link href="<?php echo public_url(); ?>css/build/screen-1200.css" rel="stylesheet" type="text/css">

@@ -4,7 +4,7 @@
          <div class="form-group">
             <label for="code" class="col-md-4 control-label padding-lr-10-5">Đầu mã</label>
             <div class="col-xs-10 col-md-7 padding-lr-10-5">
-               <input type="text" name="code" id="code" class="form-control" data-ok="0" value="" placeholder="Mã loại chứng từ">
+               <input type="text" name="code" id="code" class="form-control" data-ok="0" data-other_ok="0" value="" placeholder="Mã loại chứng từ">
             </div>
             <div class="col-xs-2 col-md-1 padding-0 centering-parent height-34">
                <i class="fa fa-fw fa-2x fa-spin checking hidden" aria-hidden="true" title="loading..."></i>

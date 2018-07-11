@@ -1,4 +1,4 @@
-<h4 class="text-center">Chứng từ</h4>
+<h4 class="text-center"><strong>Chứng từ</strong></h4>
 <div class="row bd">
    <div class="col-md-4">
       <table class="table table-hover more">
@@ -104,4 +104,4 @@
    </div>
 </div>
 <hr>
-<h4 class="text-center">Bút toán tương ứng</h4>
+<h4 class="text-center"><strong>Bút toán tương ứng</strong></h4>

@@ -93,3 +93,7 @@
   <i class="fa fa-check" title="Lưu thay đổi"></i> Cập nhật
 </button>
 <div class="clearfix"></div>
+
+<input type="hidden" id="have-a-act-id" data-url="<?php echo base_url('AccountingEntry/get_voucher'); ?>" value="<?php if ($this->input->get()) {
+   echo $this->input->get('act_id');
+} ?>">

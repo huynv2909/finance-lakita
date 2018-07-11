@@ -1,6 +1,7 @@
 #page-wrapper {
    background-color: #aee4ea;
    padding-bottom: 20px;
+   margin-top: 35px;
 }
 
 .log-box {
@@ -135,6 +136,10 @@
    color: #a94442;
 }
 
+.warning {
+   color: #f0ad4e;
+}
+
 form#type-form {
    padding: 10px;
    border: 1px solid beige;
@@ -159,6 +164,31 @@ form#type-form {
    color: #fff;
 }
 
-.exchange-btn:hover {
+.exchange-btn:hover, .slide-add-voucher:hover {
    cursor: pointer;
+}
+
+.slide-add-voucher {
+   color: grey;
+   margin-right: 15px;
+}
+
+.slide-add-voucher:hover {
+   color: black;
+}
+
+#dimension-done {
+   height: 60px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.more td:nth-child(1) {
+   width: 40%;
+
+}
+
+.more td:nth-child(2) {
+   width: 60%;
+
 }

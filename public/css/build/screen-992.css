@@ -27,4 +27,8 @@
       padding-left: 10px;
       padding-right: 5px;
    }
+
+   .more td {
+      width: 50% !important;
+   }
 }

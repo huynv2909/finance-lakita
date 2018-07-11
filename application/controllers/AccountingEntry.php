@@ -193,6 +193,24 @@
    		}
    		die(json_encode($response));
       }
+
+      // Require by ajax, return result and voucher id to client site
+      public function get_voucher() {
+         if ($this->input->post()) {
+            $id = $this->input->post('id');
+
+            $response = array();
+
+            if ($info = $this->AccountingEntry_model->get_info($id)) {
+               $response['success'] = true;
+               $response['voucher_id'] = $info->voucher_id;
+            } else {
+               $response['success'] = false;
+            }
+
+            die(json_encode($response));
+         }
+      }
    }
 
  ?>

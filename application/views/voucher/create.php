@@ -1,10 +1,10 @@
-<form class="form-horizontal" method="post" action="<?php echo base_url('Voucher/create'); ?>">
+<form class="form-horizontal" method="post" id="voucher-form" action="<?php echo base_url('Voucher/create'); ?>">
 	<div class="row">
 		<div class="col-md-8">
 			<div class="form-group">
 				 <label for="voucher-type" class="col-xs-3 control-label text-right"><span class="text-danger">(*)</span> Loại chứng từ</label>
 				 <div class="col-xs-9">
-						<select class="form-control" id="voucher-type" name="voucher_type" data-url="<?php echo base_url(); ?>voucher/load_form">
+						<select class="form-control" id="voucher-type" name="voucher_type">
 							<option value="0">(Chọn loại chứng từ)</option>
 							<?php foreach ($voucher_type as $item): ?>
 							<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('voucher_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")"; ?></option>
@@ -85,7 +85,13 @@
 	</div>
 </form>
 
-<h5><strong>Chứng từ đã nhập:</strong></h5>
+<div class="row">
+	<h5 class="pull-left"><strong>Chứng từ đã nhập:</strong></h5>
+	<!-- <i class="fa fa-fw fa-2x pull-right hidden" aria-hidden="true" title="Copy to use chevron-down"></i> -->
+	<i class="fa fa-fw fa-2x pull-right slide-add-voucher" data-hidden="0" aria-hidden="true" title="Hide"></i>
+	<div class="clearfix"></div>
+</div>
+
 <div class="row log-box">
 	<div class="col-sm-12">
 		<table class="table table-hover dataTable no-footer log-table" id="voucher_table" role="grid" aria-describedby="voucher_table_info" border="1">
@@ -113,9 +119,16 @@
 								}
 							  ?>
 						 </td>
-						 <td><?php echo number_format($item->value, 0, ",", "."); ?></td>
-						 <td><?php echo $item->content; ?></td>
 						 <td>
+							 <?php
+						 		echo number_format($item->value, 0, ",", ".") . " đ";
+							?>
+							<?php if (!$item->completed): ?>
+								<a href="<?php echo base_url('AccountingEntry/create?voucher_id=') . $item->id; ?>" title="Đến nhập bút toán"><i class="fa fa-fw warning" aria-hidden="true" title="Đến nhập bút toán"></i></a>
+							<?php endif; ?>
+						 </td>
+						 <td><?php echo $item->content; ?></td>
+						 <td class="text-center">
 							 <?php
 								foreach ($employees as $user) {
 									if ($item->executor == $user->id) {
@@ -144,8 +157,18 @@
 
 <div class="modal fade" id="view-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content data-insert">
-      <!-- insert by ajax -->
+    <div class="modal-content">
+		 <div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		  <h4 class="modal-title">Chi tiết</h4>
+	   </div>
+	   <div class="modal-body data-insert">
+		  <!-- insert by ajax -->
+	   </div>
+	   <div class="modal-footer">
+		  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	   </div>
+
     </div>
   </div>
 </div>

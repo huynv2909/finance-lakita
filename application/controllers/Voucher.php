@@ -10,23 +10,6 @@
 		}
 
 		public function index() {
-			$this->data['title'] = "Sổ kế toán";
-			$this->data['template'] = "voucher/index";
-			$this->data['active'] = 'receipt';
-			$this->data['receipts'] = $this->Voucher_model->get_list();
-
-			$this->load->model('ReceiptType_model');
-			$input = array(
-				'where' => array(
-					'active' => 1
-				)
-			);
-			$this->data['receipt_types'] = $this->ReceiptType_model->get_list($input);
-
-			$this->load->model('User_model');
-			$this->data['users'] = $this->User_model->get_list();
-
-			$this->load->view('layout', $this->data);
 		}
 
 		public function create()
@@ -38,7 +21,13 @@
 			$this->data['active'] = 'voucher';
 
 			$this->load->model('Voucher_model');
-			$this->data['vouchers'] = $this->Voucher_model->get_list();
+
+			$voucher_list = $this->Voucher_model->get_list();
+			foreach ($voucher_list as $voucher) {
+				$voucher->{"completed"} = $this->checkIssetAccoutingEntry($voucher->id);
+			}
+
+			$this->data['vouchers'] = $voucher_list;
 			// Get type receipt
 			$this->load->model('VoucherType_model');
 			$input = array(
@@ -159,7 +148,13 @@
 				$input = array(
 					'where' => array('voucher_id' => $voucher->id)
 				);
-				$this->data['accounting_entries'] = $this->AccountingEntry_model->get_list($input);
+
+				$list_act = $this->AccountingEntry_model->get_list($input);
+				foreach ($list_act as $act) {
+					$act->{"completed"} = $this->checkIssetDistribution($act->id);
+				}
+
+				$this->data['accounting_entries'] = $list_act;
 
 				$this->load->view('voucher/more/voucher', $this->data);
 				$this->load->view('voucher/more/act-entry', $this->data);
@@ -382,5 +377,39 @@
 			$string = $date->getTimestamp();
 			return $receipt_code . $string;
 		}
+
+
+		private function checkIssetAccoutingEntry($id_voucher) {
+			$input = array(
+				'where' => array(
+					'voucher_id' => $id_voucher
+				)
+			);
+
+			$this->load->model('AccountingEntry_model');
+
+			if (count($this->AccountingEntry_model->get_list($input)) > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		private function checkIssetDistribution($id_act) {
+			$input = array(
+				'where' => array(
+					'entry_id' => $id_act
+				)
+			);
+
+			$this->load->model('Distribution_model');
+
+			if (count($this->Distribution_model->get_list($input)) > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
 	}
  ?>

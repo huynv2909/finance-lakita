@@ -75,11 +75,57 @@ $(document).ready(function(){
 		}
 	});
 
+	// Dimension add
+	$('#dimension_code').keyup(function(){
+		$('.danger').removeClass('hidden').addClass('hidden');
+		$('.success').removeClass('hidden').addClass('hidden');
+		var str = $(this).val();
+		if (str != '') {
+			$('.checking').removeClass('hidden');
+			var code_arr = $('#list-dimen-code').val().split(',');
+			setTimeout(function(){
+				if ($.inArray(str, code_arr) == -1 && $.trim(str) != '') {
+					$('.danger').removeClass('hidden').addClass('hidden');
+					$('.checking').addClass('hidden');
+					$('.success').removeClass('hidden');
+					$('#dimension_code').data('ok', '1');
+				} else {
+					$('.success').removeClass('hidden').addClass('hidden');
+					$('.checking').addClass('hidden');
+					$('.danger').removeClass('hidden');
+					$('#dimension_code').data('ok', '0');
+				}
+			},300);
+		} else {
+			$('#dimension_code').data('ok', '0');
+			$('.danger').removeClass('hidden').addClass('hidden');
+			$('.success').removeClass('hidden').addClass('hidden');
+			$('#add-new-type-btn').prop('disabled', true);
+		}
+	});
+
+	$('#dimension_name, #layer, #sequence').keyup(function(){
+		console.log($('#dimension_code').data('ok'));
+		if ($('#dimension_code').data('ok') == '1' && $.trim($('#dimension_name').val()) != '' && parseInt($('#layer').val()) > 0 && $.trim($('#sequence').val()) != '') {
+			$('#dimension-done').prop('disabled', false);
+		} else {
+			$('#dimension-done').prop('disabled', true);
+		}
+	});
+
+	$('#layer, #sequence').change(function(){
+		if ($('#dimension_code').data('ok') == '1' && $.trim($('#dimension_name').val()) != '' && parseInt($('#layer').val()) > 0 && $.trim($('#sequence').val()) != '') {
+			$('#dimension-done').prop('disabled', false);
+		} else {
+			$('#dimension-done').prop('disabled', true);
+		}
+	});
 
 	// >.< because when del too fast
-	$('#code').click(function(){
+	$('#code, #dimension_code').click(function(){
+		var obj = $(this);
 		setInterval(function(){
-			if ($('#code').val() == '') {
+			if (obj.val() == '') {
 				$('.danger').removeClass('hidden').addClass('hidden');
 				$('.success').removeClass('hidden').addClass('hidden');
 			}
@@ -252,6 +298,21 @@ $(document).ready(function(){
 
 	});
 
+	$('.slide-add-voucher').click(function(){
+		var invisible = $(this).data('hidden');
+
+		if (invisible == '0') {
+			$('form').slideUp();
+			$(this).html('');
+			$(this).data('hidden', 1);
+		} else {
+			$('form').slideDown();
+			$(this).html('');
+			$(this).data('hidden', 0);
+		}
+
+	});
+
 	// When add accounting entry by  get method
 	if ($('#set-voucher').length && $('#set-voucher').val()) {
 		var id_arr = $('#list_id_voucher').val().split(',');
@@ -314,6 +375,35 @@ $(document).ready(function(){
 			$('#distribute-btn').prop('disabled', true);
 		}
 	});
+
+	// When distribute by get url
+	if ($('#have-a-act-id').length && $.isNumeric($('#have-a-act-id').val())) {
+		console.log('here');
+		var id = $('#have-a-act-id').val();
+		var url = $('#have-a-act-id').data('url');
+
+		$.ajax({
+			url : url,
+			method : "POST",
+			dataType : "JSON",
+			data : {
+				id : id
+			},
+			success : function(result) {
+				if (result.success) {
+					$('#voucher-choose').val(result.voucher_id);
+					$('#voucher-choose').trigger("change");
+
+					setTimeout(function(){
+						$('#act-choose').val(id);
+						$('#act-choose').trigger("change");
+					},100);
+
+				}
+			}
+		});
+
+	}
 
 	$('#distribute-btn').click(function(){
 

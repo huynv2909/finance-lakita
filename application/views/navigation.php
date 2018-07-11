@@ -1,7 +1,9 @@
 <!-- Navigation -->
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="navbar-header">
-        <a class="navbar-brand" href="index.html">Startmin</a>
+        <a class="navbar-brand" href="<?php echo base_url(); ?>">
+           Lakita Finance 2018
+        </a>
     </div>
 
     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -12,7 +14,7 @@
     </button>
 
     <ul class="nav navbar-nav navbar-left navbar-top-links">
-        <li><a href="#"><i class="fa fa-home fa-fw"></i> Website</a></li>
+        <li><a href="https://lakita.vn/"><i class="fa fa-home fa-fw"></i> Website</a></li>
     </ul>
 
     <ul class="nav navbar-right navbar-top-links">
@@ -72,7 +74,7 @@
         </li>
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                <i class="fa fa-user fa-fw"></i><?php //echo $user->name; ?><b class="caret"></b>
+                <i class="fa fa-user fa-fw"></i><?php echo $user->name; ?><b class="caret"></b>
             </a>
             <ul class="dropdown-menu dropdown-user">
                 <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
@@ -102,14 +104,11 @@
                     <!-- /input-group -->
                 </li>
                 <li>
-                    <a href="index.html"?><i class="fa fa-fw" aria-hidden="true" title="Dashboard"></i> Dashboard</a>
+                    <a href="<?php echo base_url(); ?>" ><i class="fa fa-fw" aria-hidden="true" title="Dashboard"></i> Dashboard</a>
                 </li>
                 <li>
                    <a href="#"><i class="fa fa-file-text-o fa-fw"></i>Hóa đơn/Chứng từ<span class="fa arrow"></span></a>
                    <ul class="nav nav-second-level">
-                       <li>
-                           <a href="<?php echo base_url('Voucher/index'); ?>">Sổ kế toán</a>
-                       </li>
                        <li>
                           <a href="<?php echo base_url('Voucher/create'); ?>">Nhập chứng từ</a>
                        </li>
@@ -122,46 +121,49 @@
                        <li>
                           <a href="<?php echo base_url('Distribution/create'); ?>">Phân bổ bút toán</a>
                        </li>
+                       <li>
+                          <a href="<?php echo base_url('Dimension'); ?>">Chiều quản trị</a>
+                       </li>
                    </ul>
                 </li>
                 <li>
                     <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="flot.html">Flot Charts</a>
+                            <a href="#">Flot Charts</a>
                         </li>
                         <li>
-                            <a href="morris.html">Morris.js Charts</a>
+                            <a href="#">Morris.js Charts</a>
                         </li>
                     </ul>
                     <!-- /.nav-second-level -->
                 </li>
                 <li>
-                    <a href="tables.html"><i class="fa fa-table fa-fw"></i> Tables</a>
+                    <a href="#"><i class="fa fa-table fa-fw"></i> Tables</a>
                 </li>
                 <li>
-                    <a href="forms.html"><i class="fa fa-edit fa-fw"></i> Forms</a>
+                    <a href="#"><i class="fa fa-edit fa-fw"></i> Forms</a>
                 </li>
                 <li>
                     <a href="#"><i class="fa fa-wrench fa-fw"></i> UI Elements<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="panels-wells.html">Panels and Wells</a>
+                            <a href="#">Panels and Wells</a>
                         </li>
                         <li>
-                            <a href="buttons.html">Buttons</a>
+                            <a href="#">Buttons</a>
                         </li>
                         <li>
-                            <a href="notifications.html">Notifications</a>
+                            <a href="#">Notifications</a>
                         </li>
                         <li>
-                            <a href="typography.html">Typography</a>
+                            <a href="#">Typography</a>
                         </li>
                         <li>
-                            <a href="icons.html"> Icons</a>
+                            <a href="#"> Icons</a>
                         </li>
                         <li>
-                            <a href="grid.html">Grid</a>
+                            <a href="#">Grid</a>
                         </li>
                     </ul>
                     <!-- /.nav-second-level -->
@@ -200,10 +202,10 @@
                     <a href="#"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="blank.html">Blank Page</a>
+                            <a href="#">Blank Page</a>
                         </li>
                         <li>
-                            <a href="login.html">Login Page</a>
+                            <a href="#">Login Page</a>
                         </li>
                     </ul>
                     <!-- /.nav-second-level -->
