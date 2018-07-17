@@ -154,12 +154,12 @@ form#type-form {
    color: #337ab7;
 }
 
-.del-type-btn {
+.del-type-btn, .del-detail-btn {
    background-color: #fff;
    color: #d9534f;
 }
 
-.del-type-btn:hover {
+.del-type-btn:hover, .del-detail-btn:hover {
    background-color: #d9534f;
    color: #fff;
 }

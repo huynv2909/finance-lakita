@@ -125,7 +125,7 @@
                    { "width" : "10%" },
                    { "width" : "10%" }
                  ],
-					  "order" : [[4, 'desc']]
+					  "order" : [[4, 'asc']]
 			});
 		</script>
 	</div>

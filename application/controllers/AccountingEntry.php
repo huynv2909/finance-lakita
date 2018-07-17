@@ -72,6 +72,7 @@
             $id = $this->input->post('id');
             $this->data['info'] = $this->AccountingEntry_model->get_info($id);
 
+            // Get distributed
             $this->load->model('Distribution_model');
             $input = array(
                'where' => array(
@@ -80,6 +81,11 @@
             );
             $this->data['distribute_list'] = $this->Distribution_model->get_list($input);
 
+            // Get Dimension manager list
+            $this->load->model('Dimension_model');
+            $list_mng = $this->Dimension_model->get_list();
+
+            // Get detail
             $this->load->model('DetailDimension_model');
             $input = array(
                'where' => array(
@@ -87,10 +93,20 @@
                )
             );
             $list_dimension = $this->DetailDimension_model->get_list($input);
+
             foreach ($this->data['distribute_list'] as $item ) {
                foreach ($list_dimension as $dimen) {
                   if ($item->dimensional_id == $dimen->id) {
-                     $item->dimensional_id = $dimen->code . " : " . $dimen->name;
+                     $item->dimensional_id = $dimen->name;
+                     if ($dimen->note != '') {
+                        $item->dimensional_id .= " : " . $dimen->note;
+                     }
+                     foreach ($list_mng as $mng) {
+                        if ($mng->id == $dimen->dimen_id) {
+                           $item->{"mng"} = $mng->name;
+                           break;
+                        }
+                     }
                      break;
                   }
                }
@@ -100,16 +116,18 @@
                'where' => array(
                   'active' => 1
                ),
-               'order' => 'code desc'
+               'order' => 'dimen_code desc'
             );
             $this->load->model('DetailDimension_model');
+            $list_details = $this->DetailDimension_model->get_list($input);
 
             $response = array(
                'act' => $this->load->view('load_by_ajax/act_box', $this->data, true),
                'distributes' => $this->data['distribute_list'],
                'tot' => $this->data['info']->TOT,
                'toa' => $this->data['info']->TOA,
-               'dimensionals' => $this->DetailDimension_model->get_list($input)
+               'mngs' => $list_mng,
+               'dimensionals' => $list_details
             );
 
             die(json_encode($response));

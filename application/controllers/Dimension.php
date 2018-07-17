@@ -60,6 +60,48 @@
          }
       }
 
+      public function get_detail() {
+         if ($this->input->post()) {
+            $id = $this->input->post('id');
+
+            $input = array(
+               'where' => array('dimen_id' => $id)
+            );
+
+            $this->load->model('DetailDimension_model');
+            $list_detail = $this->DetailDimension_model->get_list($input);
+
+            $all_detail = $this->DetailDimension_model->get_list();
+
+            foreach ($list_detail as $detail) {
+               if ($detail->parent_id != NULL) {
+                  foreach ($all_detail as $parent) {
+                     if ($detail->parent_id == $parent->id) {
+                        $detail->{"parent_name"} = $parent->name;
+                        break;
+                     }
+                  }
+               } else {
+                  $detail->{"parent_name"} = "";
+               }
+
+               if ($detail->active) {
+                  $detail->{"exchange"} = '<i class="fa fa-fw fa-2x vertical-middle active-color exchange-btn" data-url="' . base_url('DimensionDetail/change_status') . '" data-id="' . $detail->id . '" data-active="1" aria-hidden="true" title="Click to change!"></i>';
+               } else {
+                  $detail->{"exchange"} = '<i class="fa fa-fw fa-2x vertical-middle exchange-btn" data-url="' . base_url('DimensionDetail/change_status') . '" data-id="' . $detail->id . '" data-active="0" aria-hidden="true" title="Click to change!"></i>';
+               }
+
+               $detail->{"delete"} = '<button type="button" class="btn btn-circle del-detail-btn" data-url="' . base_url('DimensionDetail/delete') . '" data-id="' . $detail->id . '"><i class="fa fa-times"></i></button>';
+            }
+
+            $response = array(
+               'details' => $list_detail
+            );
+
+            die(json_encode($response));
+         }
+      }
+
       private function checkCode($new_code) {
          $list_code = $this->Dimension_model->get_list();
 

@@ -55,14 +55,16 @@
 		<table class="table table-hover dataTable no-footer log-table" id="distribution_table" role="grid" aria-describedby="distribution_table_info" border="1">
 			<thead>
 					<tr role="row">
-						<th class="sorting" tabindex="0" aria-controls="distribution_table" rowspan="1" colspan="1" aria-label="Distributtion dimention: activate to sort column ascending" style="width: 12%;">Chiều phân bổ</th>
-						<th class="sorting" tabindex="0" aria-controls="distribution_table" rowspan="1" colspan="1" aria-label="Value: activate to sort column ascending" style="width: 20%;">Số tiền</th>
-						<th class="sorting" tabindex="0" aria-controls="distribution_table" rowspan="1" colspan="1" aria-label="Content: activate to sort column ascending" style="width: 14%;">Nội dung</th>
+						<th class="sorting" tabindex="0" aria-controls="distribution_table" rowspan="1" colspan="1" aria-label="Dimention: activate to sort column ascending">Chiều</th>
+						<th class="sorting" tabindex="0" aria-controls="distribution_table" rowspan="1" colspan="1" aria-label="Distributtion dimention: activate to sort column ascending">Chi tiết chiều:</th>
+						<th class="sorting" tabindex="0" aria-controls="distribution_table" rowspan="1" colspan="1" aria-label="Value: activate to sort column ascending">Số tiền</th>
+						<th class="sorting" tabindex="0" aria-controls="distribution_table" rowspan="1" colspan="1" aria-label="Content: activate to sort column ascending">Nội dung</th>
 					</tr>
 			</thead>
 			<tbody class="contain-distribution-row">
             <tr role="row">
-					 <td colspan="3"><h5 class="empty-info">(Hãy lựa chọn bút toán)</h5></td>
+					 <td colspan="4"><h5 class="empty-info">(Hãy lựa chọn bút toán)</h5></td>
+					 <td style="display:none;"></td>
 					 <td style="display:none;"></td>
 					 <td style="display:none;"></td>
 				</tr>
@@ -73,9 +75,10 @@
               $('#distribution_table').DataTable({
                       responsive: true,
                       "columns" : [
-                        { "width" : "40%" },
-                        { "width" : "20%" },
-                        { "width" : "40%" }
+                        { "width" : "25%" },
+                        { "width" : "30%" },
+                        { "width" : "15%" },
+                        { "width" : "30%" }
                      ],
                       "order" : [[0, 'asc']]
               });
@@ -83,9 +86,7 @@
       </script>
    </div>
 </div>
-<input type="hidden" id="dimension-list" value="">
-<input type="hidden" id="tot">
-<input type="hidden" id="toa">
+
 <button type="button" class="btn btn-primary" id="distribute-btn" title="Thêm loại chứng từ mới" data-url="<?php echo base_url('Distribution/load_form'); ?>" disabled>
   <i class="fa fa-fw" aria-hidden="true" title="+ Phân bổ mới"></i> Phân bổ
 </button>
@@ -94,6 +95,11 @@
 </button>
 <div class="clearfix"></div>
 
+
+<input type="hidden" id="dimension-list" value="">
+<input type="hidden" id="mng-list" value="">
+<input type="hidden" id="tot">
+<input type="hidden" id="toa">
 <input type="hidden" id="have-a-act-id" data-url="<?php echo base_url('AccountingEntry/get_voucher'); ?>" value="<?php if ($this->input->get()) {
    echo $this->input->get('act_id');
 } ?>">

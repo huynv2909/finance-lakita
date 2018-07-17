@@ -351,15 +351,22 @@ $(document).ready(function(){
 					var table = $('#distribution_table').DataTable();
 					table.row().remove().draw();
 					for (var i = 0; i < result.distributes.length; i++) {
-						table.row.add([result.distributes[i]['dimensional_id'],convertToCurrency(result.distributes[i]['value']) + ' đ',result.distributes[i]['content']]).draw();
+						table.row.add([result.distributes[i]['mng'],result.distributes[i]['dimensional_id'],convertToCurrency(result.distributes[i]['value']) + ' đ',result.distributes[i]['content']]).draw();
 					}
 
 					var val = "";
 					for (var i = 0; i < result.dimensionals.length; i++) {
-						var temp = result.dimensionals[i].id + "~" + result.dimensionals[i].code + "~" +  result.dimensionals[i].name + "|";
+						var temp = result.dimensionals[i].id + "~" + result.dimensionals[i].name + "~" +  result.dimensionals[i].note + "|";
 						val += temp;
 					}
 					$('#dimension-list').val(val);
+
+					var val = "";
+					for (var i = 0; i < result.mngs.length; i++) {
+						var temp = result.mngs[i].id + "~" +  result.mngs[i].name + "|";
+						val += temp;
+					}
+					$('#mng-list').val(val);
 				},
 				complete : function(){
 					$('.load-info').css('display', 'none');
@@ -426,10 +433,50 @@ $(document).ready(function(){
 
 	});
 
+	$(document).on("change", "#dimension", function(){
+		var id = $(this).val();
+		$('#detail-dimen-select').val('0');
+
+		if (id > 0) {
+			var url = $(this).data('url');
+
+			$.ajax({
+				url : url,
+				method: "POST",
+				dataType: "JSON",
+				data: {
+					id : id
+				},
+				success: function(result){
+					var html = '<option value="0" selected>(Lựa chọn)</option>';
+					for (var i = 0; i < result.length; i++) {
+						temp = '<option value="' + result[i].id + '" >' + result[i].name;
+						if ($.trim(result[i].note) != '') {
+							temp += ' : ' + $.trim(result[i].note);
+						}
+						temp += '</option>';
+
+						html += temp;
+					}
+					$('#detail-dimen-select').html(html);
+					$('#detail-dimen-select').prop('disabled', false);
+				}
+			});
+
+		} else {
+			$('#detail-dimen-select').html('');
+			$('#detail-dimen-select').prop('disabled', true);
+		}
+
+
+
+	});
+
 	$('#distribute-update-btn').click(function(){
 		var data = {
 			'entry_id' : $(this).data('id'),
-			'dimen_id' : $('#dimension').val(),
+			'mng' : $('#dimension').val(),
+			'dimen_id' : $('#detail-dimen-select').val(),
 			'TOT' : $('#tot').val(),
 			'TOA' : $('#toa').val(),
 			'value' : $('#value').val(),
@@ -451,7 +498,7 @@ $(document).ready(function(){
 				table.row(form_row).remove().draw();
 				$('#distribute-btn').prop('disabled', false);
 				if (result.success) {
-					$('#distribution_table').DataTable().row.add([dimenIdToName(data.dimen_id),data.value,data.content]).draw();
+					$('#distribution_table').DataTable().row.add([mngIdToName(data.mng),dimenIdToName(data.dimen_id),data.value,data.content]).draw();
 
 					$('.alert').addClass('alert-success');
 				} else {
@@ -471,8 +518,43 @@ $(document).ready(function(){
 
 	});
 
+	// Detail dimension
+	$('#dimension-choose').change(function(){
+		var id = $(this).val();
+		var url = $(this).data('url');
+
+		if (id != 0) {
+			$('#detail-add-btn').prop('disabled', false);
+
+			$.ajax({
+				method: "POST",
+				url: url,
+				dataType: "JSON",
+				data: {
+					id : id
+				},
+				success: function(result) {
+					var table = $('#detail_dimen_table').DataTable();
+					table.row().remove().draw();
+					for (var i = 0; i < result.details.length; i++) {
+						table.row.add([result.details[i]['name'],result.details[i]['note'],result.details[i]['weight'],result.details[i]['parent_name'],result.details[i]['layer'],result.details[i]['sequence'],result.details[i]['exchange'] + result.details[i]['delete']]).draw();
+					}
+				}
+			});
+
+		} else {
+
+			var table = $('#detail_dimen_table').DataTable();
+			table.row().remove().draw();
+
+			$('#detail-add-btn').prop('disabled', true);
+			$('#detail-update-btn').prop('disabled', true);
+		}
+
+	});
+
 	// When change, check valid input
-	$(document).on("change", "#voucher-type, #executor, #TOA, #value, #debit_acc, #credit_acc", checkToEnableOk);
+	$(document).on("change", "#dimension, #detail-dimen-select, #voucher-type, #executor, #TOA, #value, #debit_acc, #credit_acc", checkToEnableOk);
 	$(document).on("keyup", "#value, #debit_acc, #credit_acc", checkToEnableOk);
 
 
@@ -579,15 +661,56 @@ $(document).ready(function(){
 
 	});
 
+	$(document).on("click", ".del-detail-btn", function(){
+		var id = $(this).data('id');
+		var url = $(this).data('url');
+		var current_btn = $(this);
+
+		$.confirm({
+			 icon: 'fa fa-remove',
+			 title: 'Xóa?',
+			 content: 'Hãy chắc chắn rằng mã chưa từng được sử dụng!',
+			 theme: 'material',
+			 type: 'red',
+			 buttons: {
+				  Ok: {
+						text: 'Ok',
+						btnClass: 'btn-green',
+						keys: ['enter'],
+						action: function(){
+							 $.ajax({
+								 url : url,
+								 method : "POST",
+								 dataType : "JSON",
+								 data : {
+									 id : id
+								 },
+								 success : function(result) {
+									 if (result.success) {
+									 	 var table = $('#detail_dimen_table').DataTable();
+						 				 var row = current_btn.parent().parent();
+						 				 table.row(row).remove().draw();
+
+										 // console.log(result.message);
+									 } else {
+										 $.alert(result.message);
+									 }
+								 }
+							 });
+						}
+				  },
+				  cancel: {
+					  text: 'Hủy',
+					  keys: ['esc'],
+					  action: function(){
+					  }
+				  }
+			 }
+		});
+
+	});
+
 	//  CHECK DEBIT vs CREDIT
-});
-
-$('#tot').change(function() {
-
-	if ($('#toa').val() > $('#tot').val()) {
-		$('#toa').val($(this).val());
-	}
-	$('#toa').attr('max', $(this).val());
 });
 
 function dimenIdToName($dimen_id) {
@@ -597,7 +720,25 @@ function dimenIdToName($dimen_id) {
 	for (var i = 0; i < dimen_arr.length; i++) {
 		var attr_arr = dimen_arr[i].split('~');
 		if (attr_arr[0] == $dimen_id) {
-			response = attr_arr[1] + " : " + attr_arr[2];
+			response = attr_arr[1];
+			if ($.trim(attr_arr[2]) != '') {
+				response += " : " + attr_arr[2];
+			}
+			break;
+		}
+	}
+
+	return response;
+}
+
+function mngIdToName($mng_id) {
+	var mng_arr = $('#mng-list').val().split('|');
+	var response = '';
+
+	for (var i = 0; i < mng_arr.length; i++) {
+		var attr_arr = mng_arr[i].split('~');
+		if (attr_arr[0] == $mng_id) {
+			response = attr_arr[1];
 			break;
 		}
 	}
@@ -632,6 +773,13 @@ function checkToEnableOk() {
 	}
 	if ($('#credit_acc').val() == '') {
 		flag = false;
+	}
+	if ($('#dimension').val() == 0) {
+		flag = false;
+	}
+	if ($('#detail-dimen-select').length && ($('#detail-dimen-select').val() == 0 || $('#detail-dimen-select').val() == null)) {
+		flag = false;
+		console.log($('#detail-dimen-select').length);
 	}
 
 	if (flag) {

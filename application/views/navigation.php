@@ -113,28 +113,25 @@
                           <a href="<?php echo base_url('Voucher/create'); ?>">Nhập chứng từ</a>
                        </li>
                        <li>
-                          <a href="<?php echo base_url('VoucherType/index'); ?>">Loại chứng từ</a>
-                       </li>
-                       <li>
                           <a href="<?php echo base_url('AccountingEntry/create'); ?>">Nhập bút toán</a>
                        </li>
                        <li>
                           <a href="<?php echo base_url('Distribution/create'); ?>">Phân bổ bút toán</a>
                        </li>
                        <li>
-                          <a href="<?php echo base_url('Dimension'); ?>">Chiều quản trị</a>
+                          <a href="<?php echo base_url('VoucherType/index'); ?>">Loại chứng từ</a>
                        </li>
                    </ul>
                 </li>
                 <li>
-                    <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
+                    <a href="#"><i class="fa fa-fw" aria-hidden="true" title="Chiều quản trị"></i> Chiều quản trị<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
-                        <li>
-                            <a href="#">Flot Charts</a>
-                        </li>
-                        <li>
-                            <a href="#">Morris.js Charts</a>
-                        </li>
+                         <li>
+                           <a href="<?php echo base_url('Dimension'); ?>">Danh sách</a>
+                         </li>
+                         <li>
+                           <a href="<?php echo base_url('DimensionDetail'); ?>">Chi tiết</a>
+                         </li>
                     </ul>
                     <!-- /.nav-second-level -->
                 </li>

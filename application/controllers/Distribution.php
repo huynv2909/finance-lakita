@@ -59,18 +59,12 @@
       }
 
       public function load_form() {
-         $this->load->model('DetailDimension_model');
-         $input = array(
-            'where' => array(
-               'active' => 1
-            ),
-            'order' => 'code asc'
-         );
-         $listDimen = $this->DetailDimension_model->get_list($input);
+         $this->load->model('Dimension_model');
+         $listDimen = $this->Dimension_model->get_list();
 
          $options = array(
             array(
-               'innerHTML' => '(Lựa chọn chiều quản trị)',
+               'innerHTML' => '(Lựa chọn)',
                'value' => '0'
             )
          );
@@ -89,9 +83,20 @@
                'properties' => array(
                   'class' => 'form-cell',
                   'id' => 'dimension',
+                  'data-url' => base_url('DimensionDetail/list_all'),
                   'style' => 'width:100%; min-height: 28px; background-color: #fff;'
                ),
                'options' => $options
+            ),
+            array(
+               'type' => 'select',
+               'properties' => array(
+                  'class' => 'form-cell',
+                  'id' => 'detail-dimen-select',
+                  'disabled' => 'true',
+                  'style' => 'width:100%; min-height: 28px; background-color: #fff;'
+               ),
+               'options' => ''
             ),
             array(
                'type' => 'input',
