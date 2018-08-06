@@ -9,6 +9,12 @@
 		{
 			parent::__construct();
 
+			// Get notify
+         $message_errors = $this->session->flashdata('message_errors');
+         $message_success = $this->session->flashdata('message_success');
+         $this->data['message_errors'] = $message_errors;
+         $this->data['message_success'] = $message_success;
+
 			$this->check();
 		}
 

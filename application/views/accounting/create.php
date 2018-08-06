@@ -4,7 +4,7 @@
    </div>
    <div class="col-xs-10">
       <select name="voucher-choose" id="voucher-choose" class="choose-box" data-url="<?php echo base_url('Voucher/show_info'); ?>">
-         <option value="0">(Lựa chọn chứng từ)</option>
+         <option value="0" selected class="hidden">(Lựa chọn chứng từ)</option>
          <?php foreach ($vouchers as $voucher): ?>
             <option value="<?php echo $voucher->id; ?>"><?php echo $voucher->TOT . " : " . $voucher->content; ?></option>
          <?php endforeach; ?>

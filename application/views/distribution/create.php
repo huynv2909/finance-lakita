@@ -4,14 +4,16 @@
    </div>
    <div class="col-xs-10">
       <select name="voucher-choose" id="voucher-choose" class="choose-box" data-url="<?php echo base_url('Voucher/show_info'); ?>">
-         <option value="0">(Lựa chọn chứng từ)</option>
+         <option value="0" selected class="hidden">(Lựa chọn chứng từ)</option>
          <?php foreach ($vouchers as $voucher): ?>
             <option value="<?php echo $voucher->id; ?>"><?php echo $voucher->TOT . " : " . $voucher->content; ?></option>
          <?php endforeach; ?>
       </select>
    </div>
 </div>
+
 <h5>Thông tin chứng từ:</h5>
+
 <div class="info-box" id="voucher-box">
    <div class="contain-voucher-info">
       <h2 class="empty-info">(Hãy lựa chọn chứng từ)</h2>
@@ -50,7 +52,11 @@
 <hr>
 
 <h5><strong>Đã phân bổ:</strong></h5>
+
 <div class="row log-box">
+   <div class="alert-warning col-xs-6 notice">
+      <strong>Lưu ý: </strong>Trong cùng một chiều quản trị, tổng số tiền các phân bổ phải bằng mệnh giá bút toán!
+   </div>
 	<div class="col-sm-12">
 		<table class="table table-hover dataTable no-footer log-table" id="distribution_table" role="grid" aria-describedby="distribution_table_info" border="1">
 			<thead>

@@ -40,12 +40,23 @@
 			$this->load->model('User_model');
 			$this->data['employees'] = $this->User_model->get_list();
 
+			// Courses list
+			$this->load->model('DetailDimension_model');
+			$input = array(
+				'where' => array('dimen_id' => 120),
+				'order' => 'name asc'
+			);
+         $courses = $this->DetailDimension_model->get_list($input);
+			$this->data['courses'] = $courses;
+
+			// Get system acc
+			$this->load->model('AccountingSystem');
+         $list_account = $this->AccountingSystem->get_list();
+			$this->data['system_acc'] = $list_account;
+
+			// default debit acc & credit acc , update by ajax later
+
 			$this->data['latest_voucher_id'] = $this->session->flashdata('latest_id');
-			// Get notify
-			$message_errors = $this->session->flashdata('message_errors');
-			$message_success = $this->session->flashdata('message_success');
-			$this->data['message_errors'] = $message_errors;
-			$this->data['message_success'] = $message_success;
 
 			// When submit form
 			if ($this->input->post()) {
@@ -74,11 +85,72 @@
 						);
 
 					$this->load->model('Voucher_model');
-					if ($this->Voucher_model->create($data)) {
-						$this->session->set_flashdata('latest_id', $this->Voucher_model->get_insert_id());
-						$this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
+
+					if (!$this->Voucher_model->create($data)) {
+						$this->session->set_flashdata('message_errors', 'Thao tác thất bại :(');
 						redirect(base_url('voucher/create'));
 					}
+
+					$voucher_id = $this->Voucher_model->get_insert_id();
+					// to pop up go to accounting entry create
+					// $this->session->set_flashdata('latest_id', $voucher_id);
+					$this->data['all_dimen'] = $this->DetailDimension_model->get_list();
+
+					if ($this->input->post('income') == 1) {
+						$total_row_sub = $this->input->post('count_sub');
+						for ($i=1; $i <= $total_row_sub; $i++) {
+							$used = $this->input->post('confirm_' . $i);
+							if ($used == 1) {
+								$data_acc = array(
+									'voucher_id' => $voucher_id,
+									'TOT' => $this->input->post('tot'),
+									'TOA' => $this->input->post('toa'),
+									'value' => str_replace(".","",$this->input->post('value_' . $i)),
+									'debit_acc' => $this->input->post('debit_' . $i),
+									'credit_acc' => $this->input->post('credit_' . $i)
+								);
+
+								$course_dis = $this->input->post('course_' . $i);
+								if (!$this->createAccountingAndDistribution($data_acc, $course_dis, true)) {
+									$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
+									redirect(base_url('voucher/create'));
+								}
+							}
+
+						}
+
+					} else {
+						// Add accouting entri and distribution
+						$dimen_id = NULL;
+						$debit = NULL;
+						$credit = NULL;
+
+						foreach ($this->data['voucher_type'] as $type) {
+							if ($type->id == $data['type_id']) {
+								$dimen_id = $type->first_dimen;
+								$debit = $type->debit_def;
+								$credit = $type->credit_def;
+								break;
+							}
+						}
+
+						$data_acc = array(
+							'voucher_id' => $voucher_id,
+							'TOT' => $this->input->post('tot'),
+							'TOA' => $this->input->post('toa'),
+							'value' => str_replace(".","",$this->input->post('value')),
+							'debit_acc' => $debit,
+							'credit_acc' => $credit
+						);
+
+						if (!$this->createAccountingAndDistribution($data_acc, $dimen_id, false)) {
+							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra! Lưu ý: Tự động phân bổ cần được thiết lập trước trong "Bút toán mặc định"');
+							redirect(base_url('voucher/create'));
+						}
+					}
+
+					$this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
+					redirect(base_url('voucher/create'));
 				}
 				else {
 					$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra khi nhập dữ liệu!');
@@ -162,201 +234,16 @@
 			}
 		}
 
+		public function get_default_sys() {
+			if ($this->input->post()) {
+				$voucher_type = $this->input->post('voucher_type_id');
+				$this->load->model('VoucherType_model');
 
-		// Create new type receipt by ajax
-		// public function create_type_receipt() {
-		// 	if ($this->input->post()) {
-		// 		$this->load->model('ReceiptType_model');
-		// 		$input = array(
-		// 			'select' => array('code')
-		// 		);
-		//
-		// 		$this->data['list_code'] = $this->ReceiptType_model->get_list($input);
-		// 		$this->load->view('receipt/load/create_type_form', $this->data);
-		// 	}
-		// }
+				$type = $this->VoucherType_model->get_info($voucher_type);
 
-		// Delete a type receipt by Ajax
-		// public function delete_type() {
-		// 	if ($this->input->post()) {
-		// 		$id = $this->input->post('id');
-		// 		$this->load->model('ReceiptType_model');
-		//
-		// 		if ($this->ReceiptType_model->delete($id)) {
-		// 			$response = array(
-		// 				'success' => true,
-		// 				'message' => "Đã xóa!"
-		// 			);
-		// 		} else {
-		// 			$response = array(
-		// 				'success' => false,
-		// 				'message' => "Đã có lỗi xảy ra!"
-		// 			);
-		// 		}
-		// 		die(json_encode($response));
-		// 	}
-		// }
-
-		// Update name receipt type
-		// public function update_name() {
-		// 	if ($this->input->post()) {
-		// 		$id = $this->input->post('id');
-		// 		$name = $this->input->post('name');
-		//
-		// 		$data = array(
-		// 			'name' => $name
-		// 			);
-		// 		$this->load->model('ReceiptType_model');
-		//
-		// 		if ($this->ReceiptType_model->update($id, $data)) {
-		// 			echo 'success';
-		// 		} else {
-		// 			echo 'failed';
-		// 		}
-		// 	}
-		// }
-
-		// Update status of receitpt_type by ajax
-		// public function change_status() {
-		// 	if ($this->input->post()) {
-		// 		$list_change = json_decode($this->input->post('list_change'));
-		// 		$this->load->model('ReceiptType_model');
-		//
-		// 		foreach ($list_change as $key => $value) {
-		// 			$input = array(
-		// 				'active' => $value
-		// 			);
-		// 			$this->ReceiptType_model->update($key, $input);
-		// 		}
-		// 	}
-		// }
-
-		// when updated status of receipt type, we reload list receipt type by ajax
-		// public function load_new_status() {
-		// 	if ($this->input->post()) {
-		// 		$input = array(
-		// 			'order' => array('active', 'desc')
-		// 		);
-		// 		$this->load->model('ReceiptType_model');
-		// 		$this->data['receipt_types'] = $this->ReceiptType_model->get_list($input);
-		//
-		// 		$this->load->view('receipt/load/receipt_list', $this->data);
-		//
-		// 	}
-		// }
-
-		// Update list accounting entry type of receipt type
-		// public function update_list_act() {
-		// 	if ($this->input->post()) {
-		// 		$id_type = $this->input->post('id');
-		// 		$new_list = $this->input->post('list');
-		//
-		// 		$this->load->model('ReceiptType_model');
-		// 		$data = array(
-		// 			'act_type_list_id' => $new_list
-		// 		);
-		// 		if ($this->ReceiptType_model->update($id_type, $data)) {
-		// 			echo 'success';
-		// 		}
-		// 		else {
-		// 			echo 'failed';
-		// 		}
-		// 	}
-		// }
-
-		// Load accounting entry types when click receipt.
-		// public function load_act_type() {
-		// 	if ($this->input->post()) {
-		// 		$id = $this->input->post('id');
-		//
-		// 		$this->load->model('ReceiptType_model');
-		// 		$input = array(
-		// 			'select' => array('act_type_list_id'),
-		// 			'where' => array('id' => $id)
-		// 		);
-		//
-		// 		if ($response = $this->ReceiptType_model->get_list($input)) {
-		// 			$list = $response[0]->act_type_list_id;
-		// 			echo '<input type="hidden" name="list-act-ori" id="list-act-ori" value="' . $list . '">';
-		// 			echo '<input type="hidden" name="list-new" id="list-new" value="' . $list . '">';
-		// 			$id_list = explode(',', $list);
-		// 			foreach ($id_list as $item) {
-		// 				$this->load_a_act_type_and_show($item);
-		// 			}
-		// 		}
-		// 	}
-		// }
-
-		// Load act type info to edit receipt type
-		// public function load_act_type_info() {
-		// 	if ($this->input->post()) {
-		// 		$id = $this->input->post('id');
-		// 		$this->load_a_act_type_and_show($id);
-		// 	}
-		// }
-
-		// Load accounting entry form
-		// public function load_form()
-		// {
-		// 	if ($this->input->post()) {
-		// 		$id = $this->input->post('id');
-		//
-		// 		$this->load->model('ReceiptType_model');
-		// 		$input = array(
-		// 			'select' => array('act_type_list_id'),
-		// 			'where' => array('id' => $id)
-		// 		);
-		// 		if ($response = $this->ReceiptType_model->get_list($input)) {
-		// 			$list = $response[0]->act_type_list_id;
-		// 			$files = explode(',', $list);
-		// 			$data['count'] = count($files);
-		// 			if (trim($list, " ") == '') {
-		// 				$data['count'] = 0;
-		// 			}
-		// 			$this->load->view('receipt/act_form/info-and-custom', $data);
-		//
-		// 			if ($data['count'] > 0) {
-		// 				$this->load->model('ActEntryType_model');
-		// 				$sequence = 1;
-		// 				foreach ($files as $item ) {
-		// 					$input = array(
-		// 						'where' => array('id' => $item),
-		// 						'active' => 1
-		// 					);
-		//
-		// 					$data['info_tr'] = $this->ActEntryType_model->get_list($input)[0];
-		// 					$data['sequence'] = $sequence;
-		// 					$sequence++;
-		// 					$this->load->view('receipt/act_form/main', $data);
-		// 				}
-		// 			}
-		// 			$this->load->view('receipt/act_form/submit');
-		// 		}
-		// 		else {
-		// 			echo "Errors: Empty information!";
-		// 		}
-		//
-		// 	}
-		// }
-
-		// public function add_act_entry()
-		// {
-		// 	if ($this->input->post()) {
-		// 		$count = $this->input->post('count');
-		// 		$tot = $this->input->post('tot');
-		// 		$toa = $this->input->post('toa');
-		// 		$data['sequence'] = $count + 1;
-		// 		$data['tot'] = $tot;
-		// 		$data['toa'] = $toa;
-		// 		$this->load->view('receipt/act_form/main', $data);
-		// 	}
-		// }
-
-		// private function load_a_act_type_and_show($id) {
-		// 	$this->load->model('ActEntryType_model');
-		// 	$data['act_type'] = $this->ActEntryType_model->get_info($id);
-		// 	$this->load->view('receipt/load/act_list', $data);
-		// }
+				die(json_encode($type));
+			}
+		}
 
 		private function checkInput() {
 			$value_str = $this->input->post('value');
@@ -365,6 +252,27 @@
 			if (!is_numeric($value_total)) {
 				return false;
 			}
+
+			if ($this->input->post('income') == 1) {
+				$total_sub = $this->input->post('count_sub');
+				$total = 0;
+				for ($i=1; $i <= $total_sub; $i++) {
+					$used = $this->input->post('confirm_' . $i);
+					if ($used == 1) {
+						$value_temp = $this->input->post('value_' . $i);
+						$value_temp = str_replace(".","",$value_temp);
+						if (!is_numeric($value_temp)) {
+							return false;
+						}
+						$total += $value_temp;
+						$this->form_validation->set_rules('course_' . $i,'Course', 'required|greater_than[0]');
+					}
+				}
+				if ($total != $value_total) {
+					return false;
+				}
+			}
+
 			$this->form_validation->set_rules('voucher_type', 'Voucher type', 'required|greater_than[0]');
 			$this->form_validation->set_rules('tot', 'TOT', 'required');
 			$this->form_validation->set_rules('executor', 'Executor', 'required|greater_than[0]');
@@ -410,6 +318,71 @@
 				return false;
 			}
 		}
+
+		private function createAccountingAndDistribution($info_acc, $detail_dimen_id, $is_revenue = false) {
+			$parent_id = NULL;
+			foreach ($this->data['all_dimen'] as $dimen) {
+				if ($dimen->id == $detail_dimen_id) {
+					$info_acc['content'] = $dimen->name;
+					$parent_id = $dimen->parent_id;
+					break;
+				}
+			}
+
+			//  But toan.
+			$this->load->model('AccountingEntry_model');
+			if (!$this->AccountingEntry_model->create($info_acc)) {
+				return false;
+			}
+
+			$acc_id = $this->AccountingEntry_model->get_insert_id();
+			$this->load->model('DetailDimension_model');
+			$this->load->model('Distribution_model');
+
+			// Doanh thu: id = 210
+			if ($is_revenue) {
+				$data_rev = array(
+					'entry_id' => $acc_id,
+					'dimensional_id' => 210,
+					'TOT' => $info_acc['TOT'],
+					'TOA' => $info_acc['TOA'],
+					'value' => $info_acc['value'],
+					'content' => 'Doanh thu'
+				);
+
+				if (!$this->Distribution_model->create($data_rev)) {
+					return false;
+				}
+			}
+
+			// Cac chieu` san pham
+			$dimen_id = $detail_dimen_id;
+			$content_dis = $info_acc['content'];
+
+			do {
+				$data_dis = array(
+					'entry_id' => $acc_id,
+					'dimensional_id' => $dimen_id,
+					'TOT' => $info_acc['TOT'],
+					'TOA' => $info_acc['TOA'],
+					'value' => $info_acc['value'],
+					'content' => $content_dis
+				);
+				if (!$this->Distribution_model->create($data_dis)) {
+					return false;
+				}
+				$dimen_id = $parent_id;
+				if ($dimen_id != NULL) {
+					$new_dimen = $this->DetailDimension_model->get_info($dimen_id);
+					$content_dis = $new_dimen->name;
+					$parent_id = $new_dimen->parent_id;
+				}
+
+			} while ($dimen_id != NULL);
+
+			return true;
+		}
+
 
 	}
  ?>

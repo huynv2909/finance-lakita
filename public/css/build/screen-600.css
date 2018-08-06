@@ -2,4 +2,9 @@
    #page-wrapper {
       margin-top: 0;
    }
+
+   .notice {
+      padding: 2px;
+      top: -42px;
+   }
 }

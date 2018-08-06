@@ -105,7 +105,6 @@ $(document).ready(function(){
 	});
 
 	$('#dimension_name, #layer, #sequence').keyup(function(){
-		console.log($('#dimension_code').data('ok'));
 		if ($('#dimension_code').data('ok') == '1' && $.trim($('#dimension_name').val()) != '' && parseInt($('#layer').val()) > 0 && $.trim($('#sequence').val()) != '') {
 			$('#dimension-done').prop('disabled', false);
 		} else {
@@ -159,11 +158,31 @@ $(document).ready(function(){
 	});
 
 	$('#voucher-type').change(function(){
+		var type_id = $(this).val();
+		var url = $(this).data('url');
 		var code = $('#voucher-type :selected').text().substring(0,2);
 		if (code == 'PT') {
 			$('#income').val('1');
+			$('#contain-detail').slideDown();
+			$('#count_sub').data('used', 1);
+
+			$.ajax({
+				url : url,
+				method : "POST",
+				dataType : "JSON",
+				data : {
+					voucher_type_id : type_id
+				},
+				success : function(result){
+					$('#debit_1').val(result.debit_def).change();
+					$('#credit_1').val(result.credit_def).change();
+				}
+			});
+
 		} else {
 			$('#income').val('0');
+			$('#contain-detail').slideUp();
+			$('#count_sub').data('used', 0);
 		}
 	});
 
@@ -385,7 +404,6 @@ $(document).ready(function(){
 
 	// When distribute by get url
 	if ($('#have-a-act-id').length && $.isNumeric($('#have-a-act-id').val())) {
-		console.log('here');
 		var id = $('#have-a-act-id').val();
 		var url = $('#have-a-act-id').data('url');
 
@@ -413,6 +431,11 @@ $(document).ready(function(){
 	}
 
 	$('#distribute-btn').click(function(){
+		$('.notice').fadeIn();
+
+		setTimeout(function(){
+			$('.notice').fadeOut();
+		},5000)
 
 		$(this).prop('disabled', true);
 		var url = $(this).data('url');
@@ -497,8 +520,9 @@ $(document).ready(function(){
 				var form_row = $('.form-cell').parent().parent();
 				table.row(form_row).remove().draw();
 				$('#distribute-btn').prop('disabled', false);
+				$('#distribute-update-btn').prop('disabled', true);
 				if (result.success) {
-					$('#distribution_table').DataTable().row.add([mngIdToName(data.mng),dimenIdToName(data.dimen_id),data.value,data.content]).draw();
+					$('#distribution_table').DataTable().row.add([mngIdToName(data.mng),dimenIdToName(data.dimen_id),data.value.toString() + " đ",data.content]).draw();
 
 					$('.alert').addClass('alert-success');
 				} else {
@@ -554,9 +578,81 @@ $(document).ready(function(){
 	});
 
 	// When change, check valid input
-	$(document).on("change", "#dimension, #detail-dimen-select, #voucher-type, #executor, #TOA, #value, #debit_acc, #credit_acc", checkToEnableOk);
+	$(document).on("change", "#dimension, #detail-dimen-select, #voucher-type, #executor, #TOA, #value, #debit_acc, #credit_acc, .sub_course, .sub_value", checkToEnableOk);
 	$(document).on("keyup", "#value, #debit_acc, #credit_acc", checkToEnableOk);
 
+	$('#value').change(function(){
+		if ($('#count_sub').val() == 1) {
+			if ($.trim($('#value_1').val()) == '') {
+				$('#value_1').val(convertToCurrency($(this).val().split('.').join('')));
+			}
+		}
+	});
+
+	$(document).on("change", ".sub_value, .sub_course", function(){
+		var index_of_last = $('.sub-row:visible').length;
+		var count = parseInt($('#count_sub').val());
+
+		var list_sub_tag = $('.sub_value:visible');
+		var is_number = true;
+		for (var i = 0; i < list_sub_tag.length; i++) {
+			if (!$.isNumeric($(list_sub_tag[i]).val().split('.').join(''))) {
+				is_number = false;
+				break;
+			}
+		}
+
+		// console.log(index_of_last == count,is_number);
+		if (index_of_last <= count && is_number) {
+			var value = parseInt($('#value').val().split('.').join(''));
+			var total_sub = 0;
+			var list_sub_tag = $('.sub_value:visible');
+			for (var i = 0; i < list_sub_tag.length; i++) {
+				var temp = parseInt($(list_sub_tag[i]).val().split('.').join(''));
+				total_sub += temp;
+			}
+
+			if (total_sub < value) {
+				var new_tag = $('.last-sub-row').clone();
+				$(new_tag).find('input:text').val(convertToCurrency((value - total_sub).toString()));
+				$(new_tag).insertAfter($('.last-sub-row'));
+				var tag_number = count + 1;
+				$('#count_sub').val(tag_number);
+				$($('.last-sub-row')[0]).removeClass('last-sub-row');
+				// Edit properties for new row
+				var new_row = $('.last-sub-row')[0];
+				// Change ID
+				$(new_row).prop('id', "sub-row-" + tag_number.toString());
+				$(new_row).data('number',count + 1);
+				// edit course
+				var course_select = $($($(new_row).children('td')[0]).children('.sub_course'))[0];
+				$(course_select).prop('name', 'course_' + tag_number.toString());
+				$(course_select).prop('id', 'course_' + tag_number.toString());
+				// edit value
+				var value_input = $($($(new_row).children('td')[1]).children('.sub_value'))[0];
+				$(value_input).prop('name', 'value_' + tag_number.toString());
+				$(value_input).prop('id', 'value_' + tag_number.toString());
+				// edit debit
+				var debit_select = $($($(new_row).children('td')[2]).children('.sub_debit'))[0];
+				$(debit_select).prop('name', 'debit_' + tag_number.toString());
+				$(debit_select).prop('id', 'debit_' + tag_number.toString());
+				$(debit_select).val($('.sub_debit').val());
+				// edit course
+				var credit_select = $($($(new_row).children('td')[3]).children('.sub_credit'))[0];
+				$(credit_select).prop('name', 'credit_' + tag_number.toString());
+				$(credit_select).prop('id', 'credit_' + tag_number.toString());
+				$(credit_select).val($('.sub_credit').val());
+				// Edit confirm
+				var confirm_input = $($($(new_row).children('td')[4]).children('input'))[0];
+				$(confirm_input).prop('name', 'confirm_' + tag_number.toString());
+				$(confirm_input).prop('id', 'confirm_' + tag_number.toString());
+				// Edit delete
+				var delete_i = $($($(new_row).children('td')[4]).children('i'))[0];
+				$(delete_i).data('number', tag_number);
+			}
+		}
+
+	});
 
 	// Active a type
 	$(document).on("click", ".exchange-btn", function(){
@@ -710,8 +806,71 @@ $(document).ready(function(){
 
 	});
 
-	//  CHECK DEBIT vs CREDIT
+	$(document).on("click", ".delete_sub", function(){
+		if ($('.sub-row:visible').length > 1) {
+			var number = $(this).data('number');
+
+			$('#sub-row-' + number.toString()).fadeOut(100);
+			$('#value_' + number.toString()).attr('data-alive', 0);
+			$('#confirm_' + number.toString()).val(0);
+
+			if ($('#sub-row-' + number.toString()).hasClass("last-sub-row")) {
+
+				$('#sub-row-' + number.toString()).removeClass("last-sub-row");
+				setTimeout(function(){
+					$('.sub-row:visible:last').addClass("last-sub-row");
+				},200);
+			}
+
+			checkToEnableOk();
+		}
+
+	});
+
+	// Check enable save change default info out voucher type
+	$('#list_changed').change(function(){
+		if ($(this).val() == '') {
+			$('#save_changed').prop('disabled', true);
+		} else {
+			$('#save_changed').prop('disabled', false);
+		}
+	});
+
+
+	$('.first_dimen, .debit_def, .credit_def').change(function(){
+		var type_id = $(this).data('id');
+		if ($(this).val() != $(this).data('old')) {
+			if ($('#changed_' + type_id.toString()).val() == '0') {
+				$('#changed_' + type_id.toString()).val('1');
+				updateChanged(type_id);
+			}
+		} else {
+			if ($('#changed_' + type_id.toString()).val() == '1') {
+				$('#changed_' + type_id.toString()).val('0');
+				updateChanged(type_id);
+			}
+		}
+	});
+
+
+
+
 });
+
+function updateChanged(type_id) {
+	var list = $('#list_changed').val().split(',');
+	list = list.filter(Number);
+	if (list.includes(type_id.toString())) {
+		var index = list.indexOf(type_id);
+		list.splice(index, 1);
+	} else {
+		list.push(type_id);
+	}
+
+	var value_new = list.join(',');
+	$('#list_changed').val(value_new);
+	$('#list_changed').trigger("change");
+}
 
 function dimenIdToName($dimen_id) {
 	var dimen_arr = $('#dimension-list').val().split('|');
@@ -779,7 +938,31 @@ function checkToEnableOk() {
 	}
 	if ($('#detail-dimen-select').length && ($('#detail-dimen-select').val() == 0 || $('#detail-dimen-select').val() == null)) {
 		flag = false;
-		console.log($('#detail-dimen-select').length);
+	}
+
+	if ($('#count_sub').length && $('#count_sub').data('used')) {
+		var n = $('#count_sub').val();
+		var total = 0;
+		for (var i = 1; i <= n; i++) {
+			if ($('#confirm_' + i.toString()).val() == 1) {
+				if ($('#course_' + i.toString()).val() == 0) {
+					flag = false;
+					break;
+				}
+
+				var value_temp = $('#value_' + i.toString()).val();
+				if ($.trim(value_temp) == '' || !$.isNumeric(value_temp.split('.').join(''))) {
+					flag = false;
+					break;
+				} else {
+					total += parseInt(value_temp.split('.').join(''));
+				}
+			}
+		}
+
+		if (parseInt(str_value) != total) {
+			flag = false;
+		}
 	}
 
 	if (flag) {

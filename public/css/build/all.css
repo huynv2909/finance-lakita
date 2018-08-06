@@ -192,3 +192,57 @@ form#type-form {
    width: 60%;
 
 }
+
+.notice {
+   position: absolute;
+   padding: 5px;
+   font-size: 12px;
+   right: 0px;
+   top: -65px;
+   border: 1px solid transparent;
+   border-radius: 4px;
+   display: none;
+}
+
+#acc-fill-table {
+   width: 100%;
+   background-color: #fff;
+}
+
+#acc-fill-table input,#acc-fill-table select {
+   width: 90%;
+   background-color: #fff;
+   border: none;
+   border-bottom: 1px dotted black;
+   margin: 5px;
+   height: 25px;
+}
+
+#acc-fill-table thead {
+   border-bottom: 1px solid #aee4ea;
+}
+
+.delete_sub {
+   color: grey;
+}
+
+#contain-detail {
+   display: none;
+}
+
+.delete_sub:hover {
+   cursor: pointer;
+   color: red;
+}
+
+#default-type-table {
+   background-color: #fff;
+   table-layout: fixed;
+}
+
+#default-type-table select, #default-type-table input {
+   background-color: #fff;
+   border: none;
+   width: 100%;
+   min-height: 30px;
+}
