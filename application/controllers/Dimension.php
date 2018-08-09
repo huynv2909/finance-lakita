@@ -17,12 +17,6 @@
          $this->data['active'] = "Dimension";
          $this->data['template'] = "dimension/index";
 
-         // Get notify
-			$message_errors = $this->session->flashdata('message_errors');
-			$message_success = $this->session->flashdata('message_success');
-			$this->data['message_errors'] = $message_errors;
-			$this->data['message_success'] = $message_success;
-
          $this->data['dimensions'] = $this->Dimension_model->get_list();
 
          $this->load->view('layout', $this->data);
@@ -45,7 +39,7 @@
                   'sequence' => $this->input->post('sequence'),
                   'layer' => $this->input->post('layer')
                );
-
+               
                if ($this->Dimension_model->create($data)) {
                   $this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
 						redirect(base_url('Dimension'));

@@ -121,6 +121,9 @@
                        <li>
                           <a href="<?php echo base_url('VoucherType/index'); ?>">Loại chứng từ</a>
                        </li>
+                       <li>
+                          <a href="<?php echo base_url('VoucherType/set_default'); ?>">Bút toán mặc định</a>
+                       </li>
                    </ul>
                 </li>
                 <li>
@@ -135,8 +138,9 @@
                     </ul>
                     <!-- /.nav-second-level -->
                 </li>
+
                 <li>
-                    <a href="#"><i class="fa fa-table fa-fw"></i> Tables</a>
+                    <a href="<?php echo base_url('GetResponsesPBI/showReport'); ?>"><i class="fa fa-bar-chart-o fa-fw"></i> Báo cáo</a>
                 </li>
                 <li>
                     <a href="#"><i class="fa fa-edit fa-fw"></i> Forms</a>

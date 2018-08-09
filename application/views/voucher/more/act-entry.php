@@ -25,8 +25,8 @@
                <td><?php echo number_format($item->value, 0, ",", "."); ?></td>
             </tr>
             <tr>
-               <td class="text-right"><strong>Ghi chú:</strong></td>
-               <td><?php if (!empty($item->note)) echo $item->note; else echo '(trống)' ?></td>
+               <td class="text-right"><strong>Nội dung:</strong></td>
+               <td><?php if (!empty($item->content)) echo $item->content; else echo '(trống)' ?></td>
             </tr>
          </tbody>
       </table>

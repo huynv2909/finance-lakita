@@ -4,8 +4,8 @@
 			<div class="form-group">
 				 <label for="voucher-type" class="col-xs-3 control-label text-right"><span class="text-danger">(*)</span> Loại chứng từ</label>
 				 <div class="col-xs-9">
-						<select class="form-control" id="voucher-type" name="voucher_type">
-							<option value="0">(Chọn loại chứng từ)</option>
+					<select class="form-control" id="voucher-type" name="voucher_type" data-url="<?php echo base_url('Voucher/get_default_sys'); ?>">
+							<option value="0" selected class="hidden">(Chọn loại chứng từ)</option>
 							<?php foreach ($voucher_type as $item): ?>
 							<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('voucher_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")"; ?></option>
 							<?php endforeach ?>
@@ -25,6 +25,56 @@
 				 <div class="col-xs-9">
 						<input onkeyup="oneDot(this)" type="text" name="value" class="form-control" id="value" value="<?php echo set_value('value'); ?>">
 						<div class="text-danger" id="text-danger-value"><?php echo form_error('value'); ?></div>
+				 </div>
+			</div>
+			<div class="form-group" id="contain-detail">
+				 <div class="col-xs-8 col-xs-offset-4">
+					<table id="acc-fill-table">
+						<thead>
+							<tr>
+								<th style="width: 45%; text-align: center;">Khóa học:</th>
+								<th style="width: 20%; text-align: center;">Số tiền:</th>
+								<th style="width: 15%; text-align: center;">TK nợ:</th>
+								<th style="width: 15%; text-align: center;">TK Có:</th>
+								<th style="width: 5%; text-align: center;"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="last-sub-row sub-row" id="sub-row-1" data-number="1">
+								<td>
+									<select class="sub_course" name="course_1" id="course_1">
+										<option value="0" selected class="hidden">(Lựa chọn khóa học)</option>
+										<?php foreach ($courses as $course): ?>
+											<option value="<?php echo $course->id; ?>"><?php echo $course->name . " : " . $course->note; ?></option>
+										<?php endforeach; ?>
+									</select>
+								</td>
+								<td>
+									<input class="sub_value" type="text" onkeyup="oneDot(this)"  name="value_1" id="value_1" value="" data-alive="1">
+								</td>
+								<td>
+									<select class="sub_debit" name="debit_1" id="debit_1">
+										<option value="0" class="hidden">(Lựa chọn)</option>
+										<?php foreach ($system_acc as $acc): ?>
+											<option value="<?php echo $acc->number; ?>"><?php echo $acc->number . " : " . $acc->description; ?></option>
+										<?php endforeach; ?>
+									</select>
+								</td>
+								<td>
+									<select class="sub_credit" name="credit_1" id="credit_1">
+										<option value="0" class="hidden">(Lựa chọn)</option>
+										<?php foreach ($system_acc as $acc): ?>
+											<option value="<?php echo $acc->number; ?>" ><?php echo $acc->number . " : " . $acc->description; ?></option>
+										<?php endforeach; ?>
+									</select>
+								</td>
+								<td class="text-center">
+									<input type="hidden" name="confirm_1" id="confirm_1" value="1">
+									<i class="fa fa-fw delete_sub" data-number="1" aria-hidden="true" title="Loại bỏ"></i>
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				 </div>
 			</div>
 			<div class="form-group">
@@ -80,6 +130,7 @@
 	</div>
 	<div class="form-group">
 		 <div class="col-sm-6 col-sm-offset-3">
+			 <input type="hidden" name="count_sub" id="count_sub" value="1" data-used="0">
 			<input class="form-control btn btn-success" type="submit" id="voucher-done" value="Xác nhận" disabled>
 		 </div>
 	</div>

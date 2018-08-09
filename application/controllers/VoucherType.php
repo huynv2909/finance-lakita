@@ -15,12 +15,6 @@
 			$this->data['template'] = "voucher_type/index";
 			$this->data['active'] = 'voucher';
 
-         // Get notify
-         $message_errors = $this->session->flashdata('message_errors');
-         $message_success = $this->session->flashdata('message_success');
-         $this->data['message_errors'] = $message_errors;
-         $this->data['message_success'] = $message_success;
-
          $input = array(
             'order' => 'active desc, id desc'
          );
@@ -107,6 +101,93 @@
          }
       }
 
+      public function set_default() {
+         $this->data['title'] = "Thông tin mặc định cho các phiếu chi";
+         $this->data['active'] = 'voucher_type';
+         $this->data['template'] = 'voucher_type/set_default';
+
+         $input = array(
+            'where' => array('income' => 0)
+         );
+         $this->data['types'] = $this->VoucherType_model->get_list($input);
+
+         $input = array(
+            'where_in' => array(
+               'dimen_code',
+               array('HD1','HD2','HD3')
+            )
+         );
+         $this->load->model('DetailDimension_model');
+
+         // Build tree
+         $dimen = $this->DetailDimension_model->get_list($input);
+         $tree_dimen = array();
+         // HD1
+         foreach ($dimen as $item) {
+            if ($item->dimen_code == 'HD1') {
+               array_push($tree_dimen, array('id' => $item->id, 'text' => $item->name));
+            }
+         }
+         // HD2
+         foreach ($dimen as $item) {
+            if ($item->dimen_code == 'HD2') {
+               foreach ($dimen as $parent) {
+                  if ($item->parent_id == $parent->id) {
+                     $str = '[' . $item->name . ']->[' . $parent->name . ']';
+                     $temp = array('id' => $item->id, 'text' => $str);
+                     array_push($tree_dimen, $temp);
+                     break;
+                  }
+               }
+            }
+         }
+         // HD3
+         foreach ($dimen as $item) {
+            if ($item->dimen_code == 'HD3') {
+               foreach ($tree_dimen as $tree) {
+                  if ($item->parent_id == $tree['id']) {
+                     $str = '[' . $item->name . ']->[' . $tree['text'] . ']';
+                     $temp = array('id' => $item->id, 'text' => $str);
+                     array_push($tree_dimen, $temp);
+                     break;
+                  }
+               }
+            }
+         }
+
+         $tree_dimen = array_reverse($tree_dimen);
+
+         $this->data['trees'] = $tree_dimen;
+
+         // Get system acc
+			$this->load->model('AccountingSystem');
+         $list_account = $this->AccountingSystem->get_list();
+			$this->data['system_acc'] = $list_account;
+
+         if ($this->input->post()) {
+            $list_changed = $this->input->post('list_changed');
+            $array_changed = explode(',', $list_changed);
+            // var_dump($array_changed);
+            // die;
+            foreach ($array_changed as $type_id) {
+               $data_update = array(
+                  'debit_def' => $this->input->post('debit_def_' . $type_id),
+                  'credit_def' => $this->input->post('credit_def_' . $type_id),
+                  'first_dimen' => $this->input->post('first_dimen_' . $type_id)
+               );
+
+               if (!$this->VoucherType_model->update($type_id, $data_update)) {
+                  $this->session->set_flashdata('message_errors', 'Thao tác thất bại!');
+   					redirect(base_url('VoucherType/set_default'));
+               }
+            }
+
+            $this->session->set_flashdata('message_success', 'Cập nhật thành công!');
+            redirect(base_url('VoucherType/set_default'));
+         }
+
+         $this->load->view('layout', $this->data);
+      }
    }
 
  ?>
