@@ -14,6 +14,7 @@
          $this->data['title'] = "Loại chứng từ";
 			$this->data['template'] = "voucher_type/index";
 			$this->data['active'] = 'voucher';
+         $this->data['js_files'] = array('voucher-type_create');
 
          $input = array(
             'order' => 'active desc, id desc'
@@ -105,6 +106,7 @@
          $this->data['title'] = "Thông tin mặc định cho các phiếu chi";
          $this->data['active'] = 'voucher_type';
          $this->data['template'] = 'voucher_type/set_default';
+         $this->data['js_files'] = array('voucher-type_set-default');
 
          $input = array(
             'where' => array('income' => 0)

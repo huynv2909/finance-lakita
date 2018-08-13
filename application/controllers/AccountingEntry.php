@@ -18,6 +18,7 @@
          $this->data['title'] = "Nhập bút toán";
 			$this->data['template'] = 'accounting/create';
 			$this->data['active'] = 'receipt';
+         $this->data['js_files'] = array('accounting-entry_create');
 
          if ($this->input->get('voucher_id')) {
 				$this->data['set_voucher'] = $this->input->get('voucher_id');
@@ -58,11 +59,7 @@
             die(json_encode($response));
          }
 
-         $this->load->model('Voucher_model');
-         $input = array(
-            'order' => 'date desc'
-         );
-         $this->data['vouchers'] = $this->Voucher_model->get_list($input);
+         $this->data['vouchers'] = $this->getUncompletedVoucher();
 
          $this->load->view('layout', $this->data);
       }
@@ -136,14 +133,23 @@
       }
 
       public function load_form() {
+         $voucher_id = $this->input->get('voucher_id');
+         $this->load->model('Voucher_model');
+         $type_id = $this->Voucher_model->get_info($voucher_id)->type_id;
+         $this->load->model('VoucherType_model');
+         $type_info = $this->VoucherType_model->get_info($type_id);
+         $debit_def = $type_info->debit_def;
+         $credit_def = $type_info->credit_def;
+
          $this->load->model('AccountingSystem');
 
          $list_account = $this->AccountingSystem->get_list();
 
-         $options = array(
+         $options_deb = array(
             array(
                'innerHTML' => '(Lựa chọn tài khoản)',
-               'value' => 0
+               'value' => 0,
+               'class' => 'hidden'
             )
          );
 
@@ -152,7 +158,31 @@
                'innerHTML' => $item->number . " : " . $item->description,
                'value' => $item->number
             );
-            array_push($options, $temp);
+            if ($item->number == $debit_def) {
+               $temp['selected'] = "true";
+            }
+
+            array_push($options_deb, $temp);
+         }
+
+         $options_cre = array(
+            array(
+               'innerHTML' => '(Lựa chọn tài khoản)',
+               'value' => 0,
+               'class' => 'hidden'
+            )
+         );
+
+         foreach ($list_account as $item) {
+            $temp = array(
+               'innerHTML' => $item->number . " : " . $item->description,
+               'value' => $item->number
+            );
+            if ($item->number == $credit_def) {
+               $temp['selected'] = "true";
+            }
+
+            array_push($options_cre, $temp);
          }
 
          $form = array(
@@ -190,7 +220,7 @@
                   'id' => 'debit_acc',
                   'style' => 'width:100%; height: 26px;'
                ),
-               'options' => $options
+               'options' => $options_deb
             ),
             array(
                'type' => 'select',
@@ -198,7 +228,7 @@
                   'id' => 'credit_acc',
                   'style' => 'width:100%; height: 26px;'
                ),
-               'options' => $options
+               'options' => $options_cre
             )
          );
 
@@ -229,6 +259,41 @@
             die(json_encode($response));
          }
       }
+
+      // return list voucher uncomplete: no accounting entry OR Total accounting entry value not equal voucher value
+      private function getUncompletedVoucher() {
+         $this->load->model('Voucher_model');
+         $input = array(
+            'order' => 'date desc'
+         );
+
+         $all_vouchers = $this->Voucher_model->get_list($input);
+
+         $return_list = array();
+         foreach ($all_vouchers as $voucher) {
+            $input = array(
+               'where' => array(
+                  'voucher_id' => $voucher->id
+               )
+            );
+            $list_act = $this->AccountingEntry_model->get_list($input);
+
+            if (count($list_act) > 0) {
+               $total_act = 0;
+               foreach ($list_act as $act) {
+                  $total_act += $act->value;
+               }
+               if ($total_act < $voucher->value) {
+                  array_push($return_list, $voucher);
+               }
+            } else {
+               array_push($return_list, $voucher);
+            }
+         }
+
+         return $return_list;
+      }
+
    }
 
  ?>

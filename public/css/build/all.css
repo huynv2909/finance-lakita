@@ -164,16 +164,16 @@ form#type-form {
    color: #fff;
 }
 
-.exchange-btn:hover, .slide-add-voucher:hover {
+.exchange-btn:hover, .slide-form:hover {
    cursor: pointer;
 }
 
-.slide-add-voucher {
+.slide-form {
    color: grey;
    margin-right: 15px;
 }
 
-.slide-add-voucher:hover {
+.slide-form:hover {
    color: black;
 }
 
@@ -204,12 +204,12 @@ form#type-form {
    display: none;
 }
 
-#acc-fill-table {
+.acc-fill-table {
    width: 100%;
    background-color: #fff;
 }
 
-#acc-fill-table input,#acc-fill-table select {
+.acc-fill-table input,.acc-fill-table select {
    width: 90%;
    background-color: #fff;
    border: none;
@@ -218,19 +218,19 @@ form#type-form {
    height: 25px;
 }
 
-#acc-fill-table thead {
+.acc-fill-table thead {
    border-bottom: 1px solid #aee4ea;
 }
 
-.delete_sub {
+.delete_sub, .delete_out_sub {
    color: grey;
 }
 
-#contain-detail {
+.contain-detail {
    display: none;
 }
 
-.delete_sub:hover {
+.delete_sub:hover, .delete_out_sub:hover {
    cursor: pointer;
    color: red;
 }

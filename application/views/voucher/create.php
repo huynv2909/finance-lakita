@@ -27,15 +27,16 @@
 						<div class="text-danger" id="text-danger-value"><?php echo form_error('value'); ?></div>
 				 </div>
 			</div>
-			<div class="form-group" id="contain-detail">
+			<div class="form-group contain-detail" id="contain-detail-income">
 				 <div class="col-xs-8 col-xs-offset-4">
-					<table id="acc-fill-table">
+					<table class="acc-fill-table">
 						<thead>
 							<tr>
-								<th style="width: 45%; text-align: center;">Khóa học:</th>
+								<th style="width: 35%; text-align: center;">Khóa học:</th>
 								<th style="width: 20%; text-align: center;">Số tiền:</th>
-								<th style="width: 15%; text-align: center;">TK nợ:</th>
-								<th style="width: 15%; text-align: center;">TK Có:</th>
+								<th style="width: 20%; text-align: center;">TOA:</th>
+								<th style="width: 10%; text-align: center;">TK nợ:</th>
+								<th style="width: 10%; text-align: center;">TK Có:</th>
 								<th style="width: 5%; text-align: center;"></th>
 							</tr>
 						</thead>
@@ -51,6 +52,9 @@
 								</td>
 								<td>
 									<input class="sub_value" type="text" onkeyup="oneDot(this)"  name="value_1" id="value_1" value="" data-alive="1">
+								</td>
+								<td>
+									<input class="sub_toa" type="date" name="toa_1" id="toa_1" value="<?php echo date('Y-m-d'); ?>" data-alive="1">
 								</td>
 								<td>
 									<select class="sub_debit" name="debit_1" id="debit_1">
@@ -71,6 +75,60 @@
 								<td class="text-center">
 									<input type="hidden" name="confirm_1" id="confirm_1" value="1">
 									<i class="fa fa-fw delete_sub" data-number="1" aria-hidden="true" title="Loại bỏ"></i>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				 </div>
+			</div>
+			<div class="form-group contain-detail" id="contain-detail-out">
+				 <div class="col-xs-8 col-xs-offset-4">
+					<table class="acc-fill-table">
+						<thead>
+							<tr>
+								<th style="width: 35%; text-align: center;">Thuộc chiều:</th>
+								<th style="width: 20%; text-align: center;">Số tiền:</th>
+								<th style="width: 20%; text-align: center;">TOA:</th>
+								<th style="width: 10%; text-align: center;">TK nợ:</th>
+								<th style="width: 10%; text-align: center;">TK Có:</th>
+								<th style="width: 5%; text-align: center;"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="last-sub-out-row sub-out-row" id="sub-out-row-1">
+								<td>
+									<select class="sub_out_dimen" name="dimen_out_1" id="dimen_out_1">
+										<option value="0" selected class="hidden">(Lựa chọn)</option>
+										<?php foreach ($dimens as $dimen): ?>
+											<option value="<?php echo $dimen->id; ?>"><?php echo $dimen->name; ?></option>
+										<?php endforeach; ?>
+									</select>
+								</td>
+								<td>
+									<input class="sub_out_value" type="text" onkeyup="oneDot(this)"  name="value_out_1" id="value_out_1" value="" data-alive="1">
+								</td>
+								<td>
+									<input class="sub_out_toa" type="date" name="toa_out_1" id="toa_out_1" value="<?php echo date('Y-m-d'); ?>" data-alive="1">
+								</td>
+								<td>
+									<select class="sub_out_debit" name="debit_out_1" id="debit_out_1">
+										<option value="0" class="hidden">(Lựa chọn)</option>
+										<?php foreach ($system_acc as $acc): ?>
+											<option value="<?php echo $acc->number; ?>"><?php echo $acc->number . " : " . $acc->description; ?></option>
+										<?php endforeach; ?>
+									</select>
+								</td>
+								<td>
+									<select class="sub_out_credit" name="credit_out_1" id="credit_out_1">
+										<option value="0" class="hidden">(Lựa chọn)</option>
+										<?php foreach ($system_acc as $acc): ?>
+											<option value="<?php echo $acc->number; ?>" ><?php echo $acc->number . " : " . $acc->description; ?></option>
+										<?php endforeach; ?>
+									</select>
+								</td>
+								<td class="text-center">
+									<input type="hidden" name="confirm_out_1" id="confirm_out_1" value="1">
+									<i class="fa fa-fw delete_out_sub" data-number="1" aria-hidden="true" title="Loại bỏ"></i>
 								</td>
 							</tr>
 						</tbody>
@@ -131,6 +189,7 @@
 	<div class="form-group">
 		 <div class="col-sm-6 col-sm-offset-3">
 			 <input type="hidden" name="count_sub" id="count_sub" value="1" data-used="0">
+			 <input type="hidden" name="count_sub_out" id="count_sub_out" value="1" data-used="0">
 			<input class="form-control btn btn-success" type="submit" id="voucher-done" value="Xác nhận" disabled>
 		 </div>
 	</div>
@@ -139,7 +198,7 @@
 <div class="row">
 	<h5 class="pull-left"><strong>Chứng từ đã nhập:</strong></h5>
 	<!-- <i class="fa fa-fw fa-2x pull-right hidden" aria-hidden="true" title="Copy to use chevron-down"></i> -->
-	<i class="fa fa-fw fa-2x pull-right slide-add-voucher" data-hidden="0" aria-hidden="true" title="Hide"></i>
+	<i class="fa fa-fw fa-2x pull-right slide-form" data-hidden="0" aria-hidden="true" title="Hide"></i>
 	<div class="clearfix"></div>
 </div>
 

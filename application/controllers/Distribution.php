@@ -14,6 +14,7 @@
          $this->data['title'] = "Phân bổ bút toán";
 			$this->data['template'] = 'distribution/create';
 			$this->data['active'] = 'voucher';
+         $this->data['js_files'] = array('distribution_create');
 
          if ($this->input->post()) {
             $data = array(
@@ -65,7 +66,8 @@
          $options = array(
             array(
                'innerHTML' => '(Lựa chọn)',
-               'value' => '0'
+               'value' => '0',
+               'class' => 'hidden'
             )
          );
 

@@ -15,6 +15,7 @@
          $this->data['title'] = "Chi tiết chiều quản trị";
          $this->data['active'] = "DimensionDetail";
          $this->data['template'] = "dimension_detail/index";
+         $this->data['js_files'] = array('dimension-detail_create');
 
          $this->load->model('Dimension_model');
 

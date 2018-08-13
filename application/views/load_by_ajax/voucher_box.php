@@ -15,7 +15,11 @@
          </tr>
          <tr>
             <td>Ngày thực hiện (TOA):</td>
-            <td><?php echo $info->TOA; ?></td>
+            <td><?php if ($info->TOA == '0000-00-00') {
+               echo '(Trống)';
+            } else {
+               echo $info->TOA;
+            } ?></td>
          </tr>
          <tr>
             <td>Người lập:</td>

@@ -74,7 +74,7 @@
 <div class="row">
 	<h5 class="pull-left"><strong>Các chiều quản trị:</strong></h5>
 	<!-- <i class="fa fa-fw fa-2x pull-right hidden" aria-hidden="true" title="Copy to use chevron-down"></i> -->
-	<i class="fa fa-fw fa-2x pull-right slide-add-voucher" data-hidden="0" aria-hidden="true" title="Hide"></i>
+	<i class="fa fa-fw fa-2x pull-right slide-form" data-hidden="0" aria-hidden="true" title="Hide"></i>
 	<div class="clearfix"></div>
 </div>
 

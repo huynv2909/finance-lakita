@@ -3,7 +3,7 @@
       <label for="dimension-choose" class="col-xs-3 col-lg-2 control-label text-right">Chi tiết chiều:</label>
       <div class="col-xs-9 col-lg-8">
          <select class="form-control" id="dimension-choose" data-url="<?php echo base_url('Dimension/get_detail'); ?>">
-              <option value="0">(Chọn chiều)</option>
+              <option value="0" class="hidden">(Chọn chiều)</option>
               <?php foreach ($dimensions as $item): ?>
                 <option value="<?php echo $item->id; ?>" <?php if ($item->id == set_value('parent_id')) echo 'selected'; ?> ><?php echo $item->code . " : " . $item->name; ?></option>
               <?php endforeach ?>

@@ -16,6 +16,7 @@
          $this->data['title'] = "Chiều quản trị";
          $this->data['active'] = "Dimension";
          $this->data['template'] = "dimension/index";
+         $this->data['js_files'] = array('dimension_create');
 
          $this->data['dimensions'] = $this->Dimension_model->get_list();
 
@@ -39,7 +40,7 @@
                   'sequence' => $this->input->post('sequence'),
                   'layer' => $this->input->post('layer')
                );
-               
+
                if ($this->Dimension_model->create($data)) {
                   $this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
 						redirect(base_url('Dimension'));

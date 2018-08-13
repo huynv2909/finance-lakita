@@ -30,7 +30,11 @@
             </tr>
             <tr>
                <td class="text-right"><strong>TOA:</strong></td>
-               <td><?php echo $voucher->TOA; ?></td>
+               <td><?php if ($voucher->TOA == '0000-00-00') {
+                  echo '(Trống)';
+               } else {
+                  echo $voucher->TOA;
+               }  ?></td>
             </tr>
          </tbody>
       </table>

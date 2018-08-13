@@ -87,3 +87,4 @@
    }
  ?>">
 <input type="hidden" id="set-voucher" value="<?php if (isset($set_voucher) && $set_voucher) echo $set_voucher; ?>">
+<input type="hidden" id="total_act" value="0">
