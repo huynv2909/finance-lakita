@@ -61,6 +61,7 @@ $(document).ready(function(){
 					$('#count_sub').data('used', 0);
 					$('#count_sub_out').data('used', 1);
 				}
+            updateRemainingAmount();
 			}
 		});
 
@@ -133,6 +134,7 @@ $(document).ready(function(){
 				$(delete_i).data('number', tag_number);
 			}
 		}
+      updateRemainingAmount();
 
 	});
 	// duplicate for not income ; OUT
@@ -205,7 +207,7 @@ $(document).ready(function(){
 					$(delete_i).data('number', tag_number);
 				}
 			}
-
+         updateRemainingAmount();
 		}, 120);
 
 	});
@@ -236,15 +238,18 @@ $(document).ready(function(){
 	$('#value').change(function(){
 		if ($('#count_sub').val() == 1) {
 			if ($.trim($('#value_1').val()) == '') {
-				$('#value_1').val(convertToCurrency($(this).val().split('.').join('')));
+				$('#value_1').val($(this).val());
 			}
 		}
 
 		if ($('#count_sub_out').val() == 1) {
 			if ($.trim($('#value_out_1').val()) == '') {
-				$('#value_out_1').val(convertToCurrency($(this).val().split('.').join('')));
+				$('#value_out_1').val($(this).val());
 			}
 		}
+
+      updateRemainingAmount();
+
 	});
 
    $(document).on("click", ".delete_sub", function(){
@@ -252,8 +257,9 @@ $(document).ready(function(){
 			var number = $(this).data('number');
 
 			$('#sub-row-' + number.toString()).fadeOut(100);
-			$('#value_' + number.toString()).attr('data-alive', 0);
+			$('#value_' + number.toString()).data('alive', 0);
 			$('#confirm_' + number.toString()).val(0);
+         $('#remaining-amount').html(convertToCurrency( (parseInt($('#remaining-amount').html().split('.').join('')) + parseInt($('#value_' + number.toString()).val().split('.').join(''))).toString() ));
 
 			if ($('#sub-row-' + number.toString()).hasClass("last-sub-row")) {
 
@@ -273,8 +279,9 @@ $(document).ready(function(){
 			var number = $(this).data('number');
 
 			$('#sub-out-row-' + number.toString()).fadeOut(100);
-			$('#value_out_' + number.toString()).attr('data-alive', 0);
+			$('#value_out_' + number.toString()).data('alive', 0);
 			$('#confirm_out_' + number.toString()).val(0);
+         $('#remaining-amount').html(convertToCurrency( (parseInt($('#remaining-amount').html().split('.').join('')) + parseInt($('#value_out_' + number.toString()).val().split('.').join(''))).toString() ));
 
 			if ($('#sub-out-row-' + number.toString()).hasClass("last-sub-out-row")) {
 
@@ -370,4 +377,29 @@ function checkToEnableOk() {
 	else {
 		$('#voucher-done').prop('disabled', true);
 	}
+}
+
+function updateRemainingAmount() {
+   setTimeout(function(){
+      var total_sub = 0;
+      if ($('#count_sub').data('used') == 1) {
+         var list_sub = $('.sub_value');
+         for (var i = 0; i < list_sub.length; i++) {
+            if ($(list_sub[i]).data('alive') == 1) {
+               total_sub += parseInt($(list_sub[i]).val().split('.').join(''));
+            }
+         }
+      }
+
+      if ($('#count_sub_out').data('used') == 1) {
+         var list_sub = $('.sub_out_value');
+         for (var i = 0; i < list_sub.length; i++) {
+            if ($(list_sub[i]).data('alive') == 1) {
+               total_sub += parseInt($(list_sub[i]).val().split('.').join(''));
+            }
+         }
+      }
+
+      $('#remaining-amount').html(convertToCurrency( (parseInt($('#value').val().split('.').join('')) - total_sub).toString() ));
+   },300);
 }

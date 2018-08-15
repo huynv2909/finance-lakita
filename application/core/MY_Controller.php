@@ -15,6 +15,27 @@
          $this->data['message_errors'] = $message_errors;
          $this->data['message_success'] = $message_success;
 
+			$configs = $this->input->cookie('configs_json');
+			$this->data['check'] = 'no cookie';
+			// Get config
+			if ($configs == NULL) {
+				$this->data['check'] = 'cookie';
+				$this->load->model('Config_model');
+				$config_db = $this->Config_model->get_list();
+				$config_arr = array();
+				foreach ($config_db as $row) {
+					$config_arr[$row->name] = $row->value;
+				}
+				$configs = json_encode($config_arr);
+				$cookie= array(
+	           'name'   => 'configs_json',
+	           'value'  => $configs,
+	           'expire' => '604800'	 // a week
+	       	);
+				$this->input->set_cookie($cookie);
+			}
+			$this->data['configs'] = $configs;
+
 			$this->check();
 		}
 

@@ -235,14 +235,19 @@ form#type-form {
    color: red;
 }
 
-#default-type-table {
+.default-type-table {
    background-color: #fff;
    table-layout: fixed;
 }
 
-#default-type-table select, #default-type-table input {
+.default-type-table select, .default-type-table input {
    background-color: #fff;
    border: none;
    width: 100%;
    min-height: 30px;
+}
+
+#remaining-amount {
+   color: dodgerblue;
+   margin: 5px 0px;
 }

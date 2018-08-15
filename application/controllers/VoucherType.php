@@ -112,6 +112,10 @@
             'where' => array('income' => 0)
          );
          $this->data['types'] = $this->VoucherType_model->get_list($input);
+         $input = array(
+            'where' => array('income' => 1)
+         );
+         $this->data['in_types'] = $this->VoucherType_model->get_list($input);
 
          $input = array(
             'where_in' => array(

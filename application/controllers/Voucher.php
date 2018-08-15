@@ -22,8 +22,19 @@
 			$this->data['js_files'] = array('voucher_create');
 
 			$voucher_list = $this->Voucher_model->get_list();
+			$count_uncompleted = 0;
 			foreach ($voucher_list as $voucher) {
-				$voucher->{"completed"} = $this->checkIssetAccoutingEntry($voucher->id, $voucher->value);
+				$done = $this->checkCompletedAccountingEntry($voucher->id, $voucher->value);
+				$voucher->{"completed"} = $done;
+				if (!$done) {
+					$count_uncompleted++;
+				}
+			}
+			$this->data['amount_uncompleted'] = $count_uncompleted;
+
+			$this->data['get_uncompleted'] = 1;
+			if ($this->input->get('uncompleted')) {
+				$this->data['get_uncompleted'] = 0;
 			}
 
 			$this->data['vouchers'] = $voucher_list;
@@ -89,7 +100,7 @@
 						'TOA' => $this->input->post('toa'),
 						'executor' => $this->input->post('executor'),
 						'value' => str_replace(".","",$this->input->post('value')),
-						'owner' => 1,
+						'owner' => $this->data['user']->id,
 						'note' => $this->input->post('note'),
 						'income' => $this->input->post('income')
 						);
@@ -102,54 +113,56 @@
 					$voucher_id = $this->Voucher_model->get_insert_id();
 					// to pop up go to accounting entry create
 					// $this->session->set_flashdata('latest_id', $voucher_id);
-					$this->data['all_dimen'] = $this->DetailDimension_model->get_list();
+					if ($this->input->post('auto_distribution') != 0) {
+						$this->data['all_dimen'] = $this->DetailDimension_model->get_list();
 
-					if ($this->input->post('income') == 1) {
-						$total_row_sub = $this->input->post('count_sub');
-						for ($i=1; $i <= $total_row_sub; $i++) {
-							$used = $this->input->post('confirm_' . $i);
-							if ($used == 1) {
-								$data_acc = array(
-									'voucher_id' => $voucher_id,
-									'TOT' => $this->input->post('tot'),
-									'TOA' => $this->input->post('toa_' . $i),
-									'value' => str_replace(".","",$this->input->post('value_' . $i)),
-									'debit_acc' => $this->input->post('debit_' . $i),
-									'credit_acc' => $this->input->post('credit_' . $i)
-								);
+						if ($this->input->post('income') == 1) {
+							$total_row_sub = $this->input->post('count_sub');
+							for ($i=1; $i <= $total_row_sub; $i++) {
+								$used = $this->input->post('confirm_' . $i);
+								if ($used == 1) {
+									$data_acc = array(
+										'voucher_id' => $voucher_id,
+										'TOT' => $this->input->post('tot'),
+										'TOA' => $this->input->post('toa_' . $i),
+										'value' => str_replace(".","",$this->input->post('value_' . $i)),
+										'debit_acc' => $this->input->post('debit_' . $i),
+										'credit_acc' => $this->input->post('credit_' . $i)
+									);
 
-								$course_dis = $this->input->post('course_' . $i);
-								if (!$this->createAccountingAndDistribution($data_acc, $course_dis, true)) {
-									$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
-									redirect(base_url('voucher/create'));
+									$course_dis = $this->input->post('course_' . $i);
+									if (!$this->createAccountingAndDistribution($data_acc, $course_dis, true)) {
+										$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
+										redirect(base_url('voucher/create'));
+									}
 								}
+
+							}
+
+						} else {
+							$total_row_sub = $this->input->post('count_sub_out');
+							for ($i=1; $i <= $total_row_sub; $i++) {
+								$used = $this->input->post('confirm_out_' . $i);
+								if ($used == 1) {
+									$data_acc = array(
+										'voucher_id' => $voucher_id,
+										'TOT' => $this->input->post('tot'),
+										'TOA' => $this->input->post('toa_out_' . $i),
+										'value' => str_replace(".","",$this->input->post('value_out_' . $i)),
+										'debit_acc' => $this->input->post('debit_out_' . $i),
+										'credit_acc' => $this->input->post('credit_out_' . $i)
+									);
+
+									$dimen_selected = $this->input->post('dimen_out_' . $i);
+									if (!$this->createAccountingAndDistribution($data_acc, $dimen_selected, false)) {
+										$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
+										redirect(base_url('voucher/create'));
+									}
+								}
+
 							}
 
 						}
-
-					} else {
-						$total_row_sub = $this->input->post('count_sub_out');
-						for ($i=1; $i <= $total_row_sub; $i++) {
-							$used = $this->input->post('confirm_out_' . $i);
-							if ($used == 1) {
-								$data_acc = array(
-									'voucher_id' => $voucher_id,
-									'TOT' => $this->input->post('tot'),
-									'TOA' => $this->input->post('toa_out_' . $i),
-									'value' => str_replace(".","",$this->input->post('value_out_' . $i)),
-									'debit_acc' => $this->input->post('debit_out_' . $i),
-									'credit_acc' => $this->input->post('credit_out_' . $i)
-								);
-
-								$dimen_selected = $this->input->post('dimen_out_' . $i);
-								if (!$this->createAccountingAndDistribution($data_acc, $dimen_selected, false)) {
-									$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
-									redirect(base_url('voucher/create'));
-								}
-							}
-
-						}
-
 					}
 
 					$this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
@@ -248,6 +261,138 @@
 			}
 		}
 
+		public function distribution_one_time() {
+			$voucher_list = $this->Voucher_model->get_list();
+			$this->load->model('VoucherType_model');
+			$this->load->model('AccountingEntry_model');
+			$this->load->model('Distribution_model');
+			$this->load->model('DetailDimension_model');
+
+			$this->data['all_dimen'] = $this->DetailDimension_model->get_list();
+
+			foreach ($voucher_list as $voucher) {
+				$input = array(
+					'where' => array(
+						'voucher_id' => $voucher->id
+					)
+				);
+
+				$type = $this->VoucherType_model->get_info($voucher->type_id);
+
+				if (count($acc_list = $this->AccountingEntry_model->get_list($input)) > 0) {
+					$total_acc = 0;
+					foreach ($acc_list as $acc) {
+						$total_acc += $acc->value;
+					}
+
+					if ($total_acc < $voucher->value) {
+						$add_value = $voucher->value - $total_acc;
+
+
+						if ($type->income == 1) {
+							// Add 1 accouting entry;
+							$data = array(
+								'voucher_id' => $voucher->id,
+								'TOT' => $voucher->TOT,
+								'TOA' => $voucher->TOT,
+								'value' => $add_value,
+								'debit_acc' => $type->debit_def,
+								'credit_acc' => $type->credit_def,
+								'content' => 'Tự động khớp bút toán'
+							);
+							if (!$this->AccountingEntry_model->create($data)) {
+								$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 1!');
+								redirect(base_url('voucher/create'));
+							}
+							$acc_id = $this->AccountingEntry_model->get_insert_id();
+
+							$data = array(
+								'entry_id' => $acc_id,
+								'dimensional_id' => 210, // Doanh thu
+								'TOT' => $voucher->TOT,
+								'TOA' => $voucher->TOT,
+								'value' => $add_value,
+								'content' => 'Doanh thu (Tự động phân bổ)'
+							);
+
+							if (!$this->Distribution_model->create($data)) {
+								$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 2!');
+								redirect(base_url('voucher/create'));
+							}
+						} else {
+							// Not income voucher
+							$data_acc = array(
+								'voucher_id' => $voucher->id,
+								'TOT' => $voucher->TOT,
+								'TOA' => $voucher->TOT,
+								'value' => $add_value,
+								'debit_acc' => $type->debit_def,
+								'credit_acc' => $type->credit_def
+							);
+
+							if (!$this->createAccountingAndDistribution($data_acc, $type->first_dimen, false)) {
+								$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 3!');
+								redirect(base_url('voucher/create'));
+							}
+						}
+					}
+				} else {
+					// new
+					if ($type->income == 1) {
+						// Add 1 accouting entry;
+						$data = array(
+							'voucher_id' => $voucher->id,
+							'TOT' => $voucher->TOT,
+							'TOA' => $voucher->TOT,
+							'value' => $voucher->value,
+							'debit_acc' => $type->debit_def,
+							'credit_acc' => $type->credit_def,
+							'content' => 'Tự động khớp bút toán'
+						);
+
+						if (!$this->AccountingEntry_model->create($data)) {
+							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 4!');
+							redirect(base_url('voucher/create'));
+						}
+						$acc_id = $this->AccountingEntry_model->get_insert_id();
+
+						$data = array(
+							'entry_id' => $acc_id,
+							'dimensional_id' => 210, // Doanh thu
+							'TOT' => $voucher->TOT,
+							'TOA' => $voucher->TOT,
+							'value' => $voucher->value,
+							'content' => 'Doanh thu (Tự động phân bổ)'
+						);
+
+						if (!$this->Distribution_model->create($data)) {
+							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 5!');
+							redirect(base_url('voucher/create'));
+						}
+					} else {
+						// Not income voucher
+						$data_acc = array(
+							'voucher_id' => $voucher->id,
+							'TOT' => $voucher->TOT,
+							'TOA' => $voucher->TOT,
+							'value' => $voucher->value,
+							'debit_acc' => $type->debit_def,
+							'credit_acc' => $type->credit_def
+						);
+
+						if (!$this->createAccountingAndDistribution($data_acc, $type->first_dimen, false)) {
+							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 6!');
+							redirect(base_url('voucher/create'));
+						}
+					}
+				}
+			}
+
+
+			$this->session->set_flashdata('message_success', 'Thao tác thành công!');
+			redirect(base_url('voucher/create'));
+		}
+
 		private function checkInput() {
 			$value_str = $this->input->post('value');
 			$value_total = str_replace(".","",$value_str);
@@ -289,8 +434,7 @@
 			return $receipt_code . $string;
 		}
 
-
-		private function checkIssetAccoutingEntry($id_voucher, $value_voucher) {
+		private function checkCompletedAccountingEntry($id_voucher, $value_voucher) {
 			$input = array(
 				'where' => array(
 					'voucher_id' => $id_voucher

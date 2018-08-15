@@ -22,9 +22,12 @@
 			</div>
 			<div class="form-group">
 				 <label for="value" class="col-xs-3 control-label text-right"><span class="text-danger">(*)</span> Số tiền</label>
-				 <div class="col-xs-9">
+				 <div class="col-xs-6">
 						<input onkeyup="oneDot(this)" type="text" name="value" class="form-control" id="value" value="<?php echo set_value('value'); ?>">
 						<div class="text-danger" id="text-danger-value"><?php echo form_error('value'); ?></div>
+				 </div>
+				 <div class="col-xs-3">
+				 		<p id="remaining-amount"></p>
 				 </div>
 			</div>
 			<div class="form-group contain-detail" id="contain-detail-income">
@@ -190,13 +193,25 @@
 		 <div class="col-sm-6 col-sm-offset-3">
 			 <input type="hidden" name="count_sub" id="count_sub" value="1" data-used="0">
 			 <input type="hidden" name="count_sub_out" id="count_sub_out" value="1" data-used="0">
+			 <input type="hidden" name="auto_distribution" value="<?php
+			 	$confs = json_decode($configs);
+				echo $confs->AUTO_DISTRIBUTION;
+			 ?>">
 			<input class="form-control btn btn-success" type="submit" id="voucher-done" value="Xác nhận" disabled>
 		 </div>
 	</div>
 </form>
 
 <div class="row">
-	<h5 class="pull-left"><strong>Chứng từ đã nhập:</strong></h5>
+	<h5 class="pull-left">
+		<strong>Chứng từ đã nhập:</strong>
+		<?php if ($amount_uncompleted > 0): ?>
+			(Còn <a href="<?php echo base_url('Voucher/create?uncompleted=1'); ?>"><?php echo $amount_uncompleted; ?> chứng từ</a> chưa hoàn thành)
+			<?php if (!$get_uncompleted): ?>
+				<a href="<?php echo base_url('Voucher/distribution_one_time'); ?>">Tự động hoàn thành<i class="fa fa-fw" aria-hidden="true" title="Tự động hoàn thành"></i></a>
+			<?php endif; ?>
+		<?php endif; ?>
+	</h5>
 	<!-- <i class="fa fa-fw fa-2x pull-right hidden" aria-hidden="true" title="Copy to use chevron-down"></i> -->
 	<i class="fa fa-fw fa-2x pull-right slide-form" data-hidden="0" aria-hidden="true" title="Hide"></i>
 	<div class="clearfix"></div>
@@ -217,6 +232,7 @@
 			</thead>
 			<tbody>
 				<?php foreach ($vouchers as $item): ?>
+					<?php if ($get_uncompleted || !$item->completed): ?>
 					<tr role="row" data-url="<?php echo base_url('Voucher/view_more'); ?>" data-id="<?php echo $item->id; ?>" class="voucher-row <?php if ($item->income == 1) echo 'success'; ?>">
 						 <td><?php echo $item->date; ?></td>
 						 <td>
@@ -250,6 +266,7 @@
 						 </td>
 						 <td><?php echo $item->TOT; ?></td>
 					</tr>
+					<?php endif; ?>
 				<?php endforeach; ?>
 			  </tbody>
 		</table>
