@@ -2,7 +2,7 @@
    <form class="form-horizontal">
       <label for="dimension-choose" class="col-xs-3 col-lg-2 control-label text-right">Chi tiết chiều:</label>
       <div class="col-xs-9 col-lg-8">
-         <select class="form-control" id="dimension-choose" data-url="<?php echo base_url('Dimension/get_detail'); ?>">
+         <select class="form-control" id="dimension-choose" data-url="<?php echo $this->routes['dimension_getdetail']; ?>">
               <option value="0" class="hidden">(Chọn chiều)</option>
               <?php foreach ($dimensions as $item): ?>
                 <option value="<?php echo $item->id; ?>" <?php if ($item->id == set_value('parent_id')) echo 'selected'; ?> ><?php echo $item->code . " : " . $item->name; ?></option>
@@ -62,9 +62,9 @@
 		</script>
 	</div>
 </div>
-<button type="button" class="btn btn-primary" id="detail-add-btn" title="Chi tiết mới" data-url="<?php echo base_url('DimensionDetail/load_form'); ?>" disabled>
+<button type="button" class="btn btn-primary" id="detail-add-btn" title="Chi tiết mới" data-url="" disabled>
   <i class="fa fa-fw" aria-hidden="true" title="Thêm chi tiết mới"></i> Thêm mới
 </button>
-<button type="button" class="btn btn-success pull-right" id="detail-update-btn" title="Lưu lại các thay đổi" data-url="<?php echo base_url('DimensionDetail/create'); ?>" disabled>
+<button type="button" class="btn btn-success pull-right" id="detail-update-btn" title="Lưu lại các thay đổi" data-url="" disabled>
   <i class="fa fa-check" title="Lưu thay đổi"></i> Cập nhật
 </button>

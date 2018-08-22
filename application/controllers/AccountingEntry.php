@@ -64,7 +64,7 @@
          $this->load->view('layout', $this->data);
       }
 
-      public function show_info() {
+      public function showInfo() {
          if ($this->input->post()) {
             $id = $this->input->post('id');
             $this->data['info'] = $this->AccountingEntry_model->get_info($id);
@@ -132,7 +132,7 @@
 
       }
 
-      public function load_form() {
+      public function loadForm() {
          $voucher_id = $this->input->get('voucher_id');
          $this->load->model('Voucher_model');
          $type_id = $this->Voucher_model->get_info($voucher_id)->type_id;
@@ -243,7 +243,7 @@
       }
 
       // Require by ajax, return result and voucher id to client site
-      public function get_voucher() {
+      public function getVoucher() {
          if ($this->input->post()) {
             $id = $this->input->post('id');
 

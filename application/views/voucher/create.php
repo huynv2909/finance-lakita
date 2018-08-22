@@ -1,10 +1,10 @@
-<form class="form-horizontal" method="post" id="voucher-form" action="<?php echo base_url('Voucher/create'); ?>">
+<form class="form-horizontal" method="post" id="voucher-form" action="<?php echo $this->routes['voucher_create']; ?>">
 	<div class="row">
 		<div class="col-md-8">
 			<div class="form-group">
 				 <label for="voucher-type" class="col-xs-3 control-label text-right"><span class="text-danger">(*)</span> Loại chứng từ</label>
 				 <div class="col-xs-9">
-					<select class="form-control" id="voucher-type" name="voucher_type" data-url="<?php echo base_url('Voucher/get_default_sys'); ?>">
+					<select class="form-control" id="voucher-type" name="voucher_type" data-url="<?php echo $this->routes['voucher_getdefaultsys']; ?>">
 							<option value="0" selected class="hidden">(Chọn loại chứng từ)</option>
 							<?php foreach ($voucher_type as $item): ?>
 							<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('voucher_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")"; ?></option>
@@ -187,6 +187,19 @@
 					<div class="text-danger"><?php echo form_error('toa'); ?></div>
 				 </div>
 			</div>
+			<div class="form-group">
+				<div class="col-xs-8 col-sm-6 col-md-8 col-lg-7 col-xs-offset-4 col-sm-offset-6 col-md-offset-4 col-lg-offset-5">
+					<p class="pull-right remind">Tự động hoàn thành bút toán:
+						<?php $confs = json_decode($configs); ?>
+						<?php if ($confs->AUTO_DISTRIBUTION == 1): ?>
+							<span style="color:green;">Bật</span>
+						<?php else: ?>
+							<span style="color:red;">Tắt</span>
+						<?php endif; ?>
+
+					</p>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="form-group">
@@ -206,9 +219,9 @@
 	<h5 class="pull-left">
 		<strong>Chứng từ đã nhập:</strong>
 		<?php if ($amount_uncompleted > 0): ?>
-			(Còn <a href="<?php echo base_url('Voucher/create?uncompleted=1'); ?>"><?php echo $amount_uncompleted; ?> chứng từ</a> chưa hoàn thành)
+			(Còn <a href="<?php echo $this->routes['voucher_create'] . '?uncompleted=1'; ?>"><?php echo $amount_uncompleted; ?> chứng từ</a> chưa hoàn thành)
 			<?php if (!$get_uncompleted): ?>
-				<a href="<?php echo base_url('Voucher/distribution_one_time'); ?>">Tự động hoàn thành<i class="fa fa-fw" aria-hidden="true" title="Tự động hoàn thành"></i></a>
+				<a href="<?php echo $this->routes['voucher_distributiononetime']; ?>">Tự động hoàn thành<i class="fa fa-fw" aria-hidden="true" title="Tự động hoàn thành"></i></a>
 			<?php endif; ?>
 		<?php endif; ?>
 	</h5>
@@ -233,7 +246,7 @@
 			<tbody>
 				<?php foreach ($vouchers as $item): ?>
 					<?php if ($get_uncompleted || !$item->completed): ?>
-					<tr role="row" data-url="<?php echo base_url('Voucher/view_more'); ?>" data-id="<?php echo $item->id; ?>" class="voucher-row <?php if ($item->income == 1) echo 'success'; ?>">
+					<tr role="row" data-url="<?php echo $this->routes['voucher_viewmore']; ?>" data-id="<?php echo $item->id; ?>" class="voucher-row <?php if ($item->income == 1) echo 'success'; ?>">
 						 <td><?php echo $item->date; ?></td>
 						 <td>
 							 <?php
@@ -250,7 +263,7 @@
 						 		echo number_format($item->value, 0, ",", ".") . " đ";
 							?>
 							<?php if (!$item->completed): ?>
-								<a href="<?php echo base_url('AccountingEntry/create?voucher_id=') . $item->id; ?>" title="Đến nhập bút toán"><i class="fa fa-fw warning" aria-hidden="true" title="Đến nhập bút toán"></i></a>
+								<a href="<?php echo $this->routes['accountingentry_create'] . '?voucher_id=' . $item->id; ?>" title="Đến nhập bút toán"><i class="fa fa-fw warning" aria-hidden="true" title="Đến nhập bút toán"></i></a>
 							<?php endif; ?>
 						 </td>
 						 <td><?php echo $item->content; ?></td>
@@ -280,7 +293,7 @@
 </div>
 
 <!-- have new voucher added -->
-<input type="hidden" id="have-a-new-voucher-add" data-url="<?php echo base_url('AccountingEntry/create?voucher_id=') . $latest_voucher_id; ?>" value="<?php if (isset($latest_voucher_id) && $latest_voucher_id) echo $latest_voucher_id; ?>">
+<input type="hidden" id="have-a-new-voucher-add" data-url="<?php echo $this->routes['accountingentry_create'] . '?voucher_id=' . $latest_voucher_id; ?>" value="<?php if (isset($latest_voucher_id) && $latest_voucher_id) echo $latest_voucher_id; ?>">
 
 <div class="modal fade" id="view-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg" role="document">

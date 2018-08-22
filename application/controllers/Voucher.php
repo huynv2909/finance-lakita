@@ -100,14 +100,14 @@
 						'TOA' => $this->input->post('toa'),
 						'executor' => $this->input->post('executor'),
 						'value' => str_replace(".","",$this->input->post('value')),
-						'owner' => $this->data['user']->id,
+						'owner' => $this->user->id,
 						'note' => $this->input->post('note'),
 						'income' => $this->input->post('income')
 						);
 
 					if (!$this->Voucher_model->create($data)) {
 						$this->session->set_flashdata('message_errors', 'Thao tác thất bại :(');
-						redirect(base_url('voucher/create'));
+						redirect($this->routes['voucher_create']);
 					}
 
 					$voucher_id = $this->Voucher_model->get_insert_id();
@@ -133,7 +133,7 @@
 									$course_dis = $this->input->post('course_' . $i);
 									if (!$this->createAccountingAndDistribution($data_acc, $course_dis, true)) {
 										$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
-										redirect(base_url('voucher/create'));
+										redirect($this->routes['voucher_create']);
 									}
 								}
 
@@ -156,7 +156,7 @@
 									$dimen_selected = $this->input->post('dimen_out_' . $i);
 									if (!$this->createAccountingAndDistribution($data_acc, $dimen_selected, false)) {
 										$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
-										redirect(base_url('voucher/create'));
+										redirect($this->routes['voucher_create']);
 									}
 								}
 
@@ -166,18 +166,18 @@
 					}
 
 					$this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
-					redirect(base_url('voucher/create'));
+					redirect($this->routes['voucher_create']);
 				}
 				else {
 					$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra khi nhập dữ liệu!');
-					redirect(base_url('voucher/create'));
+					redirect($this->routes['voucher_create']);
 				}
 			}
 
 			$this->load->view('layout', $this->data);
 		}
 
-		public function show_info() {
+		public function showInfo() {
 			if ($this->input->post()) {
 				$id = $this->input->post('id');
 
@@ -214,7 +214,7 @@
 			}
 		}
 
-		public function view_more() {
+		public function viewMore() {
 			if ($this->input->post()) {
 				$voucher_id = $this->input->post('id');
 
@@ -250,7 +250,7 @@
 			}
 		}
 
-		public function get_default_sys() {
+		public function getDefaultSys() {
 			if ($this->input->post()) {
 				$voucher_type = $this->input->post('voucher_type_id');
 				$this->load->model('VoucherType_model');
@@ -261,7 +261,7 @@
 			}
 		}
 
-		public function distribution_one_time() {
+		public function distributionOneTime() {
 			$voucher_list = $this->Voucher_model->get_list();
 			$this->load->model('VoucherType_model');
 			$this->load->model('AccountingEntry_model');
@@ -302,7 +302,7 @@
 							);
 							if (!$this->AccountingEntry_model->create($data)) {
 								$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 1!');
-								redirect(base_url('voucher/create'));
+								redirect($this->routes['voucher_create']);
 							}
 							$acc_id = $this->AccountingEntry_model->get_insert_id();
 
@@ -317,7 +317,7 @@
 
 							if (!$this->Distribution_model->create($data)) {
 								$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 2!');
-								redirect(base_url('voucher/create'));
+								redirect($this->routes['voucher_create']);
 							}
 						} else {
 							// Not income voucher
@@ -332,7 +332,7 @@
 
 							if (!$this->createAccountingAndDistribution($data_acc, $type->first_dimen, false)) {
 								$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 3!');
-								redirect(base_url('voucher/create'));
+								redirect($this->routes['voucher_create']);
 							}
 						}
 					}
@@ -352,7 +352,7 @@
 
 						if (!$this->AccountingEntry_model->create($data)) {
 							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 4!');
-							redirect(base_url('voucher/create'));
+							redirect($this->routes['voucher_create']);
 						}
 						$acc_id = $this->AccountingEntry_model->get_insert_id();
 
@@ -367,7 +367,7 @@
 
 						if (!$this->Distribution_model->create($data)) {
 							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 5!');
-							redirect(base_url('voucher/create'));
+							redirect($this->routes['voucher_create']);
 						}
 					} else {
 						// Not income voucher
@@ -382,7 +382,7 @@
 
 						if (!$this->createAccountingAndDistribution($data_acc, $type->first_dimen, false)) {
 							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 6!');
-							redirect(base_url('voucher/create'));
+							redirect($this->routes['voucher_create']);
 						}
 					}
 				}
@@ -390,7 +390,7 @@
 
 
 			$this->session->set_flashdata('message_success', 'Thao tác thành công!');
-			redirect(base_url('voucher/create'));
+			redirect($this->routes['voucher_create']);
 		}
 
 		private function checkInput() {

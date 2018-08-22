@@ -125,7 +125,7 @@ public function test_api(){
 				'http' => array (
 				  'method' => 'POST',
 				  'header'=> "Authorization: Bearer $access_token\r\n"
-				  					. "Content-Type: application/json; charset=utf-8\r\n"
+				  					. "Content-Type: application/x-www-form-urlencoded\r\n"
 									. "Accept: application/json"
 				  ,
 				  'content' => $data_query

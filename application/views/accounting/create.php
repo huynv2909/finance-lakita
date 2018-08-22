@@ -3,7 +3,7 @@
       <label for="voucher-choose">Chọn chứng từ:</label>
    </div>
    <div class="col-xs-10">
-      <select name="voucher-choose" id="voucher-choose" class="choose-box" data-url="<?php echo base_url('Voucher/show_info'); ?>">
+      <select name="voucher-choose" id="voucher-choose" class="choose-box" data-url="<?php echo $this->routes['voucher_showinfo']; ?>">
          <option value="0" selected class="hidden">(Lựa chọn chứng từ)</option>
          <?php foreach ($vouchers as $voucher): ?>
             <option value="<?php echo $voucher->id; ?>"><?php echo $voucher->TOT . " : " . $voucher->content; ?></option>
@@ -72,10 +72,10 @@
 </div>
 <input type="hidden" name="voucher_id" value="" id="voucher_id">
 <input type="hidden" name="TOT" value="" id="TOT">
-<button type="button" class="btn btn-primary" id="act-add-btn" title="Thêm loại chứng từ mới" data-url="<?php echo base_url('AccountingEntry/load_form'); ?>" disabled>
+<button type="button" class="btn btn-primary" id="act-add-btn" title="Thêm loại chứng từ mới" data-url="<?php echo $this->routes['accountingentry_loadform']; ?>" disabled>
   <i class="fa fa-fw" aria-hidden="true" title="Thêm bút toán"></i> Thêm bút toán
 </button>
-<button type="button" class="btn btn-success pull-right" id="update-act-btn" title="Lưu lại các thay đổi" data-url="<?php echo base_url('AccountingEntry/create'); ?>" disabled>
+<button type="button" class="btn btn-success pull-right" id="update-act-btn" title="Lưu lại các thay đổi" data-url="<?php echo $this->routes['accountingentry_create']; ?>" disabled>
   <i class="fa fa-check" title="Lưu thay đổi"></i> Cập nhật
 </button>
 <div class="clearfix"></div>

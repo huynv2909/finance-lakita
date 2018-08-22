@@ -34,7 +34,7 @@
          $this->load->view('layout', $this->data);
       }
 
-      public function change_status() {
+      public function changeStatus() {
          if ($this->input->post()) {
             $id = $this->input->post('id');
             $active = $this->input->post('active');
@@ -53,7 +53,7 @@
       }
 
       // Load all detail row have specified parent id.
-      public function list_all() {
+      public function listAll() {
          if ($this->input->post()) {
             $dimen_id = $this->input->post('id');
 

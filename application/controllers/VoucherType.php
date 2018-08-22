@@ -42,7 +42,7 @@
 
             if (!flag) {
                $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra khi nhập dữ liệu!');
-					redirect(base_url('VoucherType/index'));
+					redirect($this->routes['vouchertype_index']);
             }
 
             $data = array(
@@ -53,10 +53,10 @@
 
             if ($this->VoucherType_model->create($data)) {
                $this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
-               redirect(base_url('VoucherType/index'));
+               redirect($this->routes['vouchertype_index']);
             } else {
                $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
-					redirect(base_url('VoucherType/index'));
+					redirect($this->routes['vouchertype_index']);
             }
 
          }
@@ -66,7 +66,7 @@
          $this->load->view('layout', $this->data);
       }
 
-      public function change_status() {
+      public function changeStatus() {
          if ($this->input->post()) {
             $id = $this->input->post('id');
             $active = $this->input->post('active');
@@ -102,7 +102,7 @@
          }
       }
 
-      public function set_default() {
+      public function setDefault() {
          $this->data['title'] = "Thông tin mặc định cho các phiếu chi";
          $this->data['active'] = 'voucher_type';
          $this->data['template'] = 'voucher_type/set_default';
@@ -184,12 +184,12 @@
 
                if (!$this->VoucherType_model->update($type_id, $data_update)) {
                   $this->session->set_flashdata('message_errors', 'Thao tác thất bại!');
-   					redirect(base_url('VoucherType/set_default'));
+   					redirect($this->routes['vouchertype_setdefault']);
                }
             }
 
             $this->session->set_flashdata('message_success', 'Cập nhật thành công!');
-            redirect(base_url('VoucherType/set_default'));
+            redirect($this->routes['vouchertype_setdefault']);
          }
 
          $this->load->view('layout', $this->data);

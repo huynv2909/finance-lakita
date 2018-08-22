@@ -1,4 +1,4 @@
-<form class="form-horizontal" method="post" id="dimension-form" action="<?php echo base_url('Dimension/create'); ?>">
+<form class="form-horizontal" method="post" id="dimension-form" action="<?php echo $this->routes['dimension_create']; ?>">
 	<div class="row">
 		<div class="col-md-6">
          <div class="form-group">
@@ -94,7 +94,7 @@
 			</thead>
 			<tbody>
 				<?php foreach ($dimensions as $item): ?>
-					<tr role="row" data-url="<?php echo base_url('Dimension/view_more'); ?>" data-id="<?php echo $item->id; ?>" class="dimen-row">
+					<tr role="row" data-url="" data-id="<?php echo $item->id; ?>" class="dimen-row">
 						 <td><?php echo $item->code; ?></td>
 						 <td><?php echo $item->name; ?></td>
 						 <td>

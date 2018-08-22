@@ -59,7 +59,7 @@
          $this->load->view('layout', $this->data);
       }
 
-      public function load_form() {
+      public function loadForm() {
          $this->load->model('Dimension_model');
          $listDimen = $this->Dimension_model->get_list();
 
@@ -85,7 +85,7 @@
                'properties' => array(
                   'class' => 'form-cell',
                   'id' => 'dimension',
-                  'data-url' => base_url('DimensionDetail/list_all'),
+                  'data-url' => $this->routes['dimensiondetail_listall'],
                   'style' => 'width:100%; min-height: 28px; background-color: #fff;'
                ),
                'options' => $options

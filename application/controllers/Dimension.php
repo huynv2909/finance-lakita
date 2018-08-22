@@ -43,19 +43,19 @@
 
                if ($this->Dimension_model->create($data)) {
                   $this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
-						redirect(base_url('Dimension'));
+						redirect($this->routes['dimension_index']);
                } else {
                   $this->session->set_flashdata('message_errors', 'Có lỗi xảy ra!');
-   					redirect(base_url('Dimension'));
+   					redirect($this->routes['dimension_index']);
                }
             } else {
                $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra khi nhập dữ liệu!');
-					redirect(base_url('Dimension'));
+					redirect($this->routes['dimension_index']);
             }
          }
       }
 
-      public function get_detail() {
+      public function getDetail() {
          if ($this->input->post()) {
             $id = $this->input->post('id');
 
@@ -81,12 +81,12 @@
                }
 
                if ($detail->active) {
-                  $detail->{"exchange"} = '<i class="fa fa-fw fa-2x vertical-middle active-color exchange-btn" data-url="' . base_url('DimensionDetail/change_status') . '" data-id="' . $detail->id . '" data-active="1" aria-hidden="true" title="Click to change!"></i>';
+                  $detail->{"exchange"} = '<i class="fa fa-fw fa-2x vertical-middle active-color exchange-btn" data-url="' . $this->routes['dimensiondetail_changestatus'] . '" data-id="' . $detail->id . '" data-active="1" aria-hidden="true" title="Click to change!"></i>';
                } else {
-                  $detail->{"exchange"} = '<i class="fa fa-fw fa-2x vertical-middle exchange-btn" data-url="' . base_url('DimensionDetail/change_status') . '" data-id="' . $detail->id . '" data-active="0" aria-hidden="true" title="Click to change!"></i>';
+                  $detail->{"exchange"} = '<i class="fa fa-fw fa-2x vertical-middle exchange-btn" data-url="' . $this->routes['dimensiondetail_changestatus'] . '" data-id="' . $detail->id . '" data-active="0" aria-hidden="true" title="Click to change!"></i>';
                }
 
-               $detail->{"delete"} = '<button type="button" class="btn btn-circle del-detail-btn" data-url="' . base_url('DimensionDetail/delete') . '" data-id="' . $detail->id . '"><i class="fa fa-times"></i></button>';
+               $detail->{"delete"} = '<button type="button" class="btn btn-circle del-detail-btn" data-url="' . $this->routes['dimensiondetail_delete'] . '" data-id="' . $detail->id . '"><i class="fa fa-times"></i></button>';
             }
 
             $response = array(

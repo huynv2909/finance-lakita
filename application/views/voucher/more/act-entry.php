@@ -10,7 +10,7 @@
             <tr>
                <td class="text-center" colspan="2">
                   <?php if (!$item->completed): ?>
-                     <a href="<?php echo base_url('Distribution/create?act_id=') .$item->id; ?>" title="Đến phân bổ"><i class="fa fa-fw warning" aria-hidden="true" title="Đến phân bổ"></i></a>
+                     <a href="<?php echo $this->routes['distribution_create'] . '?act_id=' . $item->id; ?>" title="Đến phân bổ"><i class="fa fa-fw warning" aria-hidden="true" title="Đến phân bổ"></i></a>
                   <?php endif; ?>
                </td>
             </tr>

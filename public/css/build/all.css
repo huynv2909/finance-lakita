@@ -251,3 +251,31 @@ form#type-form {
    color: dodgerblue;
    margin: 5px 0px;
 }
+
+.role-area {
+   background-color: #fff;
+   margin-bottom: 10px;
+   border-radius: 5px;
+   padding-bottom: 10px;
+}
+
+.table-custom {
+   width: 75%;
+   margin: auto;
+}
+
+.col-set-width col:nth-child(1) {
+   width: 70%;
+}
+
+.col-set-width col:nth-child(2) {
+   width: 30%;
+}
+
+.remind {
+   font-size: 12px;
+}
+
+.remind span {
+   font-weight: bold;
+}

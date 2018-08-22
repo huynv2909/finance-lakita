@@ -30,13 +30,13 @@
 					);
 					if (!$this->Config_model->update($index, $data)) {
 						$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
-						redirect(base_url('Config'));
+						redirect($this->routes['config_index']);
 					}
 				}
 
 				delete_cookie('configs_json');
 				$this->session->set_flashdata('message_success', 'Đã cập nhật!');
-				redirect(base_url('Config'));
+				redirect($this->routes['config_index']);
 			}
 
 			$this->load->view('layout', $this->data);

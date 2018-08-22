@@ -74,7 +74,7 @@
         </li>
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                <i class="fa fa-user fa-fw"></i><?php echo $user->name; ?><b class="caret"></b>
+                <i class="fa fa-user fa-fw"></i><?php echo $this->user->name; ?><b class="caret"></b>
             </a>
             <ul class="dropdown-menu dropdown-user">
                 <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
@@ -103,41 +103,54 @@
                     </div>
                     <!-- /input-group -->
                 </li>
-                <li>
-                    <a href="<?php echo base_url(); ?>" ><i class="fa fa-fw" aria-hidden="true" title="Dashboard"></i> Dashboard</a>
-                </li>
-                <li>
-                   <a href="#"><i class="fa fa-file-text-o fa-fw"></i>Hóa đơn/Chứng từ<span class="fa arrow"></span></a>
-                   <ul class="nav nav-second-level">
-                       <li>
-                          <a href="<?php echo base_url('Voucher/create'); ?>">Nhập chứng từ</a>
-                       </li>
-                       <li>
-                          <a href="<?php echo base_url('AccountingEntry/create'); ?>">Nhập bút toán</a>
-                       </li>
-                       <li>
-                          <a href="<?php echo base_url('Distribution/create'); ?>">Phân bổ bút toán</a>
-                       </li>
-                       <li>
-                          <a href="<?php echo base_url('VoucherType/index'); ?>">Loại chứng từ</a>
-                       </li>
-                       <li>
-                          <a href="<?php echo base_url('VoucherType/set_default'); ?>">Bút toán mặc định</a>
-                       </li>
-                   </ul>
-                </li>
-                <li>
-                    <a href="#"><i class="fa fa-fw" aria-hidden="true" title="Chiều quản trị"></i> Chiều quản trị<span class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level">
-                         <li>
-                           <a href="<?php echo base_url('Dimension'); ?>">Danh sách</a>
-                         </li>
-                         <li>
-                           <a href="<?php echo base_url('DimensionDetail'); ?>">Chi tiết</a>
-                         </li>
-                    </ul>
-                    <!-- /.nav-second-level -->
-                </li>
+
+                <?php foreach ($this->navbar as $name => $catalog): ?>
+                   <?php if (count($catalog) == 1): ?>
+                      <li>
+                          <a href="<?php echo $catalog[0]['link']; ?>" ><?php echo $catalog[0]['icon'] . " " . $catalog[0]['description']; ?></a>
+                      </li>
+                   <?php else: ?>
+                      <li>
+                         <a href="#"><?php
+                              if ($name == 'voucher') {
+                                 echo '<i class="fa fa-file-text-o fa-fw"></i> Hóa đơn/Chứng từ';
+                              }
+                              if ($name == 'accountingentry') {
+                                 echo '<i class="fa fa-file-text-o fa-fw"></i> Bút toán';
+                              }
+                              if ($name == 'vouchertype') {
+                                 echo '<i class="fa fa-fw" aria-hidden="true" title="Loại chứng từ"></i> Loại chứng từ';
+                              }
+                              if ($name == 'dimension') {
+                                 echo '<i class="fa fa-fw" aria-hidden="true" title="Chiều quản trị"></i> Chiều quản trị';
+                              }
+                              if ($name == 'config') {
+                                 echo '<i class="fa fa-wrench fa-fw"></i> Thiết lập';
+                              }
+                              if ($name == 'dashboard') {
+                                 echo '<i class="fa fa-fw" aria-hidden="true" title="Dashboard"></i> Dashboard';
+                              }
+                              if ($name == 'dimensiondetail') {
+                                 echo '<i class="fa fa-sitemap fa-fw"></i> Chi tiết chiều quản trị';
+                              }
+                              if ($name == 'distribution') {
+                                 echo '<i class="fa fa-fw" aria-hidden="true" title="Phân bổ bút toán"></i> Phân bổ bút toán';
+                              }
+                              if ($name == 'user') {
+                                 echo '<i class="fa fa-fw" aria-hidden="true" title="Thành viên"></i> Thành viên';
+                              }
+                          ?><span class="fa arrow"></span></a>
+                         <ul class="nav nav-second-level">
+                            <?php foreach ($catalog as $sub_catalog): ?>
+                               <li>
+                                  <a href="<?php echo $sub_catalog['link']; ?>"><?php echo $sub_catalog['description']; ?></a>
+                               </li>
+                            <?php endforeach; ?>
+                         </ul>
+                      </li>
+                   <?php endif; ?>
+                <?php endforeach; ?>
+
 
                 <li>
                     <a href="<?php echo base_url('GetResponsesPBI/showReport'); ?>"><i class="fa fa-bar-chart-o fa-fw"></i> Báo cáo</a>
@@ -145,9 +158,7 @@
                 <li>
                     <a href="#"><i class="fa fa-edit fa-fw"></i> Forms</a>
                 </li>
-                <li>
-                    <a href="<?php echo base_url('Config'); ?>"><i class="fa fa-wrench fa-fw"></i> Thiết lập</a>
-                </li>
+
                 <li>
                     <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">

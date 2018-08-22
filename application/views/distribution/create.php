@@ -3,7 +3,7 @@
       <label for="voucher-choose">Chọn chứng từ:</label>
    </div>
    <div class="col-xs-10">
-      <select name="voucher-choose" id="voucher-choose" class="choose-box" data-url="<?php echo base_url('Voucher/show_info'); ?>">
+      <select name="voucher-choose" id="voucher-choose" class="choose-box" data-url="<?php echo $this->routes['voucher_showinfo']; ?>">
          <option value="0" selected class="hidden">(Lựa chọn chứng từ)</option>
          <?php foreach ($vouchers as $voucher): ?>
             <option value="<?php echo $voucher->id; ?>"><?php echo $voucher->TOT . " : " . $voucher->content; ?></option>
@@ -32,7 +32,7 @@
       <label for="act-choose">Chọn bút toán:</label>
    </div>
    <div class="col-xs-10">
-      <select name="act-choose" id="act-choose" class="choose-box" data-url="<?php echo base_url('AccountingEntry/show_info'); ?>" disabled>
+      <select name="act-choose" id="act-choose" class="choose-box" data-url="<?php echo $this->routes['accountingentry_showinfo']; ?>" disabled>
          <!-- Load by ajax -->
       </select>
    </div>
@@ -93,10 +93,10 @@
    </div>
 </div>
 
-<button type="button" class="btn btn-primary" id="distribute-btn" title="Thêm loại chứng từ mới" data-url="<?php echo base_url('Distribution/load_form'); ?>" disabled>
+<button type="button" class="btn btn-primary" id="distribute-btn" title="Thêm loại chứng từ mới" data-url="<?php echo $this->routes['distribution_loadform']; ?>" disabled>
   <i class="fa fa-fw" aria-hidden="true" title="+ Phân bổ mới"></i> Phân bổ
 </button>
-<button type="button" class="btn btn-success pull-right" id="distribute-update-btn" title="Lưu lại các thay đổi" data-url="<?php echo base_url('Distribution/create'); ?>" disabled>
+<button type="button" class="btn btn-success pull-right" id="distribute-update-btn" title="Lưu lại các thay đổi" data-url="<?php echo $this->routes['distribution_create']; ?>" disabled>
   <i class="fa fa-check" title="Lưu thay đổi"></i> Cập nhật
 </button>
 <div class="clearfix"></div>
@@ -106,6 +106,6 @@
 <input type="hidden" id="mng-list" value="">
 <input type="hidden" id="tot">
 <input type="hidden" id="toa">
-<input type="hidden" id="have-a-act-id" data-url="<?php echo base_url('AccountingEntry/get_voucher'); ?>" value="<?php if ($this->input->get()) {
+<input type="hidden" id="have-a-act-id" data-url="<?php echo $this->routes['accountingentry_getvoucher']; ?>" value="<?php if ($this->input->get()) {
    echo $this->input->get('act_id');
 } ?>">
