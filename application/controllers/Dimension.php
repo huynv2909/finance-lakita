@@ -86,7 +86,7 @@
                   $detail->{"exchange"} = '<i class="fa fa-fw fa-2x vertical-middle exchange-btn" data-url="' . $this->routes['dimensiondetail_changestatus'] . '" data-id="' . $detail->id . '" data-active="0" aria-hidden="true" title="Click to change!"></i>';
                }
 
-               $detail->{"delete"} = '<button type="button" class="btn btn-circle del-detail-btn" data-url="' . $this->routes['dimensiondetail_delete'] . '" data-id="' . $detail->id . '"><i class="fa fa-times"></i></button>';
+               $detail->{"delete"} = '<button type="button" class="btn btn-circle del-btn" data-url="' . $this->routes['dimensiondetail_delete'] . '" data-id="' . $detail->id . '"><i class="fa fa-times"></i></button>';
             }
 
             $response = array(

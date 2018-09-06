@@ -82,7 +82,7 @@
                            <i class="fa fa-fw fa-2x vertical-middle exchange-btn" data-url="<?php echo $this->routes['vouchertype_changestatus']; ?>" data-id="<?php echo $item->id; ?>" data-active="<?php echo $item->active; ?>" aria-hidden="true" title="Click to change!"></i>
                         <?php endif; ?>
 
-                         <button type="button" class="btn btn-circle del-type-btn" data-url="<?php echo $this->routes['vouchertype_delete']; ?>" data-id="<?php echo $item->id; ?>"><i class="fa fa-times"></i></button>
+                         <button type="button" class="btn btn-circle del-btn" data-url="<?php echo $this->routes['vouchertype_delete']; ?>" data-id="<?php echo $item->id; ?>"><i class="fa fa-times"></i></button>
                       </td>
    					</tr>
    				<?php endforeach; ?>

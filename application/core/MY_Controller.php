@@ -15,6 +15,7 @@
 		{
 			parent::__construct();
 
+			date_default_timezone_set("Asia/Ho_Chi_Minh");
 			// Get notify
          $message_errors = $this->session->flashdata('message_errors');
          $message_success = $this->session->flashdata('message_success');
@@ -84,9 +85,10 @@
 			);
 			$action = $this->Operation_model->get_list($input);
 			$this->preProcessPermission();
+
 			if (count($action) == 0 || $action[0]->is_default == 0) {
 				if (!array_key_exists($this->controller, $this->role->permission) || !in_array($this->method, $this->role->permission[$this->controller])) {
-					redirect($this->routes['redirect_accessdenied']);
+					redirect(base_url('access-denied.html'));
 				}
 			}
 

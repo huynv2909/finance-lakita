@@ -154,13 +154,23 @@ form#type-form {
    color: #337ab7;
 }
 
-.del-type-btn, .del-detail-btn {
+.del-btn {
    background-color: #fff;
    color: #d9534f;
 }
 
-.del-type-btn:hover, .del-detail-btn:hover {
+.del-btn:hover {
    background-color: #d9534f;
+   color: #fff;
+}
+
+.edit-btn {
+   background-color: #fff;
+   color: #ffb600;
+}
+
+.edit-btn:hover {
+   background-color: #ffb600;
    color: #fff;
 }
 
@@ -278,4 +288,103 @@ form#type-form {
 
 .remind span {
    font-weight: bold;
+}
+
+.report {
+   width: 100%;
+   display: block;
+   overflow-x: scroll;
+}
+
+.report th, .fix-col-report th {
+   text-align: center;
+   padding: 5px;
+}
+
+.report td, .fix-col-report td {
+   padding: 5px;
+}
+
+.data-column {
+   min-width: 155px;
+}
+
+.report tr {
+   min-height: 50px;
+}
+
+.custom-table {
+   display: none;
+}
+
+table{
+  border-collapse:collapse;
+}
+
+thead tr th {
+   min-width: 60px;
+   background:#1ABC9C;
+}
+
+.fixed{
+  top: 50px;
+  position:fixed;
+  display:none;
+  border:none;
+}
+
+.fixed-bar{
+  bottom: 0;
+  position:fixed;
+  display:none;
+  border:none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+   visibility : hidden;
+}
+
+.report-height {
+   /* height: 500px; */
+}
+
+.padding-left-10 {
+   padding-left: 10px;;
+}
+
+.centering  {
+   display: block;
+   margin: auto;
+}
+
+.report-filter {
+   padding: 15px;
+   border: 2px solid beige;
+   border-radius: 5px;
+   margin-bottom: 5px;
+   display: none;
+}
+
+.voucher-id {
+   color: blue;
+   cursor: pointer;
+}
+
+.voucher-id:hover {
+   text-decoration: underline;
+   font-weight: bold;
+}
+
+#revenue_gauge table {
+   margin: auto !important;
+}
+
+.input-transparent {
+   font-weight: bold;
+    background: transparent;
+    border: none;
+}
+
+.medium {
+   font-size: 23px;
 }

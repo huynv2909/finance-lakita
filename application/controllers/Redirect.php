@@ -7,7 +7,9 @@
 
 		function accessDenied()
 		{
-			$this->load->view('errors/access_denied');
+			$this->data['title'] = 'Access Denied!';
+			$this->data['template'] = 'errors/access_denied';
+			$this->load->view('layout', $this->data);
 		}
 	}
  ?>

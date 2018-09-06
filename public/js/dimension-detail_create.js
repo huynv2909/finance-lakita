@@ -33,7 +33,7 @@ $(document).ready(function(){
 
 	});
 
-   $(document).on("click", ".del-detail-btn", function(){
+   $(document).on("click", ".del-btn", function(){
 		var id = $(this).data('id');
 		var url = $(this).data('url');
 		var current_btn = $(this);

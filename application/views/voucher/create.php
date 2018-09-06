@@ -219,7 +219,7 @@
 	<h5 class="pull-left">
 		<strong>Chứng từ đã nhập:</strong>
 		<?php if ($amount_uncompleted > 0): ?>
-			(Còn <a href="<?php echo $this->routes['voucher_create'] . '?uncompleted=1'; ?>"><?php echo $amount_uncompleted; ?> chứng từ</a> chưa hoàn thành)
+			(Còn <a href="<?php echo $this->routes['voucher_create'] . '?uncompleted=1'; ?>"><span id="uncompleted_amount"><?php echo $amount_uncompleted; ?></span> chứng từ</a> chưa hoàn thành)
 			<?php if (!$get_uncompleted): ?>
 				<a href="<?php echo $this->routes['voucher_distributiononetime']; ?>">Tự động hoàn thành<i class="fa fa-fw" aria-hidden="true" title="Tự động hoàn thành"></i></a>
 			<?php endif; ?>
@@ -235,18 +235,21 @@
 		<table class="table table-hover dataTable no-footer log-table" id="voucher_table" role="grid" aria-describedby="voucher_table_info" border="1">
 			<thead>
 					<tr role="row">
-						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Date: activate to sort column ascending" style="width: 12%;">Thời gian</th>
-						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Reiceipt type: activate to sort column ascending" style="width: 20%;">Loại chứng từ</th>
-						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Value: activate to sort column ascending" style="width: 14%;">Số tiền</th>
-						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Content: activate to sort column ascending" style="width: 28%;">Nội dung</th>
-						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Executor: activate to sort column ascending" style="width: 14%;">Người giao dịch</th>
-						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Time on transaction: activate to sort column ascending" style="width: 12%;">TOT</th>
+						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Date: activate to sort column ascending">Thời gian</th>
+						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Reiceipt type: activate to sort column ascending">Loại chứng từ</th>
+						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Value: activate to sort column ascending">Số tiền</th>
+						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Content: activate to sort column ascending">Nội dung</th>
+						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Executor: activate to sort column ascending">Người giao dịch</th>
+						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Time on transaction: activate to sort column ascending">TOT</th>
+						<?php if (in_array('voucher_delete', explode(',', $this->role->permission_list))): ?>
+							<th tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Action: activate to sort column ascending">Thao tác</th>
+						<?php endif; ?>
 					</tr>
 			</thead>
 			<tbody>
 				<?php foreach ($vouchers as $item): ?>
 					<?php if ($get_uncompleted || !$item->completed): ?>
-					<tr role="row" data-url="<?php echo $this->routes['voucher_viewmore']; ?>" data-id="<?php echo $item->id; ?>" class="voucher-row <?php if ($item->income == 1) echo 'success'; ?>">
+					<tr role="row" id="row-<?php echo $item->id; ?>" data-url="<?php echo $this->routes['voucher_viewmore']; ?>" data-id="<?php echo $item->id; ?>" class="voucher-row <?php if ($item->income == 1) echo 'success'; ?>">
 						 <td><?php echo $item->date; ?></td>
 						 <td>
 							 <?php
@@ -278,6 +281,9 @@
 							  ?>
 						 </td>
 						 <td><?php echo $item->TOT; ?></td>
+						 <?php if (in_array('voucher_delete', explode(',', $this->role->permission_list))): ?>
+						 	<td class="text-center"><button type="button" class="btn btn-circle del-btn" title="Xóa" data-url="<?php echo $this->routes['voucher_delete']; ?>" data-id="<?php echo $item->id; ?>"><i class="fa fa-times"></i></button></td>
+						<?php endif; ?>
 					</tr>
 					<?php endif; ?>
 				<?php endforeach; ?>

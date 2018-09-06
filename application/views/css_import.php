@@ -22,6 +22,12 @@
 <!-- Custom Fonts -->
 <link href="<?php echo public_url(); ?>css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
+<?php if (isset($css_files) && $css_files): ?>
+   <?php foreach ($css_files as $css_name): ?>
+      <link href="<?php echo public_url(); ?><?php echo $css_name; ?>.css" rel="stylesheet">
+   <?php endforeach; ?>
+<?php endif; ?>
+
 <!-- My style -->
 <link href="<?php echo public_url(); ?>css/build/all.css" rel="stylesheet" type="text/css">
 <link href="<?php echo public_url(); ?>css/build/component.css" rel="stylesheet" type="text/css">

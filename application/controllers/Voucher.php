@@ -393,6 +393,24 @@
 			redirect($this->routes['voucher_create']);
 		}
 
+		public function delete() {
+         if ($this->input->post()) {
+            $id = $this->input->post('id');
+
+            $response = array();
+
+            if ($this->Voucher_model->delete($id)) {
+               $response['success'] = true;
+               $response['message'] = "Đã xóa!";
+            } else {
+               $response['success'] = false;
+               $response['message'] = "Không thể xóa!";
+            }
+
+            die(json_encode($response));
+         }
+      }
+
 		private function checkInput() {
 			$value_str = $this->input->post('value');
 			$value_total = str_replace(".","",$value_str);

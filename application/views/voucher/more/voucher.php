@@ -5,7 +5,7 @@
          <tbody>
             <tr>
                <td class="text-right"><strong>Mã chứng từ:</strong></td>
-               <td><?php echo $voucher->code; ?></td>
+               <td><a href="<?php echo $this->routes['accountingentry_index'] . '?code=' . $voucher->code; ?>"><?php echo $voucher->code; ?></a></td>
             </tr>
             <tr>
                <td class="text-right"><strong>Mã thực tế:</strong></td>

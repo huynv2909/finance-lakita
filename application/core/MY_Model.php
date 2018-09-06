@@ -179,6 +179,10 @@
 				$this->db->where_in($input['where_in'][0], $input['where_in'][1]);
 			}
 
+			if (isset($input['join'][0]) && isset($input['join'][1])) {
+				$this->db->join($input['join'][0], $input['join'][1]);
+			}
+
 			if (isset($input['like']) && $input['like']) {
 				$this->db->like($input['like'][0], $input['like'][1]);
 			}

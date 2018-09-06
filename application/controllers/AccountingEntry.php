@@ -11,7 +11,24 @@
 
       function index()
       {
+         $this->data['title'] = "Bút toán";
+			$this->data['template'] = 'accounting/index';
+			$this->data['active'] = 'receipt';
+         $this->data['js_files'] = array('accountingentry_index');
 
+         $input = array(
+            'select' => array('accounting_entries.*', 'vouchers.code'),
+            'join' => array('vouchers', 'vouchers.id = accounting_entries.voucher_id'),
+            'order' => 'TOA desc'
+         );
+
+         if ($this->input->get('code')) {
+            $input['where'] = array('vouchers.code' => $this->input->get('code'));
+         }
+
+         $this->data['entries'] = $this->AccountingEntry_model->get_list($input);
+
+         $this->load->view('layout', $this->data);
       }
 
       public function create() {
@@ -130,6 +147,24 @@
             die(json_encode($response));
          }
 
+      }
+
+      public function delete() {
+         if ($this->input->post()) {
+            $id = $this->input->post('id');
+
+            $response = array();
+
+            if ($this->AccountingEntry_model->delete($id)) {
+               $response['success'] = true;
+               $response['message'] = "Đã xóa!";
+            } else {
+               $response['success'] = false;
+               $response['message'] = "Không thể xóa!";
+            }
+
+            die(json_encode($response));
+         }
       }
 
       public function loadForm() {

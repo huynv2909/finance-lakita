@@ -139,6 +139,9 @@
                               if ($name == 'user') {
                                  echo '<i class="fa fa-fw" aria-hidden="true" title="Thành viên"></i> Thành viên';
                               }
+                              if ($name == 'report') {
+                                 echo '<i class="fa fa-bar-chart-o fa-fw"></i> Báo cáo';
+                              }
                           ?><span class="fa arrow"></span></a>
                          <ul class="nav nav-second-level">
                             <?php foreach ($catalog as $sub_catalog): ?>
@@ -150,45 +153,6 @@
                       </li>
                    <?php endif; ?>
                 <?php endforeach; ?>
-
-
-                <li>
-                    <a href="<?php echo base_url('GetResponsesPBI/showReport'); ?>"><i class="fa fa-bar-chart-o fa-fw"></i> Báo cáo</a>
-                </li>
-                <li>
-                    <a href="#"><i class="fa fa-edit fa-fw"></i> Forms</a>
-                </li>
-
-                <li>
-                    <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level">
-                        <li>
-                            <a href="#">Second Level Item</a>
-                        </li>
-                        <li>
-                            <a href="#">Second Level Item</a>
-                        </li>
-                        <li>
-                            <a href="#">Third Level <span class="fa arrow"></span></a>
-                            <ul class="nav nav-third-level">
-                                <li>
-                                    <a href="#">Third Level Item</a>
-                                </li>
-                                <li>
-                                    <a href="#">Third Level Item</a>
-                                </li>
-                                <li>
-                                    <a href="#">Third Level Item</a>
-                                </li>
-                                <li>
-                                    <a href="#">Third Level Item</a>
-                                </li>
-                            </ul>
-                            <!-- /.nav-third-level -->
-                        </li>
-                    </ul>
-                    <!-- /.nav-second-level -->
-                </li>
                 <li>
                     <a href="#"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">

@@ -296,6 +296,56 @@ $(document).ready(function(){
 
 	});
 
+   $(document).on("click", ".del-btn", function(){
+		var id = $(this).data('id');
+		var url = $(this).data('url');
+
+		$.confirm({
+			 icon: 'fa fa-remove',
+			 title: 'Xóa?',
+			 content: 'Bạn có chắc rằng sẽ xóa hoàn toàn chứng từ này?',
+			 theme: 'material',
+			 type: 'red',
+			 buttons: {
+				  Ok: {
+						text: 'Ok',
+						btnClass: 'btn-green',
+						keys: ['enter'],
+						action: function(){
+							 $.ajax({
+								 url : url,
+								 method : "POST",
+								 dataType : "JSON",
+								 data : {
+									 id : id
+								 },
+								 success : function(result) {
+									 if (result.success) {
+									 	 var table = $('#voucher_table').DataTable();
+						 				 var row = $('#row-' + id.toString());
+						 				 table.row(row).remove().draw();
+                               $('#view-modal').modal('hide');
+                               $('#uncompleted_amount').html(parseInt($('#uncompleted_amount').html()) - 1);
+										 // console.log(result.message);
+									 } else {
+                               $('#view-modal').modal('hide');
+										 $.alert(result.message);
+									 }
+								 }
+							 });
+						}
+				  },
+				  cancel: {
+					  text: 'Hủy',
+					  keys: ['esc'],
+					  action: function(){
+					  }
+				  }
+			 }
+		});
+
+	});
+
 });
 
 function checkToEnableOk() {

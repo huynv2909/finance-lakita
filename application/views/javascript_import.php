@@ -7,13 +7,8 @@
 <!-- Metis Menu Plugin JavaScript ??? -->
 <script src="<?php echo public_url(); ?>js/metisMenu.min.js"></script>
 
-<!-- delete after power bi success -->
-<?php if ($active == "dashboard"): ?>
-    <!-- Morris Charts JavaScript -->
-    <script src="<?php echo public_url(); ?>js/raphael.min.js"></script>
-    <script src="<?php echo public_url(); ?>js/morris.min.js"></script>
-    <script src="<?php echo public_url(); ?>js/morris-data.js"></script>
-<?php endif ?>
+<!-- Google charts -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 <!-- DataTables JavaScript -->
 <script src="<?php echo public_url(); ?>js/dataTables/jquery.dataTables.min.js"></script>
