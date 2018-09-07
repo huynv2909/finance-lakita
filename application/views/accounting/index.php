@@ -7,7 +7,9 @@
                   <th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Time on action: activate to sort column ascending">TOA</th>
 						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Value: activate to sort column ascending">Số tiền</th>
 						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Content: activate to sort column ascending">Nội dung</th>
-						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Action: activate to sort column ascending">Thao tác</th>
+						<?php if (in_array('accountingentry_delete', explode(',', $this->role->permission_list))): ?>
+							<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Action: activate to sort column ascending">Thao tác</th>
+						<?php endif; ?>
 					</tr>
 			</thead>
 			<tbody>
@@ -24,18 +26,19 @@
 							<?php endif; ?> -->
 						 </td>
 						 <td><?php echo $item->content; ?></td>
-						 <td class="text-center">
-						 	 <button type="button" class="btn btn-circle edit-btn" data-url="<?php echo $this->routes['accountingentry_edit']; ?>" data-id="<?php echo $item->id; ?>"><i class="fa fa-fw" aria-hidden="true" title="Chỉnh sửa"></i></button>
-							 <button type="button" class="btn btn-circle del-btn" data-url="<?php echo $this->routes['accountingentry_delete']; ?>" data-id="<?php echo $item->id; ?>"><i class="fa fa-times"></i></button>
-						 </td>
+						 <?php if (in_array('accountingentry_delete', explode(',', $this->role->permission_list))): ?>
+							 <td class="text-center">
+							 	 <button type="button" class="btn btn-circle edit-btn" data-url="<?php echo $this->routes['accountingentry_edit']; ?>" data-id="<?php echo $item->id; ?>"><i class="fa fa-fw" aria-hidden="true" title="Chỉnh sửa"></i></button>
+								 <button type="button" class="btn btn-circle del-btn" data-url="<?php echo $this->routes['accountingentry_delete']; ?>" data-id="<?php echo $item->id; ?>"><i class="fa fa-times"></i></button>
+							 </td>
+					    <?php endif; ?>
 					</tr>
 				<?php endforeach; ?>
 			  </tbody>
 		</table>
 		<script type="text/javascript">
 			$('#accounting_table').DataTable({
-					  responsive: true,
-					  "order" : [[4, 'desc']]
+					  responsive: true
 			});
 		</script>
 	</div>

@@ -1,11 +1,12 @@
 <div class="row">
    <div class="col-xs-12">
-      <h4>Số liệu: <select class="input-transparent" name="date_range">
-         <option value="1" selected>Tháng này</option>
-         <option value="2">Tháng trước</option>
-         <option value="3">Năm nay</option>
-         <option value="0">Tùy chỉnh</option>
+      <h4>Số liệu: <select id="date_choose" class="input-transparent" name="date_range">
+         <option value="1" <?php if ($date_range == 1) echo 'selected'; ?>>Tháng này</option>
+         <option value="2" <?php if ($date_range == 2) echo 'selected'; ?>>Tháng trước</option>
+         <option value="3" <?php if ($date_range == 3) echo 'selected'; ?>>Năm nay</option>
+         <option value="0" <?php if ($date_range == 0) echo 'selected'; ?>>Tùy chỉnh</option>
       </select> từ <i><?php echo $min_date; ?></i> đến <i><?php echo $max_date; ?></i></i></h4>
+      <input type="hidden" id="dashboard_url" value="<?php echo base_url('dashboard.html'); ?>">
    </div>
 </div>
 <!-- /.row -->

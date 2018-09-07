@@ -1,3 +1,4 @@
+<?php if (in_array('dimension_create', explode(',', $this->role->permission_list))): ?>
 <form class="form-horizontal" method="post" id="dimension-form" action="<?php echo $this->routes['dimension_create']; ?>">
 	<div class="row">
 		<div class="col-md-6">
@@ -70,6 +71,7 @@
 	</div>
 
 </form>
+<?php endif; ?>
 
 <div class="row">
 	<h5 class="pull-left"><strong>Các chiều quản trị:</strong></h5>

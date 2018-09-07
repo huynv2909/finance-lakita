@@ -107,7 +107,7 @@ $(document).ready(function(){
 
 	});
 
-	$(document).on("click", ".del-type-btn", function(){
+	$(document).on("click", ".del-btn", function(){
 		var id = $(this).data('id');
 		var url = $(this).data('url');
 

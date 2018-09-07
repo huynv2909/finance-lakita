@@ -18,6 +18,7 @@
 			$this->data['title'] = "Dashboard";
 			$this->data['template'] = 'dashboard/index';
 			$this->data['active'] = 'dashboard';
+			$this->data['js_files'] = array('dashboard_index');
 
 			// month kpi
 			$kpi_default = 300000000;
@@ -26,11 +27,26 @@
 			// 1: current month, 2: month before, 3: current year
 			$date_range_default = 1;
 			$min_date = date('Y-m-01');
-			//$min_date = date('2018-05-01'); // test
 			$max_date = date('Y-m-d');
+
+			if ($this->input->get('date_range')) {
+				$date_range_default = $this->input->get('date_range');
+				$this->transformRangeToDate($min_date, $max_date, $date_range_default);
+			}
+
+			if ($this->input->get('from')) {
+				$min_date = $this->input->get('from');
+				$date_range_default = 0;
+			}
+
+			if ($this->input->get('to')) {
+				$max_date = $this->input->get('to');
+				$date_range_default = 0;
+			}
 
 			$this->data['min_date'] = $min_date;
 			$this->data['max_date'] = $max_date;
+			$this->data['date_range'] = $date_range_default;
 
 			$input = array(
 				'select' => array('SUM(accounting_entries.value) AS revenue'),
@@ -168,6 +184,30 @@
 
 			$this->load->view('layout', $this->data);
 		}
+
+		private function transformRangeToDate(&$min_date, &$max_date, $range_type) {
+			// Current month
+			if ($range_type == 1) {
+				$min_date = date('Y-m-01');
+				$max_date = date('Y-m-d');
+			}
+
+			// before month
+			if ($range_type == 2) {
+				$before_month = date('m') - 1;
+				$min_date = date('Y-' . $before_month . '-01');
+				$before_time = new DateTime( $min_date );
+				$before_time->modify('last day of this month');
+				$max_date = $before_time->format('Y-m-d');
+			}
+
+			// current year
+			if ($range_type == 3) {
+				$min_date = date('Y-01-01');
+				$max_date = date('Y-m-d');
+			}
+		}
+
 
 	}
  ?>
