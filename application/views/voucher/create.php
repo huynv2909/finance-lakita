@@ -47,7 +47,7 @@
 							<tr class="last-sub-row sub-row" id="sub-row-1" data-number="1">
 								<td>
 									<select class="sub_course" name="course_1" id="course_1">
-										<option value="0" selected class="hidden">(Lựa chọn khóa học)</option>
+										<option value="0" selected class="hidden">(Lựa chọn)</option>
 										<?php foreach ($courses as $course): ?>
 											<option value="<?php echo $course->id; ?>"><?php echo $course->name . " : " . $course->note; ?></option>
 										<?php endforeach; ?>
@@ -82,6 +82,10 @@
 							</tr>
 						</tbody>
 					</table>
+
+					<p id="tax-text"><input type="checkbox" name="vat_check" value="1"> Đã bao gồm <input type="number" class="input-transparent text-center" name="tax_value" value="10" min="0" max="100"> % thuế</p>
+					<input type="hidden" name="debit_tax" value="111">
+					<input type="hidden" name="credit_tax" value="3331">
 				 </div>
 			</div>
 			<div class="form-group contain-detail" id="contain-detail-out">
@@ -206,7 +210,7 @@
 		 <div class="col-sm-6 col-sm-offset-3">
 			 <input type="hidden" name="count_sub" id="count_sub" value="1" data-used="0">
 			 <input type="hidden" name="count_sub_out" id="count_sub_out" value="1" data-used="0">
-			 <input type="hidden" name="auto_distribution" value="<?php
+			 <input type="hidden" id="auto_distribution" name="auto_distribution" value="<?php
 			 	$confs = json_decode($configs);
 				echo $confs->AUTO_DISTRIBUTION;
 			 ?>">

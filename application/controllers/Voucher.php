@@ -118,14 +118,25 @@
 
 						if ($this->input->post('income') == 1) {
 							$total_row_sub = $this->input->post('count_sub');
+							// If have tax
+							$weight_tax = 0;
+
+							if ($this->input->post('vat_check')) {
+								$weight_tax = $this->input->post('tax_value') / 100;
+							}
+
 							for ($i=1; $i <= $total_row_sub; $i++) {
 								$used = $this->input->post('confirm_' . $i);
 								if ($used == 1) {
+									$value_entered = str_replace(".","",$this->input->post('value_' . $i));
+									$value_tax = $value_entered*$weight_tax;
+									$value_revenue = $value_entered - $value_tax;
+
 									$data_acc = array(
 										'voucher_id' => $voucher_id,
 										'TOT' => $this->input->post('tot'),
 										'TOA' => $this->input->post('toa_' . $i),
-										'value' => str_replace(".","",$this->input->post('value_' . $i)),
+										'value' => $value_revenue,
 										'debit_acc' => $this->input->post('debit_' . $i),
 										'credit_acc' => $this->input->post('credit_' . $i)
 									);
@@ -135,6 +146,23 @@
 										$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
 										redirect($this->routes['voucher_create']);
 									}
+
+									if ($value_tax > 0) {
+										$data_acc = array(
+											'voucher_id' => $voucher_id,
+											'TOT' => $this->input->post('tot'),
+											'TOA' => $this->input->post('toa_' . $i),
+											'value' => $value_tax,
+											'debit_acc' => $this->input->post('debit_tax'),
+											'credit_acc' => $this->input->post('credit_tax')
+										);
+										// 316: Chi phí phi nhân sự Sale
+										if (!$this->createAccountingAndDistribution($data_acc, 316, false, ' (VAT) ')) {
+											$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
+											redirect($this->routes['voucher_create']);
+										}
+									}
+
 								}
 
 							}
@@ -493,11 +521,11 @@
 			}
 		}
 
-		private function createAccountingAndDistribution($info_acc, $detail_dimen_id, $is_revenue = false) {
+		private function createAccountingAndDistribution($info_acc, $detail_dimen_id, $is_revenue = false, $text_add = '') {
 			$parent_id = NULL;
 			foreach ($this->data['all_dimen'] as $dimen) {
 				if ($dimen->id == $detail_dimen_id) {
-					$info_acc['content'] = $dimen->name;
+					$info_acc['content'] = $dimen->name . $text_add;
 					$parent_id = $dimen->parent_id;
 					break;
 				}
@@ -540,7 +568,7 @@
 					'TOT' => $info_acc['TOT'],
 					'TOA' => $info_acc['TOA'],
 					'value' => $info_acc['value'],
-					'content' => $content_dis
+					'content' => $content_dis . $text_add
 				);
 				if (!$this->Distribution_model->create($data_dis)) {
 					return false;

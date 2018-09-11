@@ -14,7 +14,17 @@
 			$this->data['title'] = "Thiết lập";
 			$this->data['template'] = 'config/index';
 			$this->data['active'] = 'config';
-			$this->data['configs_db'] = $this->Config_model->get_list();
+			$this->data['js_files'] = array('config_index');
+
+			$input = array(
+				'where' => array('is_check' => 1)
+			);
+			$this->data['configs_db'] = $this->Config_model->get_list($input);
+
+			$input = array(
+				'where' => array('is_check' => 0)
+			);
+			$this->data['defaults_db'] = $this->Config_model->get_list($input);
 
 			if ($this->input->post()) {
 				$id_changed = $this->input->post('have_changed');
@@ -23,7 +33,7 @@
 				foreach ($list_id as $index) {
 					$value = 0;
 					if (null !== $this->input->post('config_' . $index)) {
-						$value = 1;
+						$value = $this->input->post('config_' . $index);
 					}
 					$data = array(
 						'value' => $value

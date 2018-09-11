@@ -32,38 +32,41 @@ $(document).ready(function(){
 
    // When change type select box
    $('#voucher-type').change(function(){
-		var type_id = $(this).val();
-		var url = $(this).data('url');
+      if ($('#auto_distribution').val() == '1') {
+   		var type_id = $(this).val();
+   		var url = $(this).data('url');
 
-		$.ajax({
-			url : url,
-			method : "POST",
-			dataType : "JSON",
-			data : {
-				voucher_type_id : type_id
-			},
-			success : function(result){
-				$('#debit_1').val(result.debit_def).change();
-				$('#credit_1').val(result.credit_def).change();
-				$('#debit_out_1').val(result.debit_def).change();
-				$('#credit_out_1').val(result.credit_def).change();
-				if (result.income == "1") {
-					$('#income').val('1');
-					$('#contain-detail-out').slideUp();
-					$('#contain-detail-income').slideDown();
-					$('#count_sub').data('used', 1);
-					$('#count_sub_out').data('used', 0);
-				} else {
-					$('#dimen_out_1').val(result.first_dimen).change();
-					$('#income').val('0');
-					$('#contain-detail-income').slideUp();
-					$('#contain-detail-out').slideDown();
-					$('#count_sub').data('used', 0);
-					$('#count_sub_out').data('used', 1);
-				}
-            updateRemainingAmount();
-			}
-		});
+   		$.ajax({
+   			url : url,
+   			method : "POST",
+   			dataType : "JSON",
+   			data : {
+   				voucher_type_id : type_id
+   			},
+   			success : function(result){
+   				$('#debit_1').val(result.debit_def).change();
+   				$('#credit_1').val(result.credit_def).change();
+   				$('#debit_out_1').val(result.debit_def).change();
+   				$('#credit_out_1').val(result.credit_def).change();
+   				if (result.income == "1") {
+   					$('#income').val('1');
+   					$('#contain-detail-out').slideUp();
+   					$('#contain-detail-income').slideDown();
+   					$('#count_sub').data('used', 1);
+   					$('#count_sub_out').data('used', 0);
+   				} else {
+   					$('#dimen_out_1').val(result.first_dimen).change();
+   					$('#income').val('0');
+   					$('#contain-detail-income').slideUp();
+   					$('#contain-detail-out').slideDown();
+   					$('#count_sub').data('used', 0);
+   					$('#count_sub_out').data('used', 1);
+   				}
+               updateRemainingAmount();
+   			}
+   		});
+
+      }
 
 	});
 

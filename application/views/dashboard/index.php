@@ -189,8 +189,14 @@
                    maxColor: '#09e5d3',
                    headerHeight: 20,
                    fontColor: 'white',
-                   showScale: true
+                   showScale: true,
+                   generateTooltip: showStaticTooltip
                  });
+
+                 function showStaticTooltip(row, size, value) {
+                   return '<div style="background:#fd9; padding:10px; border-style:solid">' +
+                          convertToCurrency(size.toString()) + ' VND</div>';
+                 }
 
                }
              </script>

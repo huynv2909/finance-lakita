@@ -352,6 +352,10 @@ thead tr th {
    padding-left: 10px;;
 }
 
+.margin-left-15 {
+   margin-left: 15px !important;
+}
+
 .centering  {
    display: block;
    margin: auto;
@@ -387,4 +391,13 @@ thead tr th {
 
 .medium {
    font-size: 23px;
+}
+
+#tax-text {
+   margin-top: 10px;
+   font-size: 12px;
+}
+
+#tax-text input[type=number] {
+   width: 40px;
 }

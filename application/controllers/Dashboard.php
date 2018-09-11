@@ -21,7 +21,9 @@
 			$this->data['js_files'] = array('dashboard_index');
 
 			// month kpi
-			$kpi_default = 300000000;
+			$cfg = json_decode($this->data['configs']);
+
+			$kpi_default = $cfg->REVENUE_KPI;
 			// 210 is 'Doanh thu'
 			$id_revenue_dimension = 210;
 			// 1: current month, 2: month before, 3: current year

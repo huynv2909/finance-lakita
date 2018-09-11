@@ -34,6 +34,69 @@
          $this->load->view('layout', $this->data);
       }
 
+      public function coursesManager() {
+         $this->data['title'] = "Quản trị khóa học";
+         $this->data['template'] = "dimension_detail/courses_manager";
+         $this->data['js_files'] = array('voucher-type_create');
+
+         $input = array(
+            'where' => array('dimen_code' => 'SP'),
+            'order' => 'active desc'
+         );
+
+         $courses = $this->DetailDimension_model->get_list($input);
+         $this->data['courses'] = $courses;
+
+         $input = array(
+            'where' => array('dimen_code' => 'NSP2')
+         );
+         $groups = $this->DetailDimension_model->get_list($input);
+         $this->data['groups'] = $groups;
+
+         if ($this->input->post()) {
+            $code = trim($this->input->post('code'));
+            $name = $this->input->post('name');
+            $income = $this->input->post('income');
+
+            $flag = true;
+            foreach ($courses as $type) {
+               if ($code == $type->name) {
+                  $flag = false;
+                  break;
+               }
+            }
+
+            if ($name == '') {
+               $flag = false;
+            }
+
+            if (!flag) {
+               $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra khi nhập dữ liệu!');
+					redirect($this->routes['dimensiondetail_coursesmanager']);
+            }
+
+            $data = array(
+               'dimen_id' => 120,
+               'dimen_code' => 'SP',
+               'name' => $code,
+               'note' => $name,
+               'parent_id' => $income,
+               'layer' => 2
+            );
+
+            if ($this->DetailDimension_model->create($data)) {
+               $this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
+               redirect($this->routes['dimensiondetail_coursesmanager']);
+            } else {
+               $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
+					redirect($this->routes['dimensiondetail_coursesmanager']);
+            }
+
+         }
+
+         $this->load->view('layout', $this->data);
+      }
+
       public function changeStatus() {
          if ($this->input->post()) {
             $id = $this->input->post('id');

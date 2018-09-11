@@ -79,6 +79,7 @@ $route['chi-tiet-chieu-phan-bo.html']                     = 'DimensionDetail/ind
 $route['xoa-chi-tiet.html']                               = 'DimensionDetail/delete';
 $route['change-status-dimendetail.html']                  = 'DimensionDetail/changeStatus';
 $route['get-all-dimendetail.html']                        = 'DimensionDetail/listAll';
+$route['khoa-hoc.html']                                   = 'DimensionDetail/coursesManager';
 $route['phan-bo-but-toan.html']                           = 'Distribution/create';
 $route['load-form-distri.html']                           = 'Distribution/loadForm';
 $route['logout.html']                                     = 'Logout/index';
