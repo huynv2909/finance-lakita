@@ -277,6 +277,42 @@
    		die(json_encode($response));
       }
 
+      // view distributed
+      public function viewMore() {
+         if ($this->input->post('id')) {
+            $id = $this->input->post('id');
+
+            $this->data['entry_info'] = $this->AccountingEntry_model->get_info($id);
+
+            $this->load->model('Dimension_model');
+            $dimensions = $this->Dimension_model->get_list();
+
+            $input = array(
+               'select' => array('detail_act_entries.*', 'detail_dimensional.dimen_id', 'detail_dimensional.dimen_code', 'detail_dimensional.name'),
+               'join' => array('detail_dimensional', 'detail_dimensional.id = detail_act_entries.dimensional_id'),
+               'where' => array('entry_id' => $id)
+            );
+            $this->load->model('Distribution_model');
+            $distributions = $this->Distribution_model->get_list($input);
+
+            $group_dis = array();
+            foreach ($distributions as $record) {
+               $temp = array(
+                  'detail_id' => $record->dimensional_id,
+                  'detail' => $record->name,
+                  'value' => $record->value
+               );
+               if (array_key_exists($record->dimen_code, $group_dis)) {
+                  array_push($group_dis[$record->dimen_code], $temp);
+               } else {
+                  $group_dis[$record->dimen_code] = array($temp);
+               }
+            }
+            $this->data['group_dis'] = $group_dis;
+            $this->load->view('accounting/view_more', $this->data);
+         }
+      }
+
       // Require by ajax, return result and voucher id to client site
       public function getVoucher() {
          if ($this->input->post()) {

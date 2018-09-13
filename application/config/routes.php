@@ -61,6 +61,7 @@ $route['but-toan.html']                                   = 'AccountingEntry/ind
 $route['nhap-but-toan.html']                              = 'AccountingEntry/create';
 $route['sua-but-toan.html']                               = 'AccountingEntry/edit';
 $route['xoa-but-toan.html']                               = 'AccountingEntry/delete';
+$route['da-phan-bo.html']                                 = 'AccountingEntry/viewMore';
 $route['loai-chung-tu.html']                              = 'VoucherType/index';
 $route['them-loai-chung-tu.html']                         = 'VoucherType/create';
 $route['chieu-quan-tri.html']                             = 'Dimension/index';

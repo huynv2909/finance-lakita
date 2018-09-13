@@ -1,3 +1,4 @@
+<?php $confs = json_decode($configs); ?>
 <form class="form-horizontal" method="post" id="voucher-form" action="<?php echo $this->routes['voucher_create']; ?>">
 	<div class="row">
 		<div class="col-md-8">
@@ -83,7 +84,7 @@
 						</tbody>
 					</table>
 
-					<p id="tax-text"><input type="checkbox" name="vat_check" value="1"> Đã bao gồm <input type="number" class="input-transparent text-center" name="tax_value" value="10" min="0" max="100"> % thuế</p>
+					<p id="tax-text"><input type="checkbox" name="vat_check" value="1" <?php if ($confs->AUTO_VAT_TAX == 1) echo 'checked'; ?>> Đã bao gồm <input type="number" class="input-transparent text-center" name="tax_value" value="<?php echo $confs->VAT; ?>" min="0" max="100"> % thuế</p>
 					<input type="hidden" name="debit_tax" value="111">
 					<input type="hidden" name="credit_tax" value="3331">
 				 </div>
@@ -194,11 +195,10 @@
 			<div class="form-group">
 				<div class="col-xs-8 col-sm-6 col-md-8 col-lg-7 col-xs-offset-4 col-sm-offset-6 col-md-offset-4 col-lg-offset-5">
 					<p class="pull-right remind">Tự động hoàn thành bút toán:
-						<?php $confs = json_decode($configs); ?>
 						<?php if ($confs->AUTO_DISTRIBUTION == 1): ?>
-							<span style="color:green;">Bật</span>
+							<a href="<?php echo $this->routes['config_index']; ?>"><span style="color:green;">Bật</span></a>
 						<?php else: ?>
-							<span style="color:red;">Tắt</span>
+							<a href="<?php echo $this->routes['config_index']; ?>"><span style="color:red;">Tắt</span></a>
 						<?php endif; ?>
 
 					</p>

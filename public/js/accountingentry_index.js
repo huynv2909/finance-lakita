@@ -10,10 +10,31 @@ $(document).on("click", ".voucher-id", function(){
          id : id
       },
       success : function(result) {
+         $('.title-insert').html('Thông tin chứng từ');
          $('.data-insert').html(result);
          $('#view-modal').modal('show');
       }
    });
+});
+
+$(document).on("click", ".value-acc", function(){
+   var url = $(this).data('url');
+   var id = $(this).data('id');
+
+   $.ajax({
+      url : url,
+      method : "post",
+      data : {
+         id : id
+      },
+      success : function(result) {
+         $('.title-insert').html('Trạng thái phân bổ');
+         $('.data-insert').html(result);
+         $('#view-modal').modal('show');
+      }
+   });
+
+
 });
 
 $(document).on("click", ".del-btn", function(){

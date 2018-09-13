@@ -22,7 +22,7 @@
                <tr>
                   <td><label for="<?php echo $item->name; ?>"><?php echo $item->description; ?></label></td>
                   <td>
-                     <input type="text" class="margin-left-15 padding-left-10 value" name="config_<?php echo $item->id; ?>" id="<?php echo $item->name; ?>" data-id="<?php echo $item->id; ?>" id="<?php echo $item->name; ?>" data-old="<?php echo $item->value; ?>" value="<?php echo $item->value; ?>"> VND
+                     <input type="text" class="margin-left-15 padding-left-10 value" name="config_<?php echo $item->id; ?>" id="<?php echo $item->name; ?>" data-id="<?php echo $item->id; ?>" id="<?php echo $item->name; ?>" data-old="<?php echo $item->value; ?>" value="<?php echo $item->value; ?>"> <?php echo $item->unit; ?>
                      <input type="hidden" id="changed_<?php echo $item->id; ?>" value="0">
                   </td>
                </tr>

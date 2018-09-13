@@ -7,6 +7,8 @@
                   <th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Time on action: activate to sort column ascending">TOA</th>
 						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Value: activate to sort column ascending">Số tiền</th>
 						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Content: activate to sort column ascending">Nội dung</th>
+						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Content: activate to sort column ascending">TK nợ</th>
+						<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Content: activate to sort column ascending">TK có</th>
 						<?php if (in_array('accountingentry_delete', explode(',', $this->role->permission_list))): ?>
 							<th class="sorting" tabindex="0" aria-controls="voucher_table" rowspan="1" colspan="1" aria-label="Action: activate to sort column ascending">Thao tác</th>
 						<?php endif; ?>
@@ -14,18 +16,19 @@
 			</thead>
 			<tbody>
 				<?php foreach ($entries as $item): ?>
-					<tr role="row" id="row-<?php echo $item->id; ?>" data-url="<?php echo $this->routes['voucher_viewmore']; ?>" data-id="<?php echo $item->id; ?>">
+					<tr role="row" id="row-<?php echo $item->id; ?>">
 						 <td class="text-center"><span class="voucher-id" data-url="<?php echo $this->routes['voucher_viewmore']; ?>" data-id="<?php echo $item->voucher_id; ?>"><?php echo $item->code; ?></span></td>
                    <td><?php echo $item->TOA; ?></td>
 						 <td>
-							 <?php
-						 		echo number_format($item->value, 0, ",", ".") . " đ";
-							?>
-							<!-- <?php if (!$item->completed): ?>
-								<a href="<?php echo $this->routes['accountingentry_create'] . '?voucher_id=' . $item->id; ?>" title="Đến nhập bút toán"><i class="fa fa-fw warning" aria-hidden="true" title="Đến nhập bút toán"></i></a>
-							<?php endif; ?> -->
+							 <span class="value-acc" title="Xem phân bổ..." data-id="<?php echo $item->id; ?>" data-url="<?php echo $this->routes['accountingentry_viewmore']; ?>" >
+								 <?php
+							 		echo number_format($item->value, 0, ",", ".") . " đ";
+								 ?>
+							 </span>
 						 </td>
 						 <td><?php echo $item->content; ?></td>
+						 <td class="text-center"><?php echo $item->debit_acc; ?></td>
+						 <td class="text-center"><?php echo $item->credit_acc; ?></td>
 						 <?php if (in_array('accountingentry_delete', explode(',', $this->role->permission_list))): ?>
 							 <td class="text-center">
 							 	 <button type="button" class="btn btn-circle edit-btn" data-url="<?php echo $this->routes['accountingentry_edit']; ?>" data-id="<?php echo $item->id; ?>"><i class="fa fa-fw" aria-hidden="true" title="Chỉnh sửa"></i></button>
@@ -38,7 +41,8 @@
 		</table>
 		<script type="text/javascript">
 			$('#accounting_table').DataTable({
-					  responsive: true
+					  responsive: true,
+					  "order" : [[1, 'desc']]
 			});
 		</script>
 	</div>
@@ -49,7 +53,7 @@
     <div class="modal-content">
 		 <div class="modal-header">
 		  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  <h4 class="modal-title">Chi tiết</h4>
+		  <h4 class="modal-title title-insert"></h4>
 	   </div>
 	   <div class="modal-body data-insert">
 		  <!-- insert by ajax -->

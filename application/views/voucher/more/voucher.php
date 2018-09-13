@@ -44,7 +44,7 @@
          <tbody>
             <tr>
                <td class="text-right"><strong>Giá trị:</strong></td>
-               <td><?php echo number_format($voucher->value, 0, ",", "."); ?></td>
+               <td><?php echo number_format($voucher->value, 0, ",", "."); ?> đ</td>
             </tr>
             <tr>
                <td class="text-right"><strong>Nội dung:</strong></td>
