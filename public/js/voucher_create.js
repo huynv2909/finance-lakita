@@ -1,34 +1,36 @@
 $(document).ready(function(){
-   if ($('#have-a-new-voucher-add').length && $('#have-a-new-voucher-add').val() != '') {
-		var url = $('#have-a-new-voucher-add').data('url');
+   if ($('#distribution_popup').val() == '1') {
+      if ($('#have-a-new-voucher-add').length && $('#have-a-new-voucher-add').val() != '') {
+   		var url = $('#have-a-new-voucher-add').data('url');
 
-		setTimeout(function(){
-			$.confirm({
-				 icon: 'fa fa-warning',
-			    title: 'Nhập bút toán?',
-			    content: 'Ghi nhận thành công chứng từ mới, Bạn có muốn nhập bút toán cho chứng từ mới không?',
-				 theme: 'material',
-				 type: 'green',
-			    buttons: {
-			        Ok: {
-			            text: 'Nhập',
-			            btnClass: 'btn-green',
-			            keys: ['enter'],
-			            action: function(){
-			                window.location.href = url;
-			            }
-			        },
-					  later: {
-						  text: 'Để sau',
-						  keys: ['esc'],
-						  action: function(){
-						  }
-					  }
-			    }
-			});
-		}, 1500);
+   		setTimeout(function(){
+   			$.confirm({
+   				 icon: 'fa fa-warning',
+   			    title: 'Nhập bút toán?',
+   			    content: 'Ghi nhận thành công chứng từ mới, Bạn có muốn nhập bút toán cho chứng từ mới không?',
+   				 theme: 'material',
+   				 type: 'green',
+   			    buttons: {
+   			        Ok: {
+   			            text: 'Nhập',
+   			            btnClass: 'btn-green',
+   			            keys: ['enter'],
+   			            action: function(){
+   			                window.location.href = url;
+   			            }
+   			        },
+   					  later: {
+   						  text: 'Để sau',
+   						  keys: ['esc'],
+   						  action: function(){
+   						  }
+   					  }
+   			    }
+   			});
+   		}, 1500);
 
-	}
+   	}
+   }
 
    // When change type select box
    $('#voucher-type').change(function(){
@@ -234,7 +236,7 @@ $(document).ready(function(){
 	});
 
    // When change, check valid input
-	$(document).on("change", "#voucher-type, #executor, #tot, #value, .sub_course, .sub_out_dimen, .sub_value, .sub_out_value", checkToEnableOk);
+	$(document).on("change", "#voucher-type, #executor, #tot, #value, #method, #provider, .sub_course, .sub_out_dimen, .sub_value, .sub_out_value", checkToEnableOk);
 	// 1
 	$(document).on("keyup", "#value", checkToEnableOk);
 	// 1
@@ -422,6 +424,30 @@ $(document).ready(function(){
 
 	});
 
+   $('#method').change(function(){
+      var id = $(this).val();
+      var url = $(this).data('url');
+
+      $.ajax({
+         url: url,
+         method : "POST",
+         dataType : "JSON",
+         data : {
+            id : id
+         },
+         success : function(result){
+            var html = '<option value="0" class="hidden">(Lựa chọn)</option>';
+            for (var i = 0; i < result.length; i++) {
+               html += '<option value="' + result[i]['id'] + '">' + result[i]['name'] + ' : ' + result[i]['description'] + '</option>'
+            }
+
+            $('#provider').html(html);
+            $('#provider').prop('disabled', false);
+
+         }
+      })
+   });
+
 });
 
 function checkToEnableOk() {
@@ -436,6 +462,14 @@ function checkToEnableOk() {
 	}
 
 	if ($('#executor').val() == 0) {
+		flag = false;
+	}
+
+   if ($('#method').val() == 0) {
+		flag = false;
+	}
+
+   if ($('#provider').val() == 0) {
 		flag = false;
 	}
 

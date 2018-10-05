@@ -1,7 +1,0 @@
-"Domain verification record set:"
-"Record name","Record type","Record Value"
-"_amazonses.lakita.vn","TXT","3SF8d6faruuaqvMHx2qQwOVRTDq+iGBc2Ze/7coMv8A="
-
-"Alternate domain verification record:"
-"Record name","Record type","Record Value"
-"lakita.vn","TXT","amazonses:3SF8d6faruuaqvMHx2qQwOVRTDq+iGBc2Ze/7coMv8A="

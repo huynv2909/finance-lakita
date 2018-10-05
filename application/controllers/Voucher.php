@@ -518,7 +518,57 @@
 	      $data = $sheet->toArray();
 	      $total = count($data);
 
-			pre($data);
+			$input = array(
+				'where' => array(
+					'active' => 1
+				)
+			);
+
+			$this->load->model('VoucherType_model');
+			$this->load->model('Voucher_model');
+			$all_types = $this->VoucherType_model->get_list($input);
+
+			for ($i=1; $i < $total; $i++) {
+
+				$code = 'NONE';
+				foreach ($all_types as $type) {
+					if ($type->id == $data[$i][1]) {
+						$code = $this->GenerateCode($type->code);
+						break;
+					}
+				}
+
+				$info = array(
+					'code' => $code,
+					'code_real' => $data[$i][0],
+					'type_id' => $data[$i][1],
+					'content' => $data[$i][2],
+					'income' => $data[$i][3],
+					'TOT' => $data[$i][4],
+					'TOA' => $data[$i][5],
+					'executor' => $data[$i][6],
+					'value' => $data[$i][7],
+					'owner' => $this->user->id,
+					'note' => $data[$i][8],
+					'method' => $data[$i][9],
+					'provider' => $data[$i][10]
+				);
+
+				if (!$this->Voucher_model->create($info)) {
+					if ($i > 1) {
+						$this->session->set_flashdata('message_errors', 'Đã thêm ' . ($i - 1) . ', có lỗi tại dòng ' . $i . ' :(');
+						redirect($this->routes['voucher_create']);
+					} else {
+						$this->session->set_flashdata('message_errors', 'Có lỗi xảy ra, quá trình thất bại! :(');
+						redirect($this->routes['voucher_create']);
+					}
+				}
+
+			}
+
+			$this->session->set_flashdata('message_success', 'Thêm thành công ' . ($total - 1) . ' chứng từ mới!');
+			redirect($this->routes['voucher_create']);
+
 		}
 
 		private function checkInput() {
