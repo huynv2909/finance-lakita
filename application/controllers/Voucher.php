@@ -21,23 +21,6 @@
 			$this->data['active'] = 'voucher';
 			$this->data['js_files'] = array('voucher_create');
 
-			$voucher_list = $this->Voucher_model->get_list();
-			$count_uncompleted = 0;
-			foreach ($voucher_list as $voucher) {
-				$done = $this->checkCompletedAccountingEntry($voucher->id, $voucher->value);
-				$voucher->{"completed"} = $done;
-				if (!$done) {
-					$count_uncompleted++;
-				}
-			}
-			$this->data['amount_uncompleted'] = $count_uncompleted;
-
-			$this->data['get_uncompleted'] = 1;
-			if ($this->input->get('uncompleted')) {
-				$this->data['get_uncompleted'] = 0;
-			}
-
-			$this->data['vouchers'] = $voucher_list;
 			// Get type receipt
 			$this->load->model('VoucherType_model');
 			$input = array(
@@ -46,38 +29,8 @@
 				)
 			);
 			$this->data['voucher_type'] = $this->VoucherType_model->get_list($input);
-			// Get employee
-			$this->load->model('User_model');
-			$this->data['employees'] = $this->User_model->get_list();
 
-			// Courses list
 			$this->load->model('DetailDimension_model');
-			$input = array(
-				'where' => array(
-					'dimen_id' => 120,
-					'active' => 1
-				),
-				'order' => 'name asc'
-			);
-         $courses = $this->DetailDimension_model->get_list($input);
-			$this->data['courses'] = $courses;
-
-			// Dimen list
-			$input = array(
-				'where' => array('dimen_id !=' => 120),
-				'order' => 'name asc'
-			);
-         $dimens = $this->DetailDimension_model->get_list($input);
-			$this->data['dimens'] = $dimens;
-
-			// Get system acc
-			$this->load->model('AccountingSystem');
-         $list_account = $this->AccountingSystem->get_list();
-			$this->data['system_acc'] = $list_account;
-
-			// default debit acc & credit acc , update by ajax later
-
-			$this->data['latest_voucher_id'] = $this->session->flashdata('latest_id');
 
 			// When submit form
 			if ($this->input->post()) {
@@ -102,6 +55,8 @@
 						'value' => str_replace(".","",$this->input->post('value')),
 						'owner' => $this->user->id,
 						'note' => $this->input->post('note'),
+						'method' => $this->input->post('method'),
+						'provider' => $this->input->post('provider'),
 						'income' => $this->input->post('income')
 						);
 
@@ -112,7 +67,8 @@
 
 					$voucher_id = $this->Voucher_model->get_insert_id();
 					// to pop up go to accounting entry create
-					// $this->session->set_flashdata('latest_id', $voucher_id);
+					$this->session->set_flashdata('latest_id', $voucher_id);
+
 					if ($this->input->post('auto_distribution') != 0) {
 						$this->data['all_dimen'] = $this->DetailDimension_model->get_list();
 
@@ -202,6 +158,95 @@
 				}
 			}
 
+			$filter = array();
+
+			if ($this->input->get()) {
+				if ($this->input->get('from')) {
+					$filter['where']['TOT >='] = $this->input->get('from');
+				}
+
+				if ($this->input->get('to')) {
+					$filter['where']['TOT <='] = $this->input->get('to');
+				}
+
+				if ($this->input->get('method')) {
+					$filter['where']['method'] = $this->input->get('method');
+				}
+
+				if ($this->input->get('provider')) {
+					$filter['where']['provider'] = $this->input->get('provider');
+				}
+
+				if ($this->input->get('voucher_type')) {
+					$filter['where']['type_id'] = $this->input->get('voucher_type');
+				}
+
+				if ($this->input->get('executor')) {
+					$filter['where']['executor'] = $this->input->get('executor');
+				}
+
+				if ($this->input->get('income') == '0' || $this->input->get('income') == '1') {
+					$filter['where']['income'] = $this->input->get('income');
+				}
+
+			}
+
+			$voucher_list = $this->Voucher_model->get_list($filter);
+			$count_uncompleted = 0;
+			foreach ($voucher_list as $voucher) {
+				$done = $this->checkCompletedAccountingEntry($voucher->id, $voucher->value);
+				$voucher->{"completed"} = $done;
+				if (!$done) {
+					$count_uncompleted++;
+				}
+			}
+			$this->data['amount_uncompleted'] = $count_uncompleted;
+
+			$this->data['get_uncompleted'] = 1;
+			if ($this->input->get('uncompleted')) {
+				$this->data['get_uncompleted'] = 0;
+			}
+
+			$this->data['vouchers'] = $voucher_list;
+
+			// Get employee
+			$this->load->model('User_model');
+			$this->data['employees'] = $this->User_model->get_list();
+
+			// Courses list
+			$input = array(
+				'where' => array(
+					'dimen_id' => 120,
+					'active' => 1
+				),
+				'order' => 'name asc'
+			);
+         $courses = $this->DetailDimension_model->get_list($input);
+			$this->data['courses'] = $courses;
+
+			// Dimen list
+			$input = array(
+				'where' => array('dimen_id !=' => 120),
+				'order' => 'name asc'
+			);
+         $dimens = $this->DetailDimension_model->get_list($input);
+			$this->data['dimens'] = $dimens;
+
+			// Get system acc
+			$this->load->model('AccountingSystem');
+         $list_account = $this->AccountingSystem->get_list();
+			$this->data['system_acc'] = $list_account;
+
+			// Payment Method
+			$this->load->model('Method_model');
+			$this->data['methods']= $this->Method_model->get_list();
+
+			// Provider
+			$this->load->model('Provider_model');
+			$this->data['providers']= $this->Provider_model->get_list();
+
+			$this->data['latest_voucher_id'] = $this->session->flashdata('latest_id');
+
 			$this->load->view('layout', $this->data);
 		}
 
@@ -264,6 +309,12 @@
 				$input = array(
 					'where' => array('voucher_id' => $voucher->id)
 				);
+
+				$this->load->model('Method_model');
+				$this->data['methods'] = $this->Method_model->get_list();
+
+				$this->load->model('Provider_model');
+				$this->data['providers'] = $this->Provider_model->get_list();
 
 				$list_act = $this->AccountingEntry_model->get_list($input);
 				foreach ($list_act as $act) {
@@ -439,6 +490,37 @@
          }
       }
 
+		public function createByFiles() {
+			if (!empty($_FILES)) {
+				 $tempFile = $_FILES['files']['tmp_name'];
+	          $fileName = $_FILES['files']['name'];
+	          $okExtensions = array('xls', 'xlsx', 'csv');
+	          $fileParts = explode('.', $fileName);
+	          if (!in_array(strtolower(end($fileParts)), $okExtensions)) {
+					 $this->session->set_flashdata('message_errors', 'Thao tác thất bại :(');
+					 redirect($this->routes['voucher_create']);
+	          }
+	          $targetFile = FCPATH . 'public/upload/vouchers/' . date('Y-m-d-H-i-s') . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
+	          if (!move_uploaded_file($tempFile, $targetFile)) {
+					 $this->session->set_flashdata('message_errors', 'Thao tác thất bại :(');
+					 redirect($this->routes['voucher_create']);
+	          }
+
+				 $this->fileToSystem($targetFile);
+			}
+		}
+
+		private function fileToSystem($path) {
+			$this->load->library('PHPExcel');
+
+			$objPHPExcel = PHPExcel_IOFactory::load($path);
+	      $sheet = $objPHPExcel->getActiveSheet();
+	      $data = $sheet->toArray();
+	      $total = count($data);
+
+			pre($data);
+		}
+
 		private function checkInput() {
 			$value_str = $this->input->post('value');
 			$value_total = str_replace(".","",$value_str);
@@ -469,6 +551,8 @@
 
 			$this->form_validation->set_rules('voucher_type', 'Voucher type', 'required|greater_than[0]');
 			$this->form_validation->set_rules('tot', 'TOT', 'required');
+			$this->form_validation->set_rules('method', 'Method', 'required');
+			$this->form_validation->set_rules('provider', 'Provider', 'required');
 			$this->form_validation->set_rules('executor', 'Executor', 'required|greater_than[0]');
 
 			return $this->form_validation->run();

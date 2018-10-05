@@ -114,7 +114,13 @@
 						'TOA <=' => $value['to']
 					)
 				);
-				$value['revenue'] = $this->Distribution_model->get_list($input)[0]->revenue;
+				$revenue_month = $this->Distribution_model->get_list($input)[0];
+
+				if ($revenue_month->revenue) {
+					$value['revenue'] = $revenue_month->revenue;
+				} else {
+					$value['revenue'] = 0;
+				}
 				array_push($revenue_by_month, $value);
 			}
 

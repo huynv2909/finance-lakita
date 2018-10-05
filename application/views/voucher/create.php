@@ -1,4 +1,4 @@
-<?php $confs = json_decode($configs); ?>
+<?php $confs = json_decode($configs); $total = 0; ?>
 <form class="form-horizontal" method="post" id="voucher-form" action="<?php echo $this->routes['voucher_create']; ?>">
 	<div class="row">
 		<div class="col-md-8">
@@ -6,7 +6,7 @@
 				 <label for="voucher-type" class="col-xs-3 control-label text-right"><span class="text-danger">(*)</span> Loại chứng từ</label>
 				 <div class="col-xs-9">
 					<select class="form-control" id="voucher-type" name="voucher_type" data-url="<?php echo $this->routes['voucher_getdefaultsys']; ?>">
-							<option value="0" selected class="hidden">(Chọn loại chứng từ)</option>
+							<option value="0" class="hidden">(Chọn loại chứng từ)</option>
 							<?php foreach ($voucher_type as $item): ?>
 							<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('voucher_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")"; ?></option>
 							<?php endforeach ?>
@@ -106,7 +106,7 @@
 							<tr class="last-sub-out-row sub-out-row" id="sub-out-row-1">
 								<td>
 									<select class="sub_out_dimen" name="dimen_out_1" id="dimen_out_1">
-										<option value="0" selected class="hidden">(Lựa chọn)</option>
+										<option value="0" class="hidden">(Lựa chọn)</option>
 										<?php foreach ($dimens as $dimen): ?>
 											<option value="<?php echo $dimen->id; ?>"><?php echo $dimen->name; ?></option>
 										<?php endforeach; ?>
@@ -154,19 +154,34 @@
 				 <label for="executor" class="col-xs-3 control-label text-right"><span class="text-danger">(*)</span> Người giao dịch</label>
 				 <div class="col-xs-5">
 					<select class="form-control" name="executor" id="executor" >
-						<option value="0">(Lựa chọn)</option>
+						<option value="0" class="hidden">(Lựa chọn)</option>
 						<?php foreach ($employees as $item): ?>
 							<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('executor')) echo 'selected'; ?> ><?php echo $item->name; ?></option>
 						<?php endforeach ?>
 					</select>
-					<div class="text-danger"><?php echo form_error('executor'); ?></div>
 				 </div>
 				 <div class="col-xs-3 col-xs-push-1">
 					<select class="form-control" name="income" id="income" >
 						<option value="0" selected>Phiếu Chi</option>
 						<option value="1">Phiếu Thu</option>
 					</select>
-					<div class="text-danger"><?php echo form_error('income'); ?></div>
+				 </div>
+			</div>
+			<div class="form-group">
+				 <label for="method" class="col-xs-3 control-label text-right"><span class="text-danger">(*)</span> Hình thức</label>
+				 <div class="col-xs-4">
+					<select class="form-control" name="method" id="method" data-url="<?php echo $this->routes['provider_listbymethodid']; ?>">
+						<option value="0" class="hidden">(Lựa chọn)</option>
+						<?php foreach ($methods as $item): ?>
+							<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('method')) echo 'selected'; ?> ><?php echo $item->name . " : " . $item->description; ?></option>
+						<?php endforeach ?>
+					</select>
+				 </div>
+				 <label for="provider" class="col-xs-1 col-xs-offset-1 text-right padding-0" style="padding-top: 7px;"><span class="text-danger">(*)</span> Qua</label>
+				 <div class="col-xs-3">
+					<select class="form-control" name="provider" id="provider" disabled>
+						<option value="0" class="hidden" selected>(Lựa chọn)</option>
+					</select>
 				 </div>
 			</div>
 			<div class="form-group">
@@ -210,13 +225,16 @@
 		 <div class="col-sm-6 col-sm-offset-3">
 			 <input type="hidden" name="count_sub" id="count_sub" value="1" data-used="0">
 			 <input type="hidden" name="count_sub_out" id="count_sub_out" value="1" data-used="0">
-			 <input type="hidden" id="auto_distribution" name="auto_distribution" value="<?php
-			 	$confs = json_decode($configs);
-				echo $confs->AUTO_DISTRIBUTION;
-			 ?>">
+			 <input type="hidden" id="auto_distribution" name="auto_distribution" value="<?php echo $confs->AUTO_DISTRIBUTION; ?>">
 			<input class="form-control btn btn-success" type="submit" id="voucher-done" value="Xác nhận" disabled>
 		 </div>
 	</div>
+</form>
+
+<form method="post" enctype="multipart/form-data" class="file-form" action="<?php echo $this->routes['voucher_createbyfiles']; ?>">
+	<label for="files">Thêm từ file</label>
+	<input type="file" name="files" accept=".csv, .xlsx, .xls" id="voucher-files">
+	<input type="submit" class="btn btn-warning btn-sm" name="ok" id="upload-btn" value="Thêm" style="margin-top: 4px;" disabled>
 </form>
 
 <div class="row">
@@ -236,6 +254,108 @@
 
 <div class="row log-box">
 	<div class="col-sm-12">
+		<div class="filter-box" <?php if (!$this->input->get()): ?>
+			style="display: none";
+		<?php endif; ?>>
+			<div class="col-md-4 col-lg-3">
+				<p class="text-center">TOT</p>
+				<div class="filter-subbox">
+					<label for="from">Từ:</label>
+					<input id="fil-from" class="form-control filter-field" type="date" name="from" value="<?php if (null !== $this->input->get('from')) echo $this->input->get('from'); ?>"
+					<?php if (null !== $this->input->get('from')): ?>
+						style="background-color: antiquewhite;"
+					<?php endif; ?>
+					>
+					<label for="to">Đến:</label>
+					<input id="fil-to" class="form-control filter-field" type="date" name="to" value="<?php if (null !== $this->input->get('to')) echo $this->input->get('to'); ?>"
+					<?php if (null !== $this->input->get('to')): ?>
+						style="background-color: antiquewhite;"
+					<?php endif; ?>
+					>
+				</div>
+			</div>
+			<div class="col-md-4 col-lg-3">
+				<p class="text-center">Phương thức:</p>
+				<select id="fil-method" class="form-control filter-field" name=""
+				<?php if (null !== $this->input->get('method')): ?>
+					style="background-color: antiquewhite;"
+				<?php endif; ?>
+				>
+					<option value="0" class="hidden">(Lựa chọn)</option>
+					<?php foreach ($methods as $item): ?>
+						<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->get('method')) echo 'selected'; ?> ><?php echo $item->name . " : " . $item->description; ?></option>
+					<?php endforeach ?>
+				</select>
+			</div>
+			<div class="col-md-4 col-lg-3">
+				<p class="text-center">Qua:</p>
+				<select id="fil-provider" class="form-control filter-field" name=""
+				<?php if (null !== $this->input->get('provider')): ?>
+					style="background-color: antiquewhite;"
+				<?php endif; ?>
+				>
+					<option value="0" class="hidden">(Lựa chọn)</option>
+					<?php foreach ($providers as $item): ?>
+						<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->get('provider')) echo 'selected'; ?> ><?php echo $item->name . " : " . $item->description; ?></option>
+					<?php endforeach ?>
+				</select>
+			</div>
+			<div class="col-md-4 col-lg-3">
+				<p class="text-center">Loại chứng từ:</p>
+				<select id="fil-voucher_type" class="form-control filter-field" name=""
+				<?php if (null !== $this->input->get('voucher_type')): ?>
+					style="background-color: antiquewhite;"
+				<?php endif; ?>
+				>
+					<option value="0" class="hidden">(Lựa chọn)</option>
+					<?php foreach ($voucher_type as $item): ?>
+						<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->get('voucher_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")"; ?></option>
+					<?php endforeach ?>
+				</select>
+			</div>
+			<div class="col-md-4 col-lg-3">
+				<p class="text-center">Thực hiện:</p>
+				<select id="fil-executor" class="form-control filter-field" name=""
+				<?php if (null !== $this->input->get('executor')): ?>
+					style="background-color: antiquewhite;"
+				<?php endif; ?>
+				>
+					<option value="0" class="hidden">(Lựa chọn)</option>
+					<?php foreach ($employees as $item): ?>
+						<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->get('executor')) echo 'selected'; ?> ><?php echo $item->name; ?></option>
+					<?php endforeach ?>
+				</select>
+			</div>
+			<div class="col-md-4 col-lg-3">
+				<p class="text-center filter-field">Loại:</p>
+				<select id="fil-income" class="form-control filter-field" name=""
+				<?php if (null !== $this->input->get('income')): ?>
+					style="background-color: antiquewhite;"
+				<?php endif; ?>
+				>
+					<option value="0" class="hidden">(Lựa chọn)</option>
+					<option value="1" <?php if ($this->input->get('income') == '0') echo 'selected'; ?>>Phiếu chi</option>
+					<option value="2" <?php if ($this->input->get('income') == '1') echo 'selected'; ?>>Phiếu thu</option>
+				</select>
+			</div>
+			<div class="col-md-4 col-lg-3">
+				<button type="button" name="button" class="btn btn-success" id="lets-filter"><i class="fa fa-fw" aria-hidden="true" title="Lọc ngay"></i> Lọc ngay</button>
+				<a id="reset-filter-link" href="<?php echo $this->routes['voucher_create']; ?>" class="text-center" style="display: inherit;"><i class="fa fa-fw" aria-hidden="true" title="Bỏ lọc"></i> Bỏ lọc</a>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="row">
+			<h4 class="pull-left">Tổng số: <span id="total-money"></span> đ</h4>
+			<?php if ($this->input->get()): ?>
+				<i class="fa fa-fw fa-2x pull-right slide-filter" data-hidden="0" aria-hidden="true" title="Hide"></i>
+			<?php else: ?>
+				<i class="fa fa-fw fa-2x pull-right slide-filter" data-hidden="1" aria-hidden="true" title="Lọc"></i>
+			<?php endif; ?>
+			<div class="clearfix"></div>
+		</div>
+
+	</div>
+	<div class="col-sm-12">
 		<table class="table table-hover dataTable no-footer log-table" id="voucher_table" role="grid" aria-describedby="voucher_table_info" border="1">
 			<thead>
 					<tr role="row">
@@ -251,6 +371,7 @@
 					</tr>
 			</thead>
 			<tbody>
+				<?php if (isset($vouchers) && $vouchers): ?>
 				<?php foreach ($vouchers as $item): ?>
 					<?php if ($get_uncompleted || !$item->completed): ?>
 					<tr role="row" id="row-<?php echo $item->id; ?>" data-url="<?php echo $this->routes['voucher_viewmore']; ?>" data-id="<?php echo $item->id; ?>" class="voucher-row <?php if ($item->income == 1) echo 'success'; ?>">
@@ -265,13 +386,14 @@
 								}
 							  ?>
 						 </td>
-						 <td>
+						 <td class="text-right">
+							 <?php if (!$item->completed): ?>
+								 <a href="<?php echo $this->routes['accountingentry_create'] . '?voucher_id=' . $item->id; ?>" title="Đến nhập bút toán"><i class="fa fa-fw warning" aria-hidden="true" title="Đến nhập bút toán"></i></a>
+							 <?php endif; ?>
 							 <?php
 						 		echo number_format($item->value, 0, ",", ".") . " đ";
+								$total += $item->value;
 							?>
-							<?php if (!$item->completed): ?>
-								<a href="<?php echo $this->routes['accountingentry_create'] . '?voucher_id=' . $item->id; ?>" title="Đến nhập bút toán"><i class="fa fa-fw warning" aria-hidden="true" title="Đến nhập bút toán"></i></a>
-							<?php endif; ?>
 						 </td>
 						 <td><?php echo $item->content; ?></td>
 						 <td class="text-center">
@@ -291,17 +413,21 @@
 					</tr>
 					<?php endif; ?>
 				<?php endforeach; ?>
-			  </tbody>
+				<?php endif; ?>
+			</tbody>
 		</table>
 		<script type="text/javascript">
 			$('#voucher_table').DataTable({
 					  responsive: true,
 					  "order" : [[0, 'desc'], [5, 'desc']]
 			});
+
+			$('#total-money').html(convertToCurrency('<?php echo $total; ?>'));
 		</script>
 	</div>
 </div>
 
+<input type="hidden" id="distribution_popup" value="<?php echo $confs->NOTIFY_REDIRECT_TO_ACCOUNTING; ?>">
 <!-- have new voucher added -->
 <input type="hidden" id="have-a-new-voucher-add" data-url="<?php echo $this->routes['accountingentry_create'] . '?voucher_id=' . $latest_voucher_id; ?>" value="<?php if (isset($latest_voucher_id) && $latest_voucher_id) echo $latest_voucher_id; ?>">
 

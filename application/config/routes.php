@@ -95,3 +95,5 @@ $route['xoa-loai-chung-tu.html']                          = 'VoucherType/delete'
 $route['thiet-lap-mac-dinh-cho-chung-tu.html']            = 'VoucherType/setDefault';
 $route['login.html']                                      = 'Login/index';
 $route['bao-cao-hoat-dong-tai-chinh.html']                = 'Report/financeActivity';
+$route['nha-cung-cap-dich-vu.html']                       = 'Provider/listByMethodId';
+$route['upload-by-files.html']                            = 'Voucher/createByFiles';

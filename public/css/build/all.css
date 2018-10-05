@@ -174,17 +174,21 @@ form#type-form {
    color: #fff;
 }
 
-.exchange-btn:hover, .slide-form:hover {
+.exchange-btn:hover, .slide-form:hover, .slide-filter:hover {
    cursor: pointer;
 }
 
-.slide-form {
+.slide-form, .slide-filter {
    color: grey;
    margin-right: 15px;
 }
 
-.slide-form:hover {
+.slide-form:hover, .slide-filter:hover {
    color: black;
+}
+
+#total-money {
+   color: crimson;
 }
 
 #dimension-done {
@@ -411,4 +415,16 @@ thead tr th {
    color: crimson;
    font-weight: bold;
    cursor: pointer;
+}
+
+#lets-filter {
+   margin: auto;
+    display: block;
+    margin-top: 20px;
+}
+
+.filter-box {
+   padding: 10px;
+    border: 2px solid chocolate;
+    border-radius: 10px;
 }

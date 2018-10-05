@@ -63,6 +63,32 @@
                   ?>
                </td>
             </tr>
+            <tr>
+               <td class="text-right"><strong>Hình thức:</strong></td>
+               <td>
+                  <?php
+                    foreach ($methods as $method) {
+                       if ($voucher->method == $method->id) {
+                          echo $method->name;
+                          break;
+                       }
+                    }
+                  ?>
+               </td>
+            </tr>
+            <tr>
+               <td class="text-right"><strong>Thông qua:</strong></td>
+               <td>
+                  <?php
+                    foreach ($providers as $provider) {
+                       if ($voucher->provider == $provider->id) {
+                          echo $provider->name;
+                          break;
+                       }
+                    }
+                  ?>
+               </td>
+            </tr>
          </tbody>
       </table>
    </div>

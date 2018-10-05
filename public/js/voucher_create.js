@@ -349,6 +349,79 @@ $(document).ready(function(){
 
 	});
 
+   $('.file-form input').change(function(){
+      $('#upload-btn').prop('disabled', !$('#voucher-files').val());
+   });
+
+   $('#lets-filter').click(function(){
+      var extension = '?';
+      var flag = false;
+
+      if ($('#fil-from').val() != '') {
+         flag = true;
+         extension += 'from=' + $('#fil-from').val() + '&';
+      }
+
+      if ($('#fil-to').val() != '') {
+         flag = true;
+         extension += 'to=' + $('#fil-to').val() + '&';
+      }
+
+      if ($('#fil-method').val() != '0') {
+         flag = true;
+         extension += 'method=' + $('#fil-method').val() + '&';
+      }
+
+      if ($('#fil-executor').val() != '0') {
+         flag = true;
+         extension += 'executor=' + $('#fil-executor').val() + '&';
+      }
+
+      if ($('#fil-provider').val() != '0') {
+         flag = true;
+         extension += 'provider=' + $('#fil-provider').val() + '&';
+      }
+
+      if ($('#fil-voucher_type').val() != '0') {
+         flag = true;
+         extension += 'voucher_type=' + $('#fil-voucher_type').val() + '&';
+      }
+
+      if ($('#fil-income').val() != '0') {
+         flag = true;
+         extension += 'income=' + $('#fil-income').val() + '&';
+      }
+
+      if (flag) {
+         window.location.href = $('#reset-filter-link').prop('href') + extension;
+      }
+
+
+   });
+
+   $('.filter-field').change(function(){
+      if ($(this).val() != '' && $(this).val() != '0') {
+         $(this).css('background-color', 'antiquewhite');
+      } else {
+         $(this).css('background-color', '#fff');
+      }
+   });
+
+   $('.slide-filter').click(function(){
+		var invisible = $(this).data('hidden');
+
+		if (invisible == '0') {
+			$('.filter-box').slideUp();
+			$(this).html('');
+			$(this).data('hidden', 1);
+		} else {
+			$('.filter-box').slideDown();
+			$(this).html('');
+			$(this).data('hidden', 0);
+		}
+
+	});
+
 });
 
 function checkToEnableOk() {
