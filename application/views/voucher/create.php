@@ -32,15 +32,17 @@
 				 </div>
 			</div>
 			<div class="form-group contain-detail" id="contain-detail-income">
-				 <div class="col-xs-8 col-xs-offset-4">
+				 <div class="col-xs-9 col-xs-offset-3">
 					<table class="acc-fill-table">
 						<thead>
 							<tr>
-								<th style="width: 35%; text-align: center;">Khóa học:</th>
-								<th style="width: 20%; text-align: center;">Số tiền:</th>
-								<th style="width: 20%; text-align: center;">TOA:</th>
-								<th style="width: 10%; text-align: center;">TK nợ:</th>
-								<th style="width: 10%; text-align: center;">TK Có:</th>
+								<th style="width: 35%; text-align: center;">Sản phẩm:</th>
+								<th style="width: 10%; text-align: center;">Đơn giá:</th>
+								<th style="width: 5%; text-align: center;">Số lượng</th>
+								<th style="width: 16%; text-align: center;">Số tiền:</th>
+								<th style="width: 15%; text-align: center;">TOA:</th>
+								<th style="width: 7%; text-align: center;">TK nợ:</th>
+								<th style="width: 7%; text-align: center;">TK Có:</th>
 								<th style="width: 5%; text-align: center;"></th>
 							</tr>
 						</thead>
@@ -55,7 +57,13 @@
 									</select>
 								</td>
 								<td>
-									<input class="sub_value" type="text" onkeyup="oneDot(this)"  name="value_1" id="value_1" value="" data-alive="1">
+									<input class="unit_price" type="text" onkeyup="oneDot(this)" id="unit_price_1" data-item="1" value="">
+								</td>
+								<td>
+									<input class="amount text-center" type="number" id="amount_1" value="1" min="1" data-item="1">
+								</td>
+								<td>
+									<input class="sub_value" type="text" onkeyup="oneDot(this)"  name="value_1" id="value_1" value="" data-alive="1" readonly="readonly">
 								</td>
 								<td>
 									<input class="sub_toa" type="date" name="toa_1" id="toa_1" value="<?php echo date('Y-m-d'); ?>" data-alive="1">

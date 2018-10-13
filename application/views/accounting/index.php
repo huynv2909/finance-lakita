@@ -19,7 +19,7 @@
 					<tr role="row" id="row-<?php echo $item->id; ?>">
 						 <td class="text-center"><span class="voucher-id" data-url="<?php echo $this->routes['voucher_viewmore']; ?>" data-id="<?php echo $item->voucher_id; ?>"><?php echo $item->code; ?></span></td>
                    <td><?php echo $item->TOA; ?></td>
-						 <td>
+						 <td class="text-right">
 							 <span class="value-acc" title="Xem phân bổ..." data-id="<?php echo $item->id; ?>" data-url="<?php echo $this->routes['accountingentry_viewmore']; ?>" >
 								 <?php
 							 		echo number_format($item->value, 0, ",", ".") . " đ";

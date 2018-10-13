@@ -5,7 +5,7 @@ $(document).ready(function(){
 		$('.alert').fadeIn();
 		setTimeout(function(){
 			$('.alert').fadeOut();
-		}, 3000);
+		}, 5000);
 	}
 
    $('.slide-form').click(function(){

@@ -86,7 +86,6 @@ $(document).ready(function(){
 			}
 		}
 
-		// console.log(index_of_last == count,is_number);
 		if (index_of_last <= count && is_number) {
 			var value = parseInt($('#value').val().split('.').join(''));
 			var total_sub = 0;
@@ -98,7 +97,6 @@ $(document).ready(function(){
 
 			if (total_sub < value) {
 				var new_tag = $('.last-sub-row').clone();
-				$(new_tag).find('input:text').val(convertToCurrency((value - total_sub).toString()));
 				$(new_tag).insertAfter($('.last-sub-row'));
 				var tag_number = count + 1;
 				$('#count_sub').val(tag_number);
@@ -112,30 +110,42 @@ $(document).ready(function(){
 				var course_select = $($($(new_row).children('td')[0]).children('.sub_course'))[0];
 				$(course_select).prop('name', 'course_' + tag_number.toString());
 				$(course_select).prop('id', 'course_' + tag_number.toString());
+
+            // edit unit price
+				var price_select = $($($(new_row).children('td')[1]).children('.unit_price'))[0];
+				$(price_select).data('item', tag_number);
+				$(price_select).prop('id', 'unit_price_' + tag_number.toString());
+            $(price_select).val('');
+            // edit amount
+				var amount_select = $($($(new_row).children('td')[2]).children('.amount'))[0];
+				$(amount_select).data('item', tag_number);
+				$(amount_select).prop('id', 'amount_' + tag_number.toString());
+            $(amount_select).val('1');
 				// edit value
-				var value_input = $($($(new_row).children('td')[1]).children('.sub_value'))[0];
+				var value_input = $($($(new_row).children('td')[3]).children('.sub_value'))[0];
 				$(value_input).prop('name', 'value_' + tag_number.toString());
 				$(value_input).prop('id', 'value_' + tag_number.toString());
+            $(value_input).val('');
 				// tot value
-				var toa_input = $($($(new_row).children('td')[2]).children('.sub_toa'))[0];
+				var toa_input = $($($(new_row).children('td')[4]).children('.sub_toa'))[0];
 				$(toa_input).prop('name', 'toa_' + tag_number.toString());
 				$(toa_input).prop('id', 'toa_' + tag_number.toString());
 				// edit debit
-				var debit_select = $($($(new_row).children('td')[3]).children('.sub_debit'))[0];
+				var debit_select = $($($(new_row).children('td')[5]).children('.sub_debit'))[0];
 				$(debit_select).prop('name', 'debit_' + tag_number.toString());
 				$(debit_select).prop('id', 'debit_' + tag_number.toString());
 				$(debit_select).val($('.sub_debit').val());
 				// edit course
-				var credit_select = $($($(new_row).children('td')[4]).children('.sub_credit'))[0];
+				var credit_select = $($($(new_row).children('td')[6]).children('.sub_credit'))[0];
 				$(credit_select).prop('name', 'credit_' + tag_number.toString());
 				$(credit_select).prop('id', 'credit_' + tag_number.toString());
 				$(credit_select).val($('.sub_credit').val());
 				// Edit confirm
-				var confirm_input = $($($(new_row).children('td')[5]).children('input'))[0];
+				var confirm_input = $($($(new_row).children('td')[7]).children('input'))[0];
 				$(confirm_input).prop('name', 'confirm_' + tag_number.toString());
 				$(confirm_input).prop('id', 'confirm_' + tag_number.toString());
 				// Edit delete
-				var delete_i = $($($(new_row).children('td')[5]).children('i'))[0];
+				var delete_i = $($($(new_row).children('td')[7]).children('i'))[0];
 				$(delete_i).data('number', tag_number);
 			}
 		}
@@ -241,12 +251,6 @@ $(document).ready(function(){
 	$(document).on("keyup", "#value", checkToEnableOk);
 	// 1
 	$('#value').change(function(){
-		if ($('#count_sub').val() == 1) {
-			if ($.trim($('#value_1').val()) == '') {
-				$('#value_1').val($(this).val());
-			}
-		}
-
 		if ($('#count_sub_out').val() == 1) {
 			if ($.trim($('#value_out_1').val()) == '') {
 				$('#value_out_1').val($(this).val());
@@ -257,6 +261,36 @@ $(document).ready(function(){
 
 	});
 
+
+   $(document).on("change", ".unit_price", function(){
+      var item_number = $(this).data('item');
+      var value = parseInt($(this).val().split('.').join(''))*parseInt($('#amount_' + item_number).val());
+      $('#value_' + item_number).val(convertToCurrency(value.toString()));
+      $('#value_' + item_number).trigger("change");
+   });
+
+   $(document).on("change", ".amount", function(){
+      var item_number = $(this).data('item');
+
+      var flag = true;
+      var str_value = $('#unit_price_' + item_number).val();
+   	if ($.trim(str_value) == '') {
+   		flag = false;
+   	}
+
+      str_value = str_value.split('.').join('');
+   	if (!$.isNumeric(str_value)) {
+   		flag = false;
+   	}
+
+      if (flag) {
+         var value = parseInt(str_value)*parseInt($(this).val());
+         $('#value_' + item_number).val(convertToCurrency(value.toString()));
+         $('#value_' + item_number).trigger("change");
+      }
+   });
+
+
    $(document).on("click", ".delete_sub", function(){
 		if ($('.sub-row:visible').length > 1) {
 			var number = $(this).data('number');
@@ -264,7 +298,6 @@ $(document).ready(function(){
 			$('#sub-row-' + number.toString()).fadeOut(100);
 			$('#value_' + number.toString()).data('alive', 0);
 			$('#confirm_' + number.toString()).val(0);
-         $('#remaining-amount').html(convertToCurrency( (parseInt($('#remaining-amount').html().split('.').join('')) + parseInt($('#value_' + number.toString()).val().split('.').join(''))).toString() ));
 
 			if ($('#sub-row-' + number.toString()).hasClass("last-sub-row")) {
 
@@ -391,7 +424,7 @@ $(document).ready(function(){
 
       if ($('#fil-income').val() != '0') {
          flag = true;
-         extension += 'income=' + $('#fil-income').val() + '&';
+         extension += 'income=' + (parseInt($('#fil-income').val()) - 1) + '&';
       }
 
       if (flag) {
@@ -544,9 +577,13 @@ function updateRemainingAmount() {
       var total_sub = 0;
       if ($('#count_sub').data('used') == 1) {
          var list_sub = $('.sub_value');
+
          for (var i = 0; i < list_sub.length; i++) {
             if ($(list_sub[i]).data('alive') == 1) {
-               total_sub += parseInt($(list_sub[i]).val().split('.').join(''));
+               if ($(list_sub[i]).val() != '') {
+                  total_sub += parseInt($(list_sub[i]).val().split('.').join(''));
+               }
+
             }
          }
       }

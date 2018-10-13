@@ -539,7 +539,7 @@
 				}
 
 				$info = array(
-					'code' => $code,
+					'code' => $code . 'f' . $i,
 					'code_real' => $data[$i][0],
 					'type_id' => $data[$i][1],
 					'content' => $data[$i][2],
@@ -591,9 +591,10 @@
 							return false;
 						}
 						$total += $value_temp;
-						$this->form_validation->set_rules('course_' . $i,'Course', 'required|greater_than[0]');
+						$this->form_validation->set_rules('course_' . $i, 'Course', 'required|greater_than[0]');
 					}
 				}
+
 				if ($total != $value_total) {
 					return false;
 				}
