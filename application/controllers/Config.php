@@ -44,7 +44,6 @@
 					}
 				}
 
-				delete_cookie('configs_json');
 				$this->session->set_flashdata('message_success', 'Đã cập nhật!');
 				redirect($this->routes['config_index']);
 			}

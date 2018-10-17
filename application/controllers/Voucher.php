@@ -78,14 +78,14 @@
 							$weight_tax = 0;
 
 							if ($this->input->post('vat_check')) {
-								$weight_tax = $this->input->post('tax_value') / 100;
+								$weight_tax = $this->input->post('tax_value') / ( 100 + $this->input->post('tax_value') );
 							}
 
 							for ($i=1; $i <= $total_row_sub; $i++) {
 								$used = $this->input->post('confirm_' . $i);
 								if ($used == 1) {
 									$value_entered = str_replace(".","",$this->input->post('value_' . $i));
-									$value_tax = $value_entered*$weight_tax;
+									$value_tax = ceil($value_entered*$weight_tax);
 									$value_revenue = $value_entered - $value_tax;
 
 									$data_acc = array(
@@ -98,7 +98,15 @@
 									);
 
 									$course_dis = $this->input->post('course_' . $i);
-									if (!$this->createAccountingAndDistribution($data_acc, $course_dis, true)) {
+
+									$is_revenue = true;
+
+									// 22: Thu khac. 23: Dau tu
+									if ($this->input->post('voucher_type') == 22 || $this->input->post('voucher_type') == 23) {
+										$is_revenue = false;
+									}
+
+									if (!$this->createAccountingAndDistribution($data_acc, $course_dis, $is_revenue)) {
 										$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
 										redirect($this->routes['voucher_create']);
 									}
@@ -579,24 +587,26 @@
 				return false;
 			}
 
-			if ($this->input->post('income') == 1) {
-				$total_sub = $this->input->post('count_sub');
-				$total = 0;
-				for ($i=1; $i <= $total_sub; $i++) {
-					$used = $this->input->post('confirm_' . $i);
-					if ($used == 1) {
-						$value_temp = $this->input->post('value_' . $i);
-						$value_temp = str_replace(".","",$value_temp);
-						if (!is_numeric($value_temp)) {
-							return false;
+			if ($this->input->post('auto_distribution') != 0) {
+				if ($this->input->post('income') == 1) {
+					$total_sub = $this->input->post('count_sub');
+					$total = 0;
+					for ($i=1; $i <= $total_sub; $i++) {
+						$used = $this->input->post('confirm_' . $i);
+						if ($used == 1) {
+							$value_temp = $this->input->post('value_' . $i);
+							$value_temp = str_replace(".","",$value_temp);
+							if (!is_numeric($value_temp)) {
+								return false;
+							}
+							$total += $value_temp;
+							$this->form_validation->set_rules('course_' . $i, 'Course', 'required|greater_than[0]');
 						}
-						$total += $value_temp;
-						$this->form_validation->set_rules('course_' . $i, 'Course', 'required|greater_than[0]');
 					}
-				}
 
-				if ($total != $value_total) {
-					return false;
+					if ($total != $value_total) {
+						return false;
+					}
 				}
 			}
 

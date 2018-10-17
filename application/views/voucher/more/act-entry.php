@@ -29,6 +29,9 @@
                   <td class="text-right"><strong>Nội dung:</strong></td>
                   <td><?php if (!empty($item->content)) echo $item->content; else echo '(trống)' ?></td>
                </tr>
+               <tr>
+                  <td colspan="2" class="text-center"><a href="<?php echo $this->routes['accountingentry_index'] . '?code=' . $voucher->code; ?>">Xem phân bổ<i class="fa fa-fw" aria-hidden="true" title="Xem phân bổ"></i></a></td>
+               </tr>
             </tbody>
          </table>
       </div>

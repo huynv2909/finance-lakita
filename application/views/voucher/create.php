@@ -6,10 +6,22 @@
 				 <label for="voucher-type" class="col-xs-3 control-label text-right"><span class="text-danger">(*)</span> Loại chứng từ</label>
 				 <div class="col-xs-9">
 					<select class="form-control" id="voucher-type" name="voucher_type" data-url="<?php echo $this->routes['voucher_getdefaultsys']; ?>">
-							<option value="0" class="hidden">(Chọn loại chứng từ)</option>
+						<option value="0" class="hidden">(Chọn loại chứng từ)</option>
+						<optgroup label="Phiếu thu">
 							<?php foreach ($voucher_type as $item): ?>
-							<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('voucher_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")"; ?></option>
+								<?php if ($item->income == 1): ?>
+									<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('voucher_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")"; ?></option>
+								<?php endif; ?>
 							<?php endforeach ?>
+						</optgroup>
+
+						<optgroup label="Phiếu chi">
+							<?php foreach ($voucher_type as $item): ?>
+								<?php if ($item->income == 0): ?>
+									<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('voucher_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")";?></option>
+								<?php endif; ?>
+							<?php endforeach ?>
+						</optgroup>
 					</select>
 					<div class="text-danger"><?php echo form_error('voucher_type'); ?></div>
 				 </div>

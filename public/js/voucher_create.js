@@ -34,10 +34,10 @@ $(document).ready(function(){
 
    // When change type select box
    $('#voucher-type').change(function(){
-      if ($('#auto_distribution').val() == '1') {
-   		var type_id = $(this).val();
-   		var url = $(this).data('url');
+      var type_id = $(this).val();
+      var url = $(this).data('url');
 
+      if ($('#auto_distribution').val() == '1') {
    		$.ajax({
    			url : url,
    			method : "POST",
@@ -64,11 +64,28 @@ $(document).ready(function(){
    					$('#count_sub').data('used', 0);
    					$('#count_sub_out').data('used', 1);
    				}
-               updateRemainingAmount();
    			}
    		});
 
+      } else {
+         $.ajax({
+   			url : url,
+   			method : "POST",
+   			dataType : "JSON",
+   			data : {
+   				voucher_type_id : type_id
+   			},
+   			success : function(result){
+   				if (result.income == "1") {
+   					$('#income').val('1');
+   				} else {
+   					$('#income').val('0');
+   				}
+   			}
+   		});
       }
+
+      updateRemainingAmount();
 
 	});
 
