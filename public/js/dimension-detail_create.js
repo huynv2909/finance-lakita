@@ -13,13 +13,19 @@ $(document).ready(function(){
 				data: {
 					id : id
 				},
+            beforeSend: function() {
+               $('#root-waiting').css('display', 'flex');
+            },
 				success: function(result) {
 					var table = $('#detail_dimen_table').DataTable();
 					table.row().remove().draw();
 					for (var i = 0; i < result.details.length; i++) {
 						table.row.add([result.details[i]['name'],result.details[i]['note'],result.details[i]['weight'],result.details[i]['parent_name'],result.details[i]['layer'],result.details[i]['sequence'],result.details[i]['exchange'] + result.details[i]['delete']]).draw();
 					}
-				}
+				},
+            complete: function() {
+               $('#root-waiting').css('display', 'none');
+            }
 			});
 
 		} else {

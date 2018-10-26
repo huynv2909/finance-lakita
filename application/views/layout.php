@@ -4,6 +4,11 @@
     <body>
         <div id="wrapper">
 
+           <div class="load-info" id="root-waiting">
+              <i class="fa fa-fw fa-3x fa-spin waiting" aria-hidden="true" title="Copy to use circle-o-notch"></i>
+              <i class="fa fa-fw fa-3x success hidden" aria-hidden="true" title="Success"></i>
+          </div>
+
             <?php $this->load->view('navigation'); ?>
 
             <div id="page-wrapper">

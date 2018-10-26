@@ -255,10 +255,16 @@ $(document).ready(function(){
 			data : {
 				id : id
 			},
+         beforeSend: function() {
+            $('#root-waiting').css('display', 'flex');
+         },
 			success : function(result) {
 				$('.data-insert').html(result);
 				$('#view-modal').modal('show');
-			}
+			},
+         complete: function() {
+            $('#root-waiting').css('display', 'none');
+         }
 		});
 	});
 

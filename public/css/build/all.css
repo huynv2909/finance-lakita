@@ -298,6 +298,7 @@ form#type-form {
    width: 100%;
    display: block;
    overflow-x: scroll;
+   overflow-y: hidden;
 }
 
 .report th, .fix-col-report th {

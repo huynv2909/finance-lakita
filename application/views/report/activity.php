@@ -34,7 +34,7 @@
 </div>
 
 <div class="col-lg-3 padding-0 custom-table">
-   <table border="1">
+   <table border="1" class="catalog-table">
       <thead>
          <tr height="63">
             <?php for ($i=1; $i <= $number_layer; $i++) { ?>
@@ -126,3 +126,5 @@
    </table>
 </div>
 <div class="clearfix"></div>
+
+<input type="hidden" id="height-table" value="">

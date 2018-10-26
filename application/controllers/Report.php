@@ -16,8 +16,7 @@
 			$this->data['title'] = "BÁO CÁO HOẠT ĐỘNG TÀI CHÍNH";
          $this->data['active'] = "Report";
          $this->data['template'] = "report/activity.php";
-         $this->data['js_files'] = array('report_activity', 'floating-scroll/dist/jquery.floatingscroll.es6.min');
-			$this->data['css_files'] = array('js/floating-scroll/dist/jquery.floatingscroll');
+         $this->data['js_files'] = array('report_activity');
 
          // default dimension
          $dimension_id = array(200,210,220); // HD1,HD2,HD3

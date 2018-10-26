@@ -25,6 +25,17 @@
                $t_fixed.addClass('hide-scrollbar');
                $t_fixed.css('display', 'block');
             }
+
+            // console.log(offset);
+            // console.log($(window).height() + offset);
+            // console.log($($('.catalog-table')[1]).height());
+            if ($(window).scrollTop() + $(window).height() - tableOffsetTop < parseInt($('#height-table').val())) {
+               $this.css('height', $(window).scrollTop() + $(window).height() - tableOffsetTop);
+            } else {
+               $this.css('height', parseInt($('#height-table').val()));
+            }
+
+
          }
          $(window).resize(resizeFixed);
          $(window).scroll(scrollFixed);
@@ -35,6 +46,8 @@
 
 
 $(document).ready(function(){
+   // Why 18? Fuck!
+   $('#height-table').val($('.report').height() - 18);
    $("table").fixMe();
 
    $('.report').scroll(function(){

@@ -9,10 +9,16 @@ $(document).on("click", ".voucher-id", function(){
       data : {
          id : id
       },
+      beforeSend: function() {
+         $('#root-waiting').css('display', 'flex');
+      },
       success : function(result) {
          $('.title-insert').html('Thông tin chứng từ');
          $('.data-insert').html(result);
          $('#view-modal').modal('show');
+      },
+      complete: function() {
+         $('#root-waiting').css('display', 'none');
       }
    });
 });
@@ -27,10 +33,16 @@ $(document).on("click", ".value-acc", function(){
       data : {
          id : id
       },
+      beforeSend: function() {
+         $('#root-waiting').css('display', 'flex');
+      },
       success : function(result) {
          $('.title-insert').html('Trạng thái phân bổ');
          $('.data-insert').html(result);
          $('#view-modal').modal('show');
+      },
+      complete: function() {
+         $('#root-waiting').css('display', 'none');
       }
    });
 
