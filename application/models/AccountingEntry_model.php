@@ -4,6 +4,6 @@
 	 */
 	class AccountingEntry_model extends MY_Model
 	{
-		var $table = "accounting_entries";
+		var $table = "accounting_entries_old";
 	}
  ?>

@@ -37,8 +37,8 @@
 	// 2 : month
 	// 3 : day
 	function split_date($from, $to, $type) {
-		$begin = (new DateTime( $from ))->modify('first day of this month');
-		$end = (new DateTime( $to ))->modify('first day of this month');
+		$begin = (new DateTime( $from ));
+		$end = (new DateTime( $to ));
 		$end->setTime(0,0,1);
 		$time_arr = array();
 
@@ -71,6 +71,7 @@
 		if ($type == 3) {
 			$interval = new DateInterval('P1D');
 			$daterange = new DatePeriod($begin, $interval ,$end);
+
 			foreach($daterange as $date){
 				$time_arr[$date->format("d-m-Y")] = array(
 					'from' => $date->format("Y-m-d"),

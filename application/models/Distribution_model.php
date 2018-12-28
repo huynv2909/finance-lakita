@@ -4,6 +4,6 @@
 	 */
 	class Distribution_model extends MY_Model
 	{
-		var $table = "detail_act_entries";
+		var $table = "detail_act_entries_old";
 	}
  ?>

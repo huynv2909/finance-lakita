@@ -16,10 +16,26 @@
 		public function index()
 		{
 			$this->data['title'] = "Dashboard";
-			$this->data['template'] = 'dashboard/index';
 			$this->data['active'] = 'dashboard';
-			$this->data['js_files'] = array('dashboard_index');
+			if ($this->user->permission == 1) {
+				$this->manager();
+			} else {
+				$this->accountant();
+			}
 
+		}
+
+		private function accountant() {
+			$this->data['template'] = 'dashboard/accountant';
+			$this->data['js_files'] = array('dashboard_accountant');
+
+
+			$this->load->view('layout', $this->data);
+		}
+
+		private function manager() {
+			$this->data['template'] = 'dashboard/index';
+			$this->data['js_files'] = array('dashboard_index');
 			// month kpi
 			$cfg = json_decode($this->data['configs']);
 
@@ -51,16 +67,15 @@
 			$this->data['date_range'] = $date_range_default;
 
 			$input = array(
-				'select' => array('SUM(accounting_entries.value) AS revenue'),
-				'join' => array('vouchers', 'vouchers.id = accounting_entries.voucher_id'),
+				'select' => array('SUM(value) AS revenue'),
 				'where' => array(
-					'vouchers.income' => 1,
-					'accounting_entries.TOA >=' => $min_date,
-					'accounting_entries.TOA <=' => $max_date
-				),
-				'order' => 'accounting_entries.TOA ASC'
+					'dimensional_id' => 210,
+					'TOA >=' => $min_date,
+					'TOA <=' => $max_date
+				)
 			);
-			$revenue = $this->AccountingEntry_model->get_list($input)[0]->revenue;
+
+			$revenue = $this->Distribution_model->get_list($input)[0]->revenue;
 
 			$this->data['kpi'] = $kpi_default;
 			$this->data['revenue'] = $revenue;
@@ -77,17 +92,15 @@
 
 			// cost
 			$input = array(
-				'select' => array('SUM(accounting_entries.value) AS cost'),
-				'join' => array('vouchers', 'vouchers.id = accounting_entries.voucher_id'),
+				'select' => array('SUM(value) AS cost'),
 				'where' => array(
-					'vouchers.income' => 0,
-					'accounting_entries.TOA >=' => $min_date,
-					'accounting_entries.TOA <=' => $max_date
+					'TOA >=' => $min_date,
+					'TOA <=' => $max_date
 				),
-				'order' => 'accounting_entries.TOA ASC'
+				'where_in' => array('dimensional_id', array(310,320,330,340,250) )
 			);
 
-			$cost = $this->AccountingEntry_model->get_list($input)[0]->cost;
+			$cost = $this->Distribution_model->get_list($input)[0]->cost;
 			$this->data['profit'] = $revenue - $cost;
 
 			// trend revenue
@@ -96,7 +109,11 @@
 				'order' => 'TOA asc'
 			);
 			$revenue_dis = $this->Distribution_model->get_list($input);
-			$from_date = $revenue_dis[0]->TOA;
+			$from_date = date('Y-m-d');
+			if (count($revenue_dis) > 1) {
+				$from_date = $revenue_dis[0]->TOA;
+			}
+
 			$to_date = date('Y-m-d');
 			$date_range = split_date($from_date, $to_date, 2);
 

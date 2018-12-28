@@ -31,6 +31,78 @@
          $this->load->view('layout', $this->data);
       }
 
+      public function edit() {
+         if ($this->input->post()) {
+            $this->load->model('AccountingEntry_model');
+            $this->load->model('Voucher_model');
+
+            $this->load->model('User_model');
+				$this->data['employees'] = $this->User_model->get_list();
+
+            $this->load->model('Method_model');
+				$this->data['methods'] = $this->Method_model->get_list();
+
+            $this->load->model('VoucherType_model');
+				$this->data['types'] = $this->VoucherType_model->get_list();
+
+            $this->load->model('AccountingSystem');
+            $this->data['act_system'] = $this->AccountingSystem->get_list();
+
+            $id_acc = $this->input->post('id');
+
+            $this->data['act_detail'] = $this->AccountingEntry_model->get_info($id_acc);
+
+            $id_vou = $this->data['act_detail']->voucher_id;
+
+            $this->data['info'] = $this->Voucher_model->get_info($id_vou);
+
+            $input = array(
+               'select' => 'SUM(value) AS sum_old',
+               'where' => array(
+                  'voucher_id' => $id_vou,
+                  'id !=' => $id_acc
+               )
+            );
+            $query = $this->AccountingEntry_model->get_list($input);
+
+            $sum_old = $query[0]->sum_old;
+            $total_val = $this->data['info']->value;
+
+            $remaining_val = $total_val - $sum_old;
+
+            $responses = array(
+               'voucher_detail' => $this->load->view('load_by_ajax/voucher_box', $this->data, true),
+               'form' => $this->load->view('accounting/edit', $this->data, true),
+               'remaining' => $remaining_val
+            );
+
+            die(json_encode($responses));
+         }
+      }
+
+      public function editSubmit() {
+         if ($this->input->post()) {
+            $id = $this->input->post('id');
+
+            $data_update = array(
+               'TOA' => $this->input->post('toa'),
+               'value' => str_replace(".","",$this->input->post('value')),
+               'debit_acc' => $this->input->post('debit_acc'),
+               'credit_acc' => $this->input->post('credit_acc'),
+               'content' => $this->input->post('content')
+            );
+            $this->load->model('AccountingEntry_model');
+
+            if ($this->AccountingEntry_model->update($id, $data_update)) {
+               $this->session->set_flashdata('message_success', 'Cập nhật dữ liệu thành công!');
+					redirect($this->routes['accountingentry_index']);
+            } else {
+               $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
+               redirect($this->routes['accountingentry_index']);
+            }
+         }
+      }
+
       public function create() {
          $this->data['title'] = "Nhập bút toán";
 			$this->data['template'] = 'accounting/create';
@@ -335,6 +407,7 @@
       private function getUncompletedVoucher() {
          $this->load->model('Voucher_model');
          $input = array(
+            'where' => array('approved' => 1),
             'order' => 'date desc'
          );
 

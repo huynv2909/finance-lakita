@@ -48,6 +48,8 @@
 	</div>
 </div>
 
+<input type="hidden" id="remaining_val" value="">
+
 <div class="modal fade" id="view-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">

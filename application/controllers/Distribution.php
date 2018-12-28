@@ -52,6 +52,7 @@
 
          $this->load->model('Voucher_model');
          $input = array(
+            'where' => array('approved' => 1),
             'order' => 'date desc'
          );
          $this->data['vouchers'] = $this->Voucher_model->get_list($input);

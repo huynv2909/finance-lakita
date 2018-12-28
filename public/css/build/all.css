@@ -336,6 +336,7 @@ thead tr th {
   position:fixed;
   display:none;
   border:none;
+  z-index: 22;
 }
 
 .fixed-bar{
@@ -428,4 +429,29 @@ thead tr th {
    padding: 10px;
     border: 2px solid chocolate;
     border-radius: 10px;
+}
+
+.catalog-table {
+   background-color: #fdf7c8;
+    font-weight: bold;
+}
+
+
+#edit-act-form {
+   border: 1px solid darkorange;
+   border-radius: 5px;
+   padding-top: 10px;
+}
+
+#remaining {
+   font-weight: bold;
+   color: crimson;
+}
+
+.info-100 {
+   width: 100%;
+}
+
+.info-30 {
+   width: 30%;
 }

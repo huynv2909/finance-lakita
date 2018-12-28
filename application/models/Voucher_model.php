@@ -4,7 +4,7 @@
     */
    class Voucher_model extends MY_Model
    {
-      var $table = 'vouchers';
+      var $table = 'vouchers_old';
    }
 
  ?>

@@ -73,6 +73,7 @@
             </ul>
         </li>
         <li class="dropdown">
+           <!-- <input type="hidden" id="user_id" value="<?php echo $this->user->id; ?>"> -->
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                 <i class="fa fa-user fa-fw"></i><?php echo $this->user->name; ?><b class="caret"></b>
             </a>

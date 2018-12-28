@@ -140,24 +140,47 @@
          </div>
       </div>
       <div class="row">
-         <table>
-            <colgroup class="row-25-50">
-                <col>
-                <col>
-            </colgroup>
-            <tbody>
-               <tr>
-                  <td>Nội dung:</td>
-                  <td><?php
-                     if (trim($info->content) != '') {
-                        echo $info->content;
-                     } else {
-                        echo "(Trống)";
-                     }
-                   ?></td>
-               </tr>
-            </tbody>
-         </table>
+         <div class="col-md-6">
+            <table>
+               <colgroup class="row-50-50">
+                   <col>
+                   <col>
+               </colgroup>
+               <tbody>
+                  <tr>
+                     <td>Nội dung:</td>
+                     <td><?php
+                        if (trim($info->content) != '') {
+                           echo $info->content;
+                        } else {
+                           echo "(Trống)";
+                        }
+                      ?></td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+         <div class="col-md-6">
+            <table>
+               <colgroup class="row-50-50">
+                   <col>
+                   <col>
+               </colgroup>
+               <tbody>
+                  <tr>
+                     <td>Phương thức:</td>
+                     <td><?php
+                        foreach ($methods as $method) {
+                           if ($method->id == $info->method) {
+                              echo $method->description;
+                              break;
+                           }
+                        }
+                      ?></td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
       </div>
       <div class="row">
          <table>

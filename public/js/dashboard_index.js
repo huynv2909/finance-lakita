@@ -11,10 +11,7 @@ $(document).ready(function(){
       if (choose != 0) {
          location.href = url + '?date_range=' + choose.toString();
       } else {
-         if (choose == 1) {
-            $from = yyyy.toString() + '-' + mm.toString() + '-01';
-            $to = yyyy.toString() + '-' + mm.toString() + '-' + mm.toString();
-         }
+         
       }
 
    });

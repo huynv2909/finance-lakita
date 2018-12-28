@@ -48,14 +48,19 @@
 				);
 				// default date
 				$distribution = $this->Distribution_model->get_list($input);
-				$toa_min_date = reset($distribution)->TOA;
+				$toa_min_date = date("Y-m-d");
+				if (count($distribution) > 0) {
+					$toa_min_date = reset($distribution)->TOA;
+				}
 
 				$input = array(
 					'order' => 'TOT asc'
 				);
 				$distribution = $this->Distribution_model->get_list($input);
-				$tot_min_date = reset($distribution)->TOT;
-
+				$tot_min_date = date("Y-m-d");
+				if (count($distribution) > 0) {
+					$tot_min_date = reset($distribution)->TOT;
+				}
 				// Merge time
 				$min_date = ($toa_min_date < $tot_min_date)?$toa_min_date:$tot_min_date;
 			}
@@ -79,6 +84,14 @@
 
 			$data_compilation = array();
 			$list_layer = array();
+			$index_mark = array(
+				'A100' => 0, // Doanh thu
+				'B110' => 0, // Chi phi ban hang
+				'B120' => 0, // Chi phi van hanh
+				'B130' => 0, // Chi phi quan ly
+				'D100' => 0  // Chi phi dau tu
+			);
+			// $list_detail is list detail dimension
 			foreach ($list_detail as $detail) {
 				$array_dimen = array(
 					'id' => $detail->id,
@@ -116,6 +129,31 @@
 				}
 				array_push($data_compilation, $array_dimen);
 
+				// Mark revenue
+				if ($detail->id == '210') {
+					$index_mark['A100'] = count($data_compilation) - 1;
+				}
+
+				// Mark revenue
+				if ($detail->id == '310') {
+					$index_mark['B110'] = count($data_compilation) - 1;
+				}
+
+				// Mark revenue
+				if ($detail->id == '320') {
+					$index_mark['B120'] = count($data_compilation) - 1;
+				}
+
+				// Mark revenue
+				if ($detail->id == '330') {
+					$index_mark['B130'] = count($data_compilation) - 1;
+				}
+
+				// Mark revenue
+				if ($detail->id == '340') {
+					$index_mark['D100'] = count($data_compilation) - 1;
+				}
+
 				// process list array
 				if (!in_array($detail->layer, $list_layer)) {
 					array_push($list_layer, $detail->layer);
@@ -123,6 +161,158 @@
 			}
 
 			$this->data['number_layer'] = count($list_layer);
+
+			$PL1A = array(
+				'id' => 'PL1A',
+				'name' => 'Lợi nhuận sau bán hàng (PL1A)',
+				'layer' => 1,
+				'data' => array(),
+				'total_tot' => 0,
+				'total_toa' => 0
+			);
+			$PL1B = array(
+				'id' => 'PL1B',
+				'name' => 'Lợi nhuận sau vận hành (PL1B)',
+				'layer' => 1,
+				'data' => array(),
+				'total_tot' => 0,
+				'total_toa' => 0
+			);
+			$PL2 = array(
+				'id' => 'PL2',
+				'name' => 'Lợi nhuận sau bán hàng và vận hành (PL2)',
+				'layer' => 1,
+				'data' => array(),
+				'total_tot' => 0,
+				'total_toa' => 0
+			);
+			$PL6 = array(
+				'id' => 'PL6',
+				'name' => 'Lợi nhuận sau thuế (PL6)',
+				'layer' => 1,
+				'data' => array(),
+				'total_tot' => 0,
+				'total_toa' => 0
+			);
+			$PL7 = array(
+				'id' => 'PL7',
+				'name' => 'Cash flow (PL7)',
+				'layer' => 1,
+				'data' => array(),
+				'total_tot' => 0,
+				'total_toa' => 0
+			);
+			foreach ($date_range as $point => $range) {
+				if ($data_compilation[$index_mark['A100']]['data'][$point]['toa_value']) {
+					$A100a = $data_compilation[$index_mark['A100']]['data'][$point]['toa_value'];
+				} else {
+					$A100a = 0;
+				}
+
+				if ($data_compilation[$index_mark['A100']]['data'][$point]['tot_value']) {
+					$A100t = $data_compilation[$index_mark['A100']]['data'][$point]['tot_value'];
+				} else {
+					$A100t = 0;
+				}
+
+				if ($data_compilation[$index_mark['B110']]['data'][$point]['toa_value']) {
+					$B110a = $data_compilation[$index_mark['B110']]['data'][$point]['toa_value'];
+				} else {
+					$B110a = 0;
+				}
+
+				if ($data_compilation[$index_mark['B110']]['data'][$point]['tot_value']) {
+					$B110t = $data_compilation[$index_mark['B110']]['data'][$point]['tot_value'];
+				} else {
+					$B110t = 0;
+				}
+
+				if ($data_compilation[$index_mark['B120']]['data'][$point]['toa_value']) {
+					$B120a = $data_compilation[$index_mark['B120']]['data'][$point]['toa_value'];
+				} else {
+					$B120a = 0;
+				}
+
+				if ($data_compilation[$index_mark['B120']]['data'][$point]['tot_value']) {
+					$B120t = $data_compilation[$index_mark['B120']]['data'][$point]['tot_value'];
+				} else {
+					$B120t = 0;
+				}
+
+				if ($data_compilation[$index_mark['B130']]['data'][$point]['toa_value']) {
+					$B130a = $data_compilation[$index_mark['B130']]['data'][$point]['toa_value'];
+				} else {
+					$B130a = 0;
+				}
+
+				if ($data_compilation[$index_mark['B130']]['data'][$point]['tot_value']) {
+					$B130t = $data_compilation[$index_mark['B130']]['data'][$point]['tot_value'];
+				} else {
+					$B130t = 0;
+				}
+
+				if ($data_compilation[$index_mark['D100']]['data'][$point]['toa_value']) {
+					$D100a = $data_compilation[$index_mark['D100']]['data'][$point]['toa_value'];
+				} else {
+					$D100a = 0;
+				}
+
+				if ($data_compilation[$index_mark['D100']]['data'][$point]['tot_value']) {
+					$D100t = $data_compilation[$index_mark['D100']]['data'][$point]['tot_value'];
+				} else {
+					$D100t = 0;
+				}
+
+				// PL1A
+				$range['toa_value'] = $A100a - $B110a;
+				$PL1A['total_toa'] += $range['toa_value'];
+
+				$range['tot_value'] = $A100t - $B110t;
+				$PL1A['total_tot'] += $range['tot_value'];
+
+				$PL1A['data'][$point] = $range;
+
+				// PL1B
+				$range['toa_value'] = $A100a - $B120a;
+				$PL1B['total_toa'] += $range['toa_value'];
+
+				$range['tot_value'] = $A100t - $B120t;
+				$PL1B['total_tot'] += $range['tot_value'];
+
+				$PL1B['data'][$point] = $range;
+
+				// PL2
+				$range['toa_value'] = $A100a - $B110a - $B120a;
+				$PL2['total_toa'] += $range['toa_value'];
+
+				$range['tot_value'] = $A100t - $B110t - $B120t;
+				$PL2['total_tot'] += $range['tot_value'];
+
+				$PL2['data'][$point] = $range;
+
+				// PL6
+				$range['toa_value'] = $A100a - $B110a - $B120a - $B130a;
+				$PL6['total_toa'] += $range['toa_value'];
+
+				$range['tot_value'] = $A100t - $B110t - $B120t - $B130t;
+				$PL6['total_tot'] += $range['tot_value'];
+
+				$PL6['data'][$point] = $range;
+
+				// PL7
+				$range['toa_value'] = $A100a - $B110a - $B120a - $B130a - $D100a;
+				$PL7['total_toa'] += $range['toa_value'];
+
+				$range['tot_value'] = $A100t - $B110t - $B120t - $B130t - $D100t;
+				$PL7['total_tot'] += $range['tot_value'];
+
+				$PL7['data'][$point] = $range;
+			}
+			$data_compilation[] = $PL1A;
+			$data_compilation[] = $PL1B;
+			$data_compilation[] = $PL2;
+			$data_compilation[] = $PL6;
+			$data_compilation[] = $PL7;
 
 			$this->data['data_compilation'] = $data_compilation;
 

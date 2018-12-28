@@ -166,7 +166,9 @@
 				}
 			}
 
-			$filter = array();
+			$filter = array(
+				'where' => array('approved' => 1)
+			);
 
 			if ($this->input->get()) {
 				if ($this->input->get('from')) {
@@ -258,6 +260,146 @@
 			$this->load->view('layout', $this->data);
 		}
 
+		public function approve()
+		{
+			$this->data['title'] = "Duyệt chứng từ tự động thêm từ CRM";
+			$this->data['template'] = 'voucher/approve';
+			$this->data['active'] = 'voucher';
+			$this->data['js_files'] = array('voucher_approve');
+
+			$input = array(
+				'where' => array('approved' => 0)
+			);
+			$vc_news = $this->Voucher_model->get_list($input);
+			$this->data['vc_news'] = array();
+
+			if (count($vc_news) > 0) {
+				$this->load->model('Crm_model');
+				foreach ($vc_news as $vc) {
+					$parts = explode('-', $vc->content);
+					$id_contact = $parts[3];
+					$vc->{"course_code"} = $parts[5];
+
+					$input = array(
+						'where' => array('id_contact' => $id_contact)
+					);
+					$vc->{"crm_note"} = $this->Crm_model->get_list($input)[0]->note;
+
+				}
+				$this->data['vc_news'] = $vc_news;
+
+				$this->load->model('VoucherType_model');
+				$input = array(
+					'where' => array('active' => 1),
+					'order' => 'income DESC'
+				);
+				$this->data['types'] = $this->VoucherType_model->get_list($input);
+
+				$this->load->model('DetailDimension_model');
+				$input = array(
+					'where' => array('active' => 1, 'dimen_code' => 'SP'),
+					'order' => 'name ASC'
+				);
+				$this->data['courses'] = $this->DetailDimension_model->get_list($input);
+
+				$this->load->model('User_model');
+				$this->data['users'] = $this->User_model->get_list();
+
+				$this->load->model('Provider_model');
+				$input = array('order' => 'name ASC');
+				$this->data['providers'] = $this->Provider_model->get_list($input);
+
+				$this->load->model('Method_model');
+				$this->data['methods'] = $this->Method_model->get_list();
+			}
+
+			$this->load->view('layout', $this->data);
+		}
+
+		public function approveOne() {
+			if ($this->input->post()) {
+				$value = str_replace(".","",$this->input->post('value'));
+				$id = $this->input->post('id');
+				$tot = $this->input->post('tot');
+
+				$data = array(
+					'type_id' => $this->input->post('type_id'),
+					'content' => $this->input->post('content'),
+					'TOT' => $tot,
+					'TOA' => $tot,
+					'executor' => $this->input->post('executor'),
+					'value' => $value,
+					'owner' => $this->user->id,
+					'method' => $this->input->post('method'),
+					'provider' => $this->input->post('provider'),
+					'approved' => 1
+				);
+
+				if (!$this->Voucher_model->update($id, $data)) {
+					$this->session->set_flashdata('message_errors', 'Thao tác thất bại :(');
+					redirect($this->routes['voucher_approve']);
+				}
+
+				if ($this->input->post('auto') == 1) {
+					$this->load->model('DetailDimension_model');
+					$this->data['all_dimen'] = $this->DetailDimension_model->get_list();
+
+					if ($this->input->post('cod') == 1) {
+						$cod_value = $this->input->post('cod_value');
+						$value = $value - $cod_value;
+
+						$data_acc = array(
+							'voucher_id' => $id,
+							'TOT' => $tot,
+							'TOA' => $tot,
+							'value' => $value,
+							'debit_acc' => 111,
+							'credit_acc' => 511
+						);
+
+						$dimen_selected = $this->input->post('course');
+						if (!$this->createAccountingAndDistribution($data_acc, $dimen_selected, true)) {
+							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra trong quá trình phân bổ 1!');
+							redirect($this->routes['voucher_approve']);
+						}
+
+						$data_acc = array(
+							'voucher_id' => $id,
+							'TOT' => $tot,
+							'TOA' => $tot,
+							'value' => $cod_value,
+							'debit_acc' => 111,
+							'credit_acc' => 511
+						);
+
+						$dimen_selected = 318;
+						if (!$this->createAccountingAndDistribution($data_acc, $dimen_selected, false)) {
+							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra trong quá trình phân bổ 2!');
+							redirect($this->routes['voucher_approve']);
+						}
+
+					} else {
+						$data_acc = array(
+							'voucher_id' => $id,
+							'TOT' => $tot,
+							'TOA' => $tot,
+							'value' => $value,
+							'debit_acc' => 111,
+							'credit_acc' => 511
+						);
+
+						$dimen_selected = $this->input->post('course');
+						if (!$this->createAccountingAndDistribution($data_acc, $dimen_selected, true)) {
+							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra trong quá trình phân bổ!');
+							redirect($this->routes['voucher_approve']);
+						}
+					}
+				}
+
+				die('Thao tác thành công!');
+			}
+		}
+
 		public function showInfo() {
 			if ($this->input->post()) {
 				$id = $this->input->post('id');
@@ -268,12 +410,7 @@
 				$this->data['employees'] = $this->User_model->get_list();
 
 				$this->load->model('VoucherType_model');
-				$input = array(
-					'where' => array(
-						'active' => 1
-					)
-				);
-				$this->data['types'] = $this->VoucherType_model->get_list($input);
+				$this->data['types'] = $this->VoucherType_model->get_list();
 
 				$input = array(
 					'where' => array(
@@ -282,6 +419,9 @@
 				);
 				$this->load->model('AccountingEntry_model');
 				$this->data['act_list'] = $this->AccountingEntry_model->get_list($input);
+
+				$this->load->model('Method_model');
+				$this->data['methods'] = $this->Method_model->get_list();
 
 				$response = array(
 					'voucher' => $this->load->view('load_by_ajax/voucher_box', $this->data, true),
