@@ -43,9 +43,14 @@
                   </div>
                   <div class="col-md-4">
                      <input class="info-30" type="text" id="value_<?php echo $vc->id; ?>" name="value_<?php echo $vc->id; ?>" value="<?php echo number_format($vc->value, 0, ",", ".") ?>">
-                     <span> Gồm COD: <input type="checkbox" class="have-cod" data-id="<?php echo $vc->id; ?>" id="cod_<?php echo $vc->id; ?>" name="cod_<?php echo $vc->id; ?>" value=""></span>
-                     <input class="info-30" type="number" id="cod_value_<?php echo $vc->id; ?>" name="cod_value_<?php echo $vc->id; ?>" min="0" value="30000" disabled>
-                     <input class="info-100" type="date" id="tot_<?php echo $vc->id; ?>" name="tot_<?php echo $vc->id; ?>" value="<?php echo $vc->TOT; ?>">
+                     <input class="info-70" type="date" id="tot_<?php echo $vc->id; ?>" name="tot_<?php echo $vc->id; ?>" value="<?php echo $vc->TOT; ?>">
+
+                     <span>VAT: <input type="checkbox" class="have-vat" data-id="<?php echo $vc->id; ?>" id="vat_<?php echo $vc->id; ?>" name="vat_<?php echo $vc->id; ?>" value=""></span>
+                     <input class="info-25" type="number" id="vat_value_<?php echo $vc->id; ?>" name="vat_value_<?php echo $vc->id; ?>" min="0" value="<?php echo round($vc->value/10); ?>" disabled>
+
+                     <span>COD: <input type="checkbox" class="have-cod" data-id="<?php echo $vc->id; ?>" id="cod_<?php echo $vc->id; ?>" name="cod_<?php echo $vc->id; ?>" value=""></span>
+                     <input class="info-25" type="number" id="cod_value_<?php echo $vc->id; ?>" name="cod_value_<?php echo $vc->id; ?>" min="0" value="30000" disabled>
+
                      <select class="info-100" id="executor_<?php echo $vc->id; ?>" name="executor_<?php echo $vc->id; ?>">
                         <?php foreach ($users as $user): ?>
                            <option value="<?php echo $user->id; ?>" <?php if ($user->id == 6) echo "selected"; ?>><?php echo $user->name; ?></option>
@@ -82,7 +87,8 @@
      </table>
    </form>
 
-   <input type="hidden" id="url" value="<?php echo $this->routes['voucher_approveone']; ?>">
+   <input type="hidden" id="url-approve-one" value="<?php echo $this->routes['voucher_approveone']; ?>">
+   <input type="hidden" id="url-deny-one" value="<?php echo $this->routes['voucher_denyone']; ?>">
 <?php else: ?>
    <h3 class="text-center">Các chứng từ đã được duyệt hết!</h3>
 <?php endif; ?>

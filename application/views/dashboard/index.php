@@ -5,7 +5,11 @@
          <option value="2" <?php if ($date_range == 2) echo 'selected'; ?>>Tháng trước</option>
          <option value="3" <?php if ($date_range == 3) echo 'selected'; ?>>Năm nay</option>
          <option value="0" <?php if ($date_range == 0) echo 'selected'; ?>>Tùy chỉnh</option>
-      </select> từ <i><?php echo $min_date; ?></i> đến <i><?php echo $max_date; ?></i></i></h4>
+      </select> từ <i><?php echo $min_date; ?></i> đến <i><?php echo $max_date; ?></i></i><?php
+         if ($this->input->get('from')) {
+            echo '<i id="refresh-btn" class="fa fa-fw" aria-hidden="true" title="Refresh"></i>';
+         }
+       ?></h4>
       <input type="hidden" id="dashboard_url" value="<?php echo base_url('dashboard.html'); ?>">
    </div>
 </div>

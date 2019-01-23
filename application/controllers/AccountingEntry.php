@@ -16,14 +16,16 @@
 			$this->data['active'] = 'receipt';
          $this->data['js_files'] = array('accountingentry_index');
 
+         $this->load->model('Voucher_model');
+
          $input = array(
-            'select' => array('accounting_entries.*', 'vouchers.code'),
-            'join' => array('vouchers', 'vouchers.id = accounting_entries.voucher_id'),
+            'select' => array($this->AccountingEntry_model->table . '.*', $this->Voucher_model->table . '.code'),
+            'join' => array($this->Voucher_model->table => $this->Voucher_model->table . '.id = ' . $this->AccountingEntry_model->table . '.voucher_id'),
             'order' => 'TOA desc'
          );
 
          if ($this->input->get('code')) {
-            $input['where'] = array('vouchers.code' => $this->input->get('code'));
+            $input['where'] = array($this->Voucher_model->table . '.code' => $this->input->get('code'));
          }
 
          $this->data['entries'] = $this->AccountingEntry_model->get_list($input);
@@ -357,14 +359,16 @@
             $this->data['entry_info'] = $this->AccountingEntry_model->get_info($id);
 
             $this->load->model('Dimension_model');
+            $this->load->model('DetailDimension_model');
+            $this->load->model('Distribution_model');
             $dimensions = $this->Dimension_model->get_list();
 
             $input = array(
-               'select' => array('detail_act_entries.*', 'detail_dimensional.dimen_id', 'detail_dimensional.dimen_code', 'detail_dimensional.name'),
-               'join' => array('detail_dimensional', 'detail_dimensional.id = detail_act_entries.dimensional_id'),
+               'select' => array($this->Distribution_model->table . '.*', $this->DetailDimension_model->table . '.dimen_id', $this->DetailDimension_model->table . '.dimen_code', $this->DetailDimension_model->table . '.name'),
+               'join' => array($this->DetailDimension_model->table => $this->DetailDimension_model->table . '.id = ' . $this->Distribution_model->table . '.dimensional_id'),
                'where' => array('entry_id' => $id)
             );
-            $this->load->model('Distribution_model');
+
             $distributions = $this->Distribution_model->get_list($input);
 
             $group_dis = array();

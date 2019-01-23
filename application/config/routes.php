@@ -99,4 +99,7 @@ $route['bao-cao-hoat-dong-tai-chinh.html']                = 'Report/financeActiv
 $route['nha-cung-cap-dich-vu.html']                       = 'Provider/listByMethodId';
 $route['upload-by-files.html']                            = 'Voucher/createByFiles';
 $route['duyet-chung-tu.html']                             = 'Voucher/approve';
+$route['xoa-1.html']                                      = 'Voucher/denyone';
 $route['duyet.html']                                      = 'Voucher/approveOne';
+$route['bao-cao-khoa-hoc.html']                           = 'Report/coursesReport';
+$route['xem-du-lieu.html']                                = 'Report/viewData';

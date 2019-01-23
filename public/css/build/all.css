@@ -434,6 +434,7 @@ thead tr th {
 .catalog-table {
    background-color: #fdf7c8;
     font-weight: bold;
+    width: 100%;
 }
 
 
@@ -452,6 +453,36 @@ thead tr th {
    width: 100%;
 }
 
+.info-70 {
+   width: 65%;
+}
+
 .info-30 {
    width: 30%;
+}
+
+.info-25 {
+   width: 25%;
+}
+
+#refresh-btn {
+   cursor: pointer;
+   color: chocolate;
+}
+
+.cell:hover {
+   cursor: pointer;
+}
+
+.data-unit {
+   width: 100%;
+   margin-bottom: 5px;
+}
+
+.data-unit tr:hover {
+   background: aliceblue;
+}
+
+.data-unit td {
+   padding: 10px;
 }

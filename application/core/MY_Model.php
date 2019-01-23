@@ -179,8 +179,18 @@
 				$this->db->where_in($input['where_in'][0], $input['where_in'][1]);
 			}
 
-			if (isset($input['join'][0]) && isset($input['join'][1])) {
-				$this->db->join($input['join'][0], $input['join'][1]);
+			if (isset($input['where_not_in'][0]) && isset($input['where_not_in'][1])) {
+				$this->db->where_not_in($input['where_not_in'][0], $input['where_not_in'][1]);
+			}
+
+			if (isset($input['or_where_in']) && $input['or_where_in']) {
+				$this->db->or_where_in($input['or_where_in'][0], $input['or_where_in'][1]);
+			}
+
+			if (isset($input['join']) && $input['join']) {
+				foreach ($input['join'] as $table => $cond) {
+					$this->db->join($table, $cond);
+				}
 			}
 
 			if (isset($input['like']) && $input['like']) {

@@ -15,9 +15,9 @@
          <div class="form-group">
            <label for="by">Theo:</label>
            <select class="form-control" name="by">
-              <option value="1" <?php if ($this->input->get('by') == '1') echo 'selected'; ?>>Năm</option>
-              <option value="2" <?php if ($this->input->get('by') == '2') echo 'selected'; ?>>Tháng</option>
-              <option value="3" <?php if ($this->input->get('by') == '3') echo 'selected'; ?>>Ngày</option>
+              <option value="1">Năm</option>
+              <option value="2" selected>Tháng</option>
+              <option value="3">Ngày</option>
            </select>
          </div>
       </div>
@@ -80,7 +80,7 @@
          <?php endforeach; ?>
 
          <th class="custom-td column-tot-total">TOT</th>
-         <th class="custom-td column-tot-total">TOA</th>
+         <th class="custom-td column-toa-total">TOA</th>
       </tr>
    </thead>
    <tbody>
@@ -94,8 +94,8 @@
             <?php endif; ?>
 
             <?php foreach ($row['data'] as $date => $value): ?>
-               <td class="data text-center <?php if ($value['tot_value']) echo "cell"; ?> column-tot-<?php echo $date; ?>" data-row="<?php echo $row['id']; ?>" data-column="tot-<?php echo $date; ?>"><?php if ($value['tot_value']) echo number_format($value['tot_value'], 0, ",", "."); else echo "-"; ?></td>
-               <td class="data text-center <?php if ($value['toa_value']) echo "cell"; ?> column-toa-<?php echo $date; ?>" data-row="<?php echo $row['id']; ?>" data-column="toa-<?php echo $date; ?>"><?php if ($value['toa_value']) echo number_format($value['toa_value'], 0, ",", "."); else echo "-"; ?></td>
+               <td class="data <?php if ($value['tot_value']) echo "cell"; ?> column-tot-<?php echo $date; ?> text-center" data-row="<?php echo $row['id']; ?>" data-column="tot-<?php echo $date; ?>"><?php if ($value['tot_value']) echo number_format($value['tot_value'], 0, ",", "."); else echo "-"; ?></td>
+               <td class="data <?php if ($value['toa_value']) echo "cell"; ?> column-toa-<?php echo $date; ?> text-center" data-row="<?php echo $row['id']; ?>" data-column="toa-<?php echo $date; ?>"><?php if ($value['toa_value']) echo number_format($value['toa_value'], 0, ",", "."); else echo "-"; ?></td>
             <?php endforeach; ?>
 
             <td class="data-compile text-center custom-td <?php if ($row['total_tot']) echo "cell"; ?> column-tot-total" data-row="<?php echo $row['id']; ?>" data-column="tot-total"><?php echo number_format($row['total_tot'], 0, ",", "."); ?></td>

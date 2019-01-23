@@ -120,8 +120,8 @@
 											'debit_acc' => $this->input->post('debit_tax'),
 											'credit_acc' => $this->input->post('credit_tax')
 										);
-										// 316: Chi phí phi nhân sự Sale
-										if (!$this->createAccountingAndDistribution($data_acc, 316, false, ' (VAT) ')) {
+										// 350: Chi phí thue
+										if (!$this->createAccountingAndDistribution($data_acc, 350, false, ' (VAT) ')) {
 											$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
 											redirect($this->routes['voucher_create']);
 										}
@@ -344,6 +344,26 @@
 					$this->load->model('DetailDimension_model');
 					$this->data['all_dimen'] = $this->DetailDimension_model->get_list();
 
+					if ($this->input->post('vat') == 1) {
+						$vat_value = $this->input->post('vat_value');
+
+						$data_acc = array(
+							'voucher_id' => $id,
+							'TOT' => $tot,
+							'TOA' => $tot,
+							'value' => $vat_value,
+							'debit_acc' => 111,
+							'credit_acc' => 3331
+						);
+
+						$dimen_selected = 350;
+						if (!$this->createAccountingAndDistribution($data_acc, $dimen_selected, false)) {
+							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra trong quá trình phân bổ 3!');
+							redirect($this->routes['voucher_approve']);
+						}
+						$value -= $vat_value;
+					}
+
 					if ($this->input->post('cod') == 1) {
 						$cod_value = $this->input->post('cod_value');
 						$value = $value - $cod_value;
@@ -394,6 +414,19 @@
 							redirect($this->routes['voucher_approve']);
 						}
 					}
+				}
+
+				die('Thao tác thành công!');
+			}
+		}
+
+		public function denyOne() {
+			if ($this->input->post()) {
+				$id = $this->input->post('id');
+
+				if (!$this->Voucher_model->delete($id)) {
+					$this->session->set_flashdata('message_errors', 'Thao tác thất bại :(');
+					redirect($this->routes['voucher_approve']);
 				}
 
 				die('Thao tác thành công!');

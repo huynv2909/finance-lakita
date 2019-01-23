@@ -172,7 +172,8 @@
 
 			// Tree map
 			$input = array(
-				'where_in' => array('dimen_code', array('SP', 'NSP1', 'NSP2'))
+				'where_in' => array('dimen_code', array('SP', 'NSP1', 'NSP2')),
+				'where_not_in' => array('id', array(1517,1518))
 			);
 			$all_product = $this->DetailDimension_model->get_list($input);
 
@@ -221,6 +222,12 @@
 			if ($range_type == 2) {
 				$before_month = date('m') - 1;
 				$min_date = date('Y-' . $before_month . '-01');
+				if ($before_month == 0) {
+					$before_month = 12;
+					$before_year = date('Y') - 1;
+					$min_date = date($before_year . '-' . $before_month . '-01');
+				};
+
 				$before_time = new DateTime( $min_date );
 				$before_time->modify('last day of this month');
 				$max_date = $before_time->format('Y-m-d');

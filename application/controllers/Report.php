@@ -9,6 +9,7 @@
 		public function __construct() {
          parent::__construct();
          $this->load->model('Distribution_model');
+			$this->load->model('DetailDimension_model');
       }
 
 		public function financeActivity()
@@ -20,7 +21,6 @@
 
          // default dimension
          $dimension_id = array(200,210,220); // HD1,HD2,HD3
-         $this->load->model('DetailDimension_model');
 
          $input = array(
             'where' => array('active' => 1),
@@ -315,8 +315,199 @@
 			$data_compilation[] = $PL7;
 
 			$this->data['data_compilation'] = $data_compilation;
+			// pre($data_compilation);
+			$this->load->view('layout', $this->data);
+		}
+
+		public function coursesReport() {
+			$this->data['title'] = "BÁO CÁO DOANH THU KHÓA HỌC";
+         $this->data['active'] = "Report";
+         $this->data['template'] = "report/courses";
+         $this->data['js_files'] = array('report_activity');
+
+			// default dimension
+         $dimension_id = array(100,110,120); // NSP1, NSP2, SP
+
+         $input = array(
+            'where' => array('active' => 1),
+            'where_in' => array('dimen_id', $dimension_id),
+				'or_where_in' => array('id', array(1515,1516)),
+            'order' => 'layer asc'
+         );
+
+         $detail_objects = $this->DetailDimension_model->get_list($input);
+			//pre($this->db->last_query());
+
+         $list_detail = array();
+         $trace_temp = array(); // temporory array to sort $list_detail
+         $this->sort($list_detail, $detail_objects, $trace_temp);
+
+			$distribution = NULL;
+
+			if ($this->input->get('from') && validateDate($this->input->get('from'))) {
+				$min_date = $this->input->get('from');
+
+				$distribution = $this->Distribution_model->get_list();
+			} else {
+				// Default get all
+				$input = array(
+					'order' => 'TOA asc'
+				);
+				// default date
+				$distribution = $this->Distribution_model->get_list($input);
+				$toa_min_date = date("Y-m-d");
+				if (count($distribution) > 0) {
+					$toa_min_date = reset($distribution)->TOA;
+				}
+
+				$input = array(
+					'order' => 'TOT asc'
+				);
+				$distribution = $this->Distribution_model->get_list($input);
+				$tot_min_date = date("Y-m-d");
+				if (count($distribution) > 0) {
+					$tot_min_date = reset($distribution)->TOT;
+				}
+				// Merge time
+				$min_date = ($toa_min_date < $tot_min_date)?$toa_min_date:$tot_min_date;
+			}
+
+			if ($this->input->get('to') && validateDate($this->input->get('to'))) {
+				$max_date = $this->input->get('to');
+			} else {
+				$max_date = date("Y-m-d");
+			}
+
+			$this->data['from'] = $min_date;
+			$this->data['to'] = $max_date;
+
+			$by = 2;
+			if ($this->input->get('by') && in_array($this->input->get('by'), array('1','2','3'))) {
+				$by = $this->input->get('by');
+			}
+			// default: month = 2
+			$date_range = array_reverse(split_date($min_date, $max_date, $by), true);
+			$this->data['date_range'] = $date_range;
+
+			$data_compilation = array();
+			$list_layer = array();
+
+			// $list_detail is list detail dimension
+			foreach ($list_detail as $detail) {
+				$array_dimen = array(
+					'id' => $detail->id,
+					'name' => $detail->name,
+					'layer' => $detail->layer,
+					'data' => array(),
+					'total_tot' => 0,
+					'total_toa' => 0
+				);
+
+				foreach ($date_range as $point => $range) {
+					$condition = array(
+						'select' => array('SUM(value) AS total'),
+						'where' => array(
+							'dimensional_id' => $detail->id,
+							'TOA  >=' => $range['from'],
+							'TOA  <=' => $range['to']
+						)
+					);
+					$range['toa_value'] = $this->Distribution_model->get_list($condition)[0]->total;
+					$array_dimen['total_toa'] += $range['toa_value'];
+
+					$condition = array(
+						'select' => array('SUM(value) AS total'),
+						'where' => array(
+							'dimensional_id' => $detail->id,
+							'TOT  >=' => $range['from'],
+							'TOT  <=' => $range['to']
+						)
+					);
+					$range['tot_value'] = $this->Distribution_model->get_list($condition)[0]->total;
+					$array_dimen['total_tot'] += $range['tot_value'];
+
+					$array_dimen['data'][$point] = $range;
+				}
+				array_push($data_compilation, $array_dimen);
+
+				// Mark revenue
+				if ($detail->id == '210') {
+					$index_mark['A100'] = count($data_compilation) - 1;
+				}
+
+				// Mark revenue
+				if ($detail->id == '310') {
+					$index_mark['B110'] = count($data_compilation) - 1;
+				}
+
+				// Mark revenue
+				if ($detail->id == '320') {
+					$index_mark['B120'] = count($data_compilation) - 1;
+				}
+
+				// Mark revenue
+				if ($detail->id == '330') {
+					$index_mark['B130'] = count($data_compilation) - 1;
+				}
+
+				// Mark revenue
+				if ($detail->id == '340') {
+					$index_mark['D100'] = count($data_compilation) - 1;
+				}
+
+				// process list array
+				if (!in_array($detail->layer, $list_layer)) {
+					array_push($list_layer, $detail->layer);
+				}
+			}
+
+
+			$this->data['number_layer'] = count($list_layer);
+			$this->data['data_compilation'] = $data_compilation;
 
 			$this->load->view('layout', $this->data);
+		}
+
+		public function viewData() {
+			if ($this->input->post()) {
+				$type = $this->input->post('type');
+				$from = $this->input->post('from');
+				$to = $this->input->post('to');
+				$id = $this->input->post('id');
+
+				$this->load->model('Voucher_model');
+				$this->load->model('AccountingEntry_model');
+				$this->load->model('Distribution_model');
+
+				$input = array(
+					'select' => array(
+						$this->Voucher_model->table . '.code AS code',
+						$this->Voucher_model->table . '.date AS date',
+						$this->Voucher_model->table . '.content AS content_v',
+						$this->Voucher_model->table . '.value AS value_v',
+						$this->AccountingEntry_model->table . '.TOT AS tot',
+						$this->AccountingEntry_model->table . '.TOA AS toa',
+						$this->AccountingEntry_model->table . '.content AS content_a',
+						$this->AccountingEntry_model->table . '.value AS value_a',
+						$this->Distribution_model->table . '.content AS content_d',
+						$this->Distribution_model->table . '.value AS value_d',
+					),
+					'join' => array(
+						$this->Voucher_model->table => $this->Voucher_model->table . '.id = ' . $this->AccountingEntry_model->table . '.voucher_id',
+						$this->Distribution_model->table => $this->Distribution_model->table . '.entry_id = ' . $this->AccountingEntry_model->table . '.id'
+					),
+					'where' => array(
+						$this->Distribution_model->table . '.dimensional_id' => $id,
+						$this->Distribution_model->table . '.' . $type . ' >=' => $from,
+						$this->Distribution_model->table . '.' . $type . ' <=' => $to
+					),
+					'order' => 'date DESC'
+				);
+
+				$this->data['data_compilation'] = $this->AccountingEntry_model->get_list($input);
+
+				$this->load->view('report/data', $this->data);
+			}
 		}
 
       private function sort(&$new_arr, $origin, $trace_temp) {
