@@ -58,6 +58,8 @@ $(document).ready(function(){
    });
 
    $('.approve').click(function(){
+      $(this).prop('disabled', true);
+      $(this).parent().children('.deny').prop('disabled', true);
       var url = $('#url-approve-one').val();
       var id = $(this).data('id');
       var have_cod = 0;
@@ -125,36 +127,111 @@ $(document).ready(function(){
    });
 
    $('.deny').click(function(){
+      $(this).prop('disabled', true);
+      $(this).parent().children('.approve').prop('disabled', true);
+
       var url = $('#url-deny-one').val();
       var id = $(this).data('id');
 
-      $.ajax({
-         url : url,
-         method : "post",
-         data : {
-            id : id
-         },
-         beforeSend: function() {
-            $('#root-waiting').css('display', 'flex');
-         },
-         success : function(result) {
-            $('#remaining').html(parseInt($('#remaining').html()) - 1);
+      $.confirm({
+			 icon: 'fa fa-remove',
+			 title: 'Xóa?',
+			 content: 'Bạn có chắc rằng sẽ xóa hoàn toàn chứng từ này?',
+			 theme: 'material',
+			 type: 'red',
+			 buttons: {
+				  Ok: {
+						text: 'Ok',
+						btnClass: 'btn-green',
+						keys: ['enter'],
+						action: function(){
+                     $.ajax({
+                        url : url,
+                        method : "post",
+                        data : {
+                           id : id
+                        },
+                        beforeSend: function() {
+                           $('#root-waiting').css('display', 'flex');
+                        },
+                        success : function(result) {
+                           $('#remaining').html(parseInt($('#remaining').html()) - 1);
 
-            $('#row-' + id).slideUp(1000);
-            $('.alert').html(result);
-            $('.alert').addClass('alert-success');
+                           $('#row-' + id).slideUp(1000);
+                           $('.alert').html(result);
+                           $('.alert').addClass('alert-success');
 
-            $('.alert').fadeIn();
-				setTimeout(function(){
-					$('.alert').fadeOut();
-					$('.alert').removeClass('alert-success alert-danger');
-				}, 4000);
-         },
-         complete: function() {
-            $('#root-waiting').css('display', 'none');
-         }
-      });
+                           $('.alert').fadeIn();
+                          setTimeout(function(){
+                             $('.alert').fadeOut();
+                             $('.alert').removeClass('alert-success alert-danger');
+                          }, 4000);
+                        },
+                        complete: function() {
+                           $('#root-waiting').css('display', 'none');
+                        }
+                     });
+						}
+				  },
+				  cancel: {
+					  text: 'Hủy',
+					  keys: ['esc'],
+					  action: function(){
+					  }
+				  }
+			 }
+		});
 
    });
+
+   $('.slide-filter').click(function(){
+		var invisible = $(this).data('hidden');
+
+		if (invisible == '0') {
+			$('.filter-box').slideUp();
+			$(this).html('');
+			$(this).data('hidden', 1);
+		} else {
+			$('.filter-box').slideDown();
+			$(this).html('');
+			$(this).data('hidden', 0);
+		}
+
+	});
+
+   $('#lets-filter').click(function(){
+      var extension = '?';
+      var flag = false;
+
+      if ($('#fil-method').val() != '0') {
+         flag = true;
+         extension += 'method=' + $('#fil-method').val() + '&';
+      }
+
+      if ($('#fil-provider').val() != '0') {
+         flag = true;
+         extension += 'provider=' + $('#fil-provider').val() + '&';
+      }
+
+      if ($('#fil-voucher_type').val() != '0') {
+         flag = true;
+         extension += 'voucher_type=' + $('#fil-voucher_type').val() + '&';
+      }
+
+      if (flag) {
+         window.location.href = $('#reset-filter-link').prop('href') + extension;
+      }
+
+
+   });
+
+   $('.filter-field').change(function(){
+      if ($(this).val() != '' && $(this).val() != '0') {
+         $(this).css('background-color', 'antiquewhite');
+      } else {
+         $(this).css('background-color', '#fff');
+      }
+   });
+
 
 });

@@ -44,7 +44,7 @@
                 }
              </script>
           </div>
-          <a href="#">
+          <a href="<?php echo $this->routes['voucher_create'] . '?from=' . $min_date . '&to=' . $max_date; ?>">
              <div class="panel-footer">
                   <span class="pull-left">Doanh thu: <?php echo round($revenue/1000000, 2); ?>M / <?php echo round($kpi/1000000, 2); ?>M</span>
                   <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -94,7 +94,7 @@
                         </div>
                     </div>
                 </div>
-                <a href="#">
+                <a href="<?php echo $this->routes['report_financeactivity']; ?>">
                     <div class="panel-footer">
                         <span class="pull-left">Lợi nhuận</span>
                         <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -112,12 +112,12 @@
                            <i class="fa fa-file-text-o fa-fw fa-5x" title="Chứng từ mới"></i>
                        </div>
                        <div class="col-xs-9 text-right">
-                           <div class="huge"><?php echo $new_records; ?></div>
-                           <div>New Records!</div>
+                           <div class="huge"><?php echo $new_records . '/' . $total_records; ?></div>
+                           <div>New Records/Total records!</div>
                        </div>
                    </div>
                 </div>
-                <a href="#">
+                <a href="<?php echo $this->routes['voucher_create'] . '?from=' . $min_date . '&to=' . $max_date; ?>">
                     <div class="panel-footer">
                         <span class="pull-left">Số chứng từ mới</span>
                         <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -198,8 +198,8 @@
                  });
 
                  function showStaticTooltip(row, size, value) {
-                   return '<div style="background:#fd9; padding:10px; border-style:solid">' +
-                          convertToCurrency(size.toString()) + ' VND</div>';
+                   return '<div style="background:#fd9; padding:10px; border-style:solid"><p class="text-center">' +
+                          convertToCurrency(size.toString()) + ' VND</p><p class="text-center"><a href="<?php echo $this->routes['report_coursesreport']; ?>">Chi tiết</a></p></div>';
                  }
 
                }

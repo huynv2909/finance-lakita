@@ -48,6 +48,12 @@
 	</div>
 </div>
 
+<?php if (!$this->input->get()): ?>
+<div class="alert-warning">
+	<strong>Lưu ý: </strong>Để tăng tốc độ tải trang, bảng trên giới hạn <?php echo $limit_loading; ?> bút toán gần nhất, bạn có thể <a href="<?php echo $this->routes['config_index']; ?>">điều chỉnh</a>!
+</div>
+<?php endif; ?>
+
 <input type="hidden" id="remaining_val" value="">
 
 <div class="modal fade" id="view-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">

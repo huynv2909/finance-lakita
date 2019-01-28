@@ -89,6 +89,7 @@
 			);
 			$new_records = $this->Voucher_model->get_total($input);
 			$this->data['new_records'] = $new_records;
+			$this->data['total_records'] = $this->Voucher_model->get_total();
 
 			// cost
 			$input = array(
@@ -97,7 +98,7 @@
 					'TOA >=' => $min_date,
 					'TOA <=' => $max_date
 				),
-				'where_in' => array('dimensional_id', array(310,320,330,340,250) )
+				'where_in' => array('dimensional_id', array(310,320,330,340,250,350) )
 			);
 
 			$cost = $this->Distribution_model->get_list($input)[0]->cost;

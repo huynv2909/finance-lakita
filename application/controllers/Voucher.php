@@ -199,6 +199,9 @@
 					$filter['where']['income'] = $this->input->get('income');
 				}
 
+			} else {
+				$this->data['limit_loading'] = json_decode($this->data['configs'])->NUMBER_LOADING;
+				$filter['limit'] = array($this->data['limit_loading'],0);
 			}
 
 			$voucher_list = $this->Voucher_model->get_list($filter);
@@ -267,10 +270,26 @@
 			$this->data['active'] = 'voucher';
 			$this->data['js_files'] = array('voucher_approve');
 
-			$input = array(
+			$filter = array(
 				'where' => array('approved' => 0)
 			);
-			$vc_news = $this->Voucher_model->get_list($input);
+
+			if ($this->input->get()) {
+				if ($this->input->get('method')) {
+					$filter['where']['method'] = $this->input->get('method');
+				}
+
+				if ($this->input->get('provider')) {
+					$filter['where']['provider'] = $this->input->get('provider');
+				}
+
+				if ($this->input->get('voucher_type')) {
+					$filter['where']['type_id'] = $this->input->get('voucher_type');
+				}
+
+			}
+
+			$vc_news = $this->Voucher_model->get_list($filter);
 			$this->data['vc_news'] = array();
 
 			if (count($vc_news) > 0) {
@@ -283,7 +302,14 @@
 					$input = array(
 						'where' => array('id_contact' => $id_contact)
 					);
-					$vc->{"crm_note"} = $this->Crm_model->get_list($input)[0]->note;
+
+					$contact_info = $this->Crm_model->get_list($input);
+					if (count($contact_info) > 0) {
+						$vc->{"crm_note"} = $contact_info[0]->note;
+					} else {
+						$vc->{"crm_note"} = '';
+					}
+
 
 				}
 				$this->data['vc_news'] = $vc_news;
@@ -301,17 +327,17 @@
 					'order' => 'name ASC'
 				);
 				$this->data['courses'] = $this->DetailDimension_model->get_list($input);
-
-				$this->load->model('User_model');
-				$this->data['users'] = $this->User_model->get_list();
-
-				$this->load->model('Provider_model');
-				$input = array('order' => 'name ASC');
-				$this->data['providers'] = $this->Provider_model->get_list($input);
-
-				$this->load->model('Method_model');
-				$this->data['methods'] = $this->Method_model->get_list();
 			}
+
+			$this->load->model('User_model');
+			$this->data['users'] = $this->User_model->get_list();
+
+			$this->load->model('Provider_model');
+			$input = array('order' => 'name ASC');
+			$this->data['providers'] = $this->Provider_model->get_list($input);
+
+			$this->load->model('Method_model');
+			$this->data['methods'] = $this->Method_model->get_list();
 
 			$this->load->view('layout', $this->data);
 		}

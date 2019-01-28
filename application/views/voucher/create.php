@@ -1,5 +1,7 @@
 <?php $confs = json_decode($configs); $total = 0; ?>
-<form class="form-horizontal" method="post" id="voucher-form" action="<?php echo $this->routes['voucher_create']; ?>">
+<form class="form-horizontal" method="post" id="voucher-form" action="<?php echo $this->routes['voucher_create']; ?>" <?php if ($this->input->get()): ?>
+	style="display: none";
+<?php endif; ?>>
 	<div class="row">
 		<div class="col-md-8">
 			<div class="form-group">
@@ -251,7 +253,9 @@
 	</div>
 </form>
 
-<form method="post" enctype="multipart/form-data" class="file-form" action="<?php echo $this->routes['voucher_createbyfiles']; ?>">
+<form method="post" enctype="multipart/form-data" class="file-form" action="<?php echo $this->routes['voucher_createbyfiles']; ?>" <?php if ($this->input->get()): ?>
+	style="display: none";
+<?php endif; ?>>
 	<label for="files">Thêm từ file</label>
 	<input type="file" name="files" accept=".csv, .xlsx, .xls" id="voucher-files">
 	<input type="submit" class="btn btn-warning btn-sm" name="ok" id="upload-btn" value="Thêm" style="margin-top: 4px;" disabled>
@@ -267,8 +271,11 @@
 			<?php endif; ?>
 		<?php endif; ?>
 	</h5>
-	<!-- <i class="fa fa-fw fa-2x pull-right hidden" aria-hidden="true" title="Copy to use chevron-down"></i> -->
-	<i class="fa fa-fw fa-2x pull-right slide-form" data-hidden="0" aria-hidden="true" title="Hide"></i>
+	<?php if ($this->input->get()): ?>
+		<i class="fa fa-fw fa-2x pull-right slide-form" aria-hidden="true" title="Show"></i>
+	<?php else: ?>
+		<i class="fa fa-fw fa-2x pull-right slide-form" data-hidden="0" aria-hidden="true" title="Hide"></i>
+	<?php endif; ?>
 	<div class="clearfix"></div>
 </div>
 
@@ -446,6 +453,12 @@
 		</script>
 	</div>
 </div>
+
+<?php if (!$this->input->get()): ?>
+<div class="alert-warning">
+	<strong>Lưu ý: </strong>Để tăng tốc độ tải trang, bảng trên giới hạn <?php echo $limit_loading; ?> chứng từ gần nhất, bạn có thể <a href="<?php echo $this->routes['config_index']; ?>">điều chỉnh</a>!
+</div>
+<?php endif; ?>
 
 <input type="hidden" id="distribution_popup" value="<?php echo $confs->NOTIFY_REDIRECT_TO_ACCOUNTING; ?>">
 <!-- have new voucher added -->

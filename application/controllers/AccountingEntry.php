@@ -17,11 +17,13 @@
          $this->data['js_files'] = array('accountingentry_index');
 
          $this->load->model('Voucher_model');
+         $this->data['limit_loading'] = json_decode($this->data['configs'])->NUMBER_LOADING;
 
          $input = array(
             'select' => array($this->AccountingEntry_model->table . '.*', $this->Voucher_model->table . '.code'),
             'join' => array($this->Voucher_model->table => $this->Voucher_model->table . '.id = ' . $this->AccountingEntry_model->table . '.voucher_id'),
-            'order' => 'TOA desc'
+            'order' => 'TOA desc',
+            'limit' => array($this->data['limit_loading'], 0)
          );
 
          if ($this->input->get('code')) {
@@ -96,8 +98,18 @@
             $this->load->model('AccountingEntry_model');
 
             if ($this->AccountingEntry_model->update($id, $data_update)) {
-               $this->session->set_flashdata('message_success', 'Cập nhật dữ liệu thành công!');
-					redirect($this->routes['accountingentry_index']);
+               $update_dis = array(
+                  'TOA' => $this->input->post('toa')
+               );
+               $this->load->model('Distribution_model');
+
+               if ($this->Distribution_model->update_rule(array('entry_id' => $id), $update_dis)) {
+                  $this->session->set_flashdata('message_success', 'Cập nhật dữ liệu thành công!');
+		             redirect($this->routes['accountingentry_index']);
+               } else {
+                  $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 2!');
+                  redirect($this->routes['accountingentry_index']);
+               }
             } else {
                $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
                redirect($this->routes['accountingentry_index']);

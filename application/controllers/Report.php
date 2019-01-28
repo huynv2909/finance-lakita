@@ -134,24 +134,29 @@
 					$index_mark['A100'] = count($data_compilation) - 1;
 				}
 
-				// Mark revenue
+				// Mark sale
 				if ($detail->id == '310') {
 					$index_mark['B110'] = count($data_compilation) - 1;
 				}
 
-				// Mark revenue
+				// Mark operation
 				if ($detail->id == '320') {
 					$index_mark['B120'] = count($data_compilation) - 1;
 				}
 
-				// Mark revenue
+				// Mark management
 				if ($detail->id == '330') {
 					$index_mark['B130'] = count($data_compilation) - 1;
 				}
 
-				// Mark revenue
+				// Mark investment
 				if ($detail->id == '340') {
 					$index_mark['D100'] = count($data_compilation) - 1;
+				}
+
+				// Mark tax
+				if ($detail->id == '350') {
+					$index_mark['C100'] = count($data_compilation) - 1;
 				}
 
 				// process list array
@@ -251,6 +256,18 @@
 					$B130t = 0;
 				}
 
+				if ($data_compilation[$index_mark['C100']]['data'][$point]['toa_value']) {
+					$C100a = $data_compilation[$index_mark['C100']]['data'][$point]['toa_value'];
+				} else {
+					$C100a = 0;
+				}
+
+				if ($data_compilation[$index_mark['C100']]['data'][$point]['tot_value']) {
+					$C100t = $data_compilation[$index_mark['C100']]['data'][$point]['tot_value'];
+				} else {
+					$C100t = 0;
+				}
+
 				if ($data_compilation[$index_mark['D100']]['data'][$point]['toa_value']) {
 					$D100a = $data_compilation[$index_mark['D100']]['data'][$point]['toa_value'];
 				} else {
@@ -291,19 +308,19 @@
 				$PL2['data'][$point] = $range;
 
 				// PL6
-				$range['toa_value'] = $A100a - $B110a - $B120a - $B130a;
+				$range['toa_value'] = $A100a - $C100a;
 				$PL6['total_toa'] += $range['toa_value'];
 
-				$range['tot_value'] = $A100t - $B110t - $B120t - $B130t;
+				$range['tot_value'] = $A100t - $C100t;
 				$PL6['total_tot'] += $range['tot_value'];
 
 				$PL6['data'][$point] = $range;
 
 				// PL7
-				$range['toa_value'] = $A100a - $B110a - $B120a - $B130a - $D100a;
+				$range['toa_value'] = $A100a - $B110a - $B120a - $B130a - $C100a - $D100a;
 				$PL7['total_toa'] += $range['toa_value'];
 
-				$range['tot_value'] = $A100t - $B110t - $B120t - $B130t - $D100t;
+				$range['tot_value'] = $A100t - $B110t - $B120t - $B130t - $C100t - $D100t;
 				$PL7['total_tot'] += $range['tot_value'];
 
 				$PL7['data'][$point] = $range;
@@ -429,31 +446,6 @@
 					$array_dimen['data'][$point] = $range;
 				}
 				array_push($data_compilation, $array_dimen);
-
-				// Mark revenue
-				if ($detail->id == '210') {
-					$index_mark['A100'] = count($data_compilation) - 1;
-				}
-
-				// Mark revenue
-				if ($detail->id == '310') {
-					$index_mark['B110'] = count($data_compilation) - 1;
-				}
-
-				// Mark revenue
-				if ($detail->id == '320') {
-					$index_mark['B120'] = count($data_compilation) - 1;
-				}
-
-				// Mark revenue
-				if ($detail->id == '330') {
-					$index_mark['B130'] = count($data_compilation) - 1;
-				}
-
-				// Mark revenue
-				if ($detail->id == '340') {
-					$index_mark['D100'] = count($data_compilation) - 1;
-				}
 
 				// process list array
 				if (!in_array($detail->layer, $list_layer)) {
