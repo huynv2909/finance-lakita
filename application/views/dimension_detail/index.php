@@ -20,7 +20,6 @@
 					<tr role="row">
 						<th class="sorting text-center" tabindex="0" aria-controls="detail_dimen_table" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending" >Tên gọi</th>
 						<th class="sorting text-center" tabindex="0" aria-controls="detail_dimen_table" rowspan="1" colspan="1" aria-label="Note: activate to sort column ascending" >Ghi chú:</th>
-						<th class="sorting text-center" tabindex="0" aria-controls="detail_dimen_table" rowspan="1" colspan="1" aria-label="Weight: activate to sort column ascending" >Trọng số:</th>
 						<th class="sorting text-center" tabindex="0" aria-controls="detail_dimen_table" rowspan="1" colspan="1" aria-label="Parent detail: activate to sort column ascending" >Chi tiết cha:</th>
 						<th class="sorting text-center" tabindex="0" aria-controls="detail_dimen_table" rowspan="1" colspan="1" aria-label="Layer: activate to sort column ascending" >Tầng:</th>
 						<th class="sorting text-center" tabindex="0" aria-controls="detail_dimen_table" rowspan="1" colspan="1" aria-label="Sequence: activate to sort column ascending" >Thứ tự:</th>
@@ -30,7 +29,6 @@
 			<tbody>
             <tr>
                <td colspan="7"><h5 class="empty-info">(Hãy lựa chọn chiều)</h5></td>
-               <td style="display:none;"></td>
                <td style="display:none;"></td>
                <td style="display:none;"></td>
                <td style="display:none;"></td>
@@ -46,9 +44,8 @@
                  "columns" : [
                     { "width" : "21%" },
                     { "width" : "30%" },
-                    { "width" : "10%" },
                     { "width" : "15%" },
-                    { "width" : "7%" },
+                    { "width" : "17%" },
                     { "width" : "7%" },
                     { "width" : "10%" }
                  ],
@@ -62,9 +59,15 @@
 		</script>
 	</div>
 </div>
+
+<input type="hidden" id="dimen_id" value="">
+<input type="hidden" id="dimen_code" value="">
+<input type="hidden" id="dimen_layer" value="">
+
+<input type="hidden" id="list_parent" value="">
+
+<input type="hidden" value="<?php echo $this->routes['dimensiondetail_create']; ?>" id="url-add">
+
 <button type="button" class="btn btn-primary" id="detail-add-btn" title="Chi tiết mới" data-url="" disabled>
   <i class="fa fa-fw" aria-hidden="true" title="Thêm chi tiết mới"></i> Thêm mới
-</button>
-<button type="button" class="btn btn-success pull-right" id="detail-update-btn" title="Lưu lại các thay đổi" data-url="" disabled>
-  <i class="fa fa-check" title="Lưu thay đổi"></i> Cập nhật
 </button>

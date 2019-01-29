@@ -89,8 +89,21 @@
                $detail->{"delete"} = '<button type="button" class="btn btn-circle del-btn" data-url="' . $this->routes['dimensiondetail_delete'] . '" data-id="' . $detail->id . '"><i class="fa fa-times"></i></button>';
             }
 
+            $this->load->model('Dimension_model');
+            $info_dimen = $this->Dimension_model->get_info($id);
+
+            $list_parent = array();
+            if (is_numeric($info_dimen->parent_id)) {
+               $input = array(
+                  'where' => array('dimen_id' => $info_dimen->parent_id)
+               );
+               $list_parent = $this->DetailDimension_model->get_list($input);
+            }
+
             $response = array(
-               'details' => $list_detail
+               'details' => $list_detail,
+               'info_dimen' => $info_dimen,
+               'list_parent' => $list_parent
             );
 
             die(json_encode($response));

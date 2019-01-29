@@ -146,6 +146,27 @@
          }
       }
 
+      public function create() {
+         if ($this->input->post()) {
+            $data = array(
+               'dimen_id'=> $this->input->post('dimen_id'),
+               'dimen_code'=> $this->input->post('dimen_code'),
+               'name'=> $this->input->post('name'),
+               'note'=> $this->input->post('note'),
+               'parent_id'=> $this->input->post('parent_id'),
+               'layer'=> $this->input->post('layer')
+            );
+
+            if ($this->DetailDimension_model->create($data)) {
+               $this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
+               redirect($this->routes['dimensiondetail_index']);
+            } else {
+               $this->session->set_flashdata('message_errors', 'Có lỗi xảy ra!');
+               redirect($this->routes['dimensiondetail_index']);
+            }
+         }
+      }
+
    }
 
  ?>
