@@ -129,6 +129,13 @@
                   ?>
                </td>
             </tr>
+            <tr>
+               <td colspan="2" class="text-center">
+                  <?php if (!$voucher->completed): ?>
+                     <a href="<?php echo $this->routes['accountingentry_create'] . '?voucher_id=' . $voucher->id; ?>" title="Đến nhập bút toán"><i class="fa fa-fw warning" aria-hidden="true" title="Đến nhập bút toán"></i> Chia bút toán</a>
+                  <?php endif; ?>
+               </td>
+            </tr>
          </tbody>
       </table>
    </div>

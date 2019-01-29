@@ -27,8 +27,38 @@
 
 		private function accountant() {
 			$this->data['template'] = 'dashboard/accountant';
-			$this->data['js_files'] = array('dashboard_accountant');
+			$this->data['js_files'] = array('dashboard_index');
 
+			// 1: current month, 2: month before, 3: current year, 4: today
+			$min_date = date('Y-m-d');
+			$max_date = date('Y-m-d');
+			$date_range = 4;
+
+			if ($this->input->get('date_range') && $this->input->get('date_range') == '1') {
+				$min_date = date('Y-m-1');
+				$min_date = date('Y-m-d');
+				$date_range = 1;
+			}
+
+			if ($this->input->get('from')) {
+				$min_date = $this->input->get('from');
+				$date_range = 0;
+			}
+
+			if ($this->input->get('to')) {
+				$max_date = $this->input->get('to');
+				$date_range = 0;
+			}
+
+			$this->data['min_date'] = $min_date;
+			$this->data['max_date'] = $max_date;
+			$this->data['date_range'] = $date_range;
+
+			$input = array(
+				'select' => array('COUNT(`id`) AS quantity'),
+				'where' => array('approved' => 0)
+			);
+			$this->data['unapproved'] = $this->Voucher_model->get_list($input)[0]->quantity;
 
 			$this->load->view('layout', $this->data);
 		}

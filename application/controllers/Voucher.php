@@ -499,6 +499,9 @@
 				$voucher_id = $this->input->post('id');
 
 				$voucher = $this->Voucher_model->get_info($voucher_id);
+
+				$voucher->{"completed"} = $this->checkCompletedAccountingEntry($voucher->id, $voucher->value);
+
 				$this->data['voucher'] = $voucher;
 
 				$this->load->model('VoucherType_model');
