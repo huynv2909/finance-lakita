@@ -38,6 +38,11 @@
                      'success' => true,
                      'message' => 'Cập nhật thành công!'
                   );
+
+                  $this->data['log_info']['row_id'] = $this->Distribution_model->get_insert_id();
+   					$this->data['log_info']['info'] = $data['content'] . ' : ' . $data['value'] . ' d';
+                  $this->Log_model->create($this->data['log_info']);
+
                } else {
                   $response = array(
                      'var' => $data,
@@ -52,7 +57,7 @@
 
          $this->load->model('Voucher_model');
          $input = array(
-            'where' => array('approved' => 1),
+            'where' => array('approved' => 1, 'deleted' => 0),
             'order' => 'date desc'
          );
          $this->data['vouchers'] = $this->Voucher_model->get_list($input);

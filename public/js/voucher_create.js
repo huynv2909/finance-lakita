@@ -411,6 +411,33 @@ $(document).ready(function(){
       $('#upload-btn').prop('disabled', !$('#voucher-files').val());
    });
 
+   $('#voucher-files').click(function(){
+      $.confirm({
+			 icon: 'fa fa-exclamation',
+			 title: 'Phiếu thu hay phiếu chi?',
+			 content: 'Hãy đảm bảo chỉ có các phiếu thu hoặc chỉ phiếu chi!',
+			 theme: 'material',
+			 type: 'blue',
+			 buttons: {
+				  in: {
+						text: 'Phiếu thu',
+						btnClass: 'btn-green',
+						action: function(){
+                     $('#type').val('1');
+						}
+				  },
+				  out: {
+					  text: 'Phiếu chi',
+                 btnClass: 'btn-orange',
+					  action: function(){
+                    $('#type').val('0');
+					  }
+				  }
+			 }
+		});
+
+   });
+
    $('#lets-filter').click(function(){
       var extension = '?';
       var flag = false;
@@ -448,6 +475,11 @@ $(document).ready(function(){
       if ($('#fil-income').val() != '0') {
          flag = true;
          extension += 'income=' + (parseInt($('#fil-income').val()) - 1) + '&';
+      }
+
+      if ($('#fil-auto').val() != '0') {
+         flag = true;
+         extension += 'auto=' + $('#fil-auto').val() + '&';
       }
 
       if (flag) {

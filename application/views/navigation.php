@@ -155,13 +155,19 @@
                    <?php endif; ?>
                 <?php endforeach; ?>
                 <li>
-                    <a href="#"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span class="fa arrow"></span></a>
+                    <a href="#"><i class="fa fa-files-o fa-fw"></i> Tài liệu<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="#">Blank Page</a>
+                            <a href="https://docs.google.com/spreadsheets/d/1QxTOD8Ju30MI2vUBW5082DNZIatKnu1vPh5gONgIngU/edit#gid=0">Mẫu input files</a>
                         </li>
                         <li>
-                            <a href="#">Login Page</a>
+                            <a href="https://docs.google.com/spreadsheets/d/1hnh3QEPCHI_Gq1Rubx7aslFKsQ569Q2bPea3oOrb5Tk/edit?usp=sharing">Quy tắc phân bổ</a>
+                        </li>
+                        <li>
+                            <a href="https://drive.google.com/open?id=1GYKm1KhzdoAqjkRxla4xvPUBISiWpbRk">A&D system document</a>
+                        </li>
+                        <li>
+                            <a href="https://drive.google.com/open?id=1A9_MNnwTiglz2WjLYgvHGLSoSfoG2ODv">Chiều quản trị</a>
                         </li>
                     </ul>
                     <!-- /.nav-second-level -->

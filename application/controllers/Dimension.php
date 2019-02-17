@@ -43,6 +43,11 @@
 
                if ($this->Dimension_model->create($data)) {
                   $this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
+
+                  $this->data['log_info']['row_id'] = $this->Dimension_model->get_insert_id();
+   					$this->data['log_info']['info'] = $data['name'];
+                  $this->Log_model->create($this->data['log_info']);
+
 						redirect($this->routes['dimension_index']);
                } else {
                   $this->session->set_flashdata('message_errors', 'Có lỗi xảy ra!');
@@ -60,7 +65,7 @@
             $id = $this->input->post('id');
 
             $input = array(
-               'where' => array('dimen_id' => $id)
+               'where' => array('dimen_id' => $id, 'deleted' => 0)
             );
 
             $this->load->model('DetailDimension_model');

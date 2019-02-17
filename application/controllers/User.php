@@ -62,6 +62,10 @@
 
 					}
 
+					$this->data['log_info']['row_id'] = $list_changed[0];
+					$this->data['log_info']['info'] = 'Thay đổi quyền';
+					$this->Log_model->create($this->data['log_info']);
+
 					$this->session->set_flashdata('message_success', 'Cập nhật thành công!');
 					redirect($this->routes['user_permission']);
 				}

@@ -1,4 +1,2 @@
-1. Complete approve voucher
-2. View data report
-3. Total report everymonth.
-4. loging
+1. approve outcome vc
+2. logging show and dashboard

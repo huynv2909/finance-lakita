@@ -81,6 +81,18 @@
 				}
 			}
 
+			$this->data['save_log'] = false;
+			if ($action[0]->save_log == '1') {
+				
+				$this->data['log_info'] = array(
+					'action' => $action[0]->name,
+					'user_id' => $this->user->id,
+					'row_id' => '',
+					'info' => ''
+				);
+				$this->load->model('Log_model');
+			}
+
 		}
 
 		private function preProcessPermission() {

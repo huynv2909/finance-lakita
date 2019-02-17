@@ -131,6 +131,7 @@ $(document).ready(function(){
 									 id : id
 								 },
 								 success : function(result) {
+									 $('.alert').html(result.message);
 									 if (result.success) {
 									 	 var table = $('#voucher_types_table').DataTable();
 						 				 var row = $('#type-' + id.toString());
@@ -138,10 +139,17 @@ $(document).ready(function(){
 						 				 table.row(row).remove().draw();
 
 										 $('#list_code').val($('#list_code').val().replace(old_code + ",",''));
-										 // console.log(result.message);
+										 $('.alert').addClass('alert-success');
 									 } else {
-										 $.alert(result.message);
+										 $('.alert').addClass('alert-danger');
 									 }
+
+									 $('.alert').fadeIn();
+	             				setTimeout(function(){
+	             					$('.alert').fadeOut();
+	             					$('.alert').removeClass('alert-success alert-danger');
+	             				}, 3000);
+
 								 }
 							 });
 						}

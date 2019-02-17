@@ -85,6 +85,11 @@
             );
 
             if ($this->DetailDimension_model->create($data)) {
+
+               $this->data['log_info']['row_id'] = $this->DetailDimension_model->get_insert_id();
+					$this->data['log_info']['info'] = $data['name'] . ' : ' . $data['note'];
+               $this->Log_model->create($this->data['log_info']);
+
                $this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
                redirect($this->routes['dimensiondetail_coursesmanager']);
             } else {
@@ -107,6 +112,15 @@
             );
 
             if ($this->DetailDimension_model->update($id, $new_update)) {
+               $this->data['log_info']['row_id'] = $id;
+               if ($new_update['active'] == 1) {
+                  $this->data['log_info']['info'] = 'change to Active' ;
+               } else {
+                  $this->data['log_info']['info'] = 'change to Deactive' ;
+               }
+
+               $this->Log_model->create($this->data['log_info']);
+
                echo "Changed";
             } else {
                echo "Errors";
@@ -121,7 +135,7 @@
             $dimen_id = $this->input->post('id');
 
             $input = array(
-               'where' => array('dimen_id' => $dimen_id)
+               'where' => array('dimen_id' => $dimen_id, 'deleted' => 0)
             );
 
             die(json_encode($this->DetailDimension_model->get_list($input)));
@@ -134,9 +148,15 @@
 
             $response = array();
 
-            if ($this->DetailDimension_model->delete($id)) {
+            if ($this->DetailDimension_model->update($id, array('deleted' => 1))) {
                $response['success'] = true;
                $response['message'] = "Đã xóa!";
+
+               $info = $this->DetailDimension_model->get_info($id);
+					$this->data['log_info']['row_id'] = $id;
+					$this->data['log_info']['info'] = $info->name . ' : layer: ' . $info->layer;
+
+               $this->Log_model->create($this->data['log_info']);
             } else {
                $response['success'] = false;
                $response['message'] = "Không thể xóa!";
@@ -158,6 +178,11 @@
             );
 
             if ($this->DetailDimension_model->create($data)) {
+
+               $this->data['log_info']['row_id'] = $this->DetailDimension_model->get_insert_id();
+               $this->data['log_info']['info'] = $data['name'];
+               $this->Log_model->create($this->data['log_info']);
+
                $this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
                redirect($this->routes['dimensiondetail_index']);
             } else {

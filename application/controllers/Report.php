@@ -89,6 +89,7 @@
 				'B110' => 0, // Chi phi ban hang
 				'B120' => 0, // Chi phi van hanh
 				'B130' => 0, // Chi phi quan ly
+				'T100' => 0, // Chi phi chia se Thay
 				'D100' => 0  // Chi phi dau tu
 			);
 			// $list_detail is list detail dimension
@@ -157,6 +158,11 @@
 				// Mark tax
 				if ($detail->id == '350') {
 					$index_mark['C100'] = count($data_compilation) - 1;
+				}
+
+				// Mark tax
+				if ($detail->id == '250') {
+					$index_mark['T100'] = count($data_compilation) - 1;
 				}
 
 				// process list array
@@ -280,6 +286,18 @@
 					$D100t = 0;
 				}
 
+				if ($data_compilation[$index_mark['T100']]['data'][$point]['toa_value']) {
+					$T100a = $data_compilation[$index_mark['T100']]['data'][$point]['toa_value'];
+				} else {
+					$T100a = 0;
+				}
+
+				if ($data_compilation[$index_mark['T100']]['data'][$point]['tot_value']) {
+					$T100t = $data_compilation[$index_mark['T100']]['data'][$point]['tot_value'];
+				} else {
+					$T100t = 0;
+				}
+
 				// PL1A
 				$range['toa_value'] = $A100a - $B110a;
 				$PL1A['total_toa'] += $range['toa_value'];
@@ -308,19 +326,19 @@
 				$PL2['data'][$point] = $range;
 
 				// PL6
-				$range['toa_value'] = $A100a - $C100a;
+				$range['toa_value'] = $A100a - $B110a - $B120a - $B130a - $C100a;
 				$PL6['total_toa'] += $range['toa_value'];
 
-				$range['tot_value'] = $A100t - $C100t;
+				$range['tot_value'] = $A100t - $B110t - $B120t - $B130t - $C100t;
 				$PL6['total_tot'] += $range['tot_value'];
 
 				$PL6['data'][$point] = $range;
 
 				// PL7
-				$range['toa_value'] = $A100a - $B110a - $B120a - $B130a - $C100a - $D100a;
+				$range['toa_value'] = $A100a - $B110a - $B120a - $B130a - $C100a - $D100a - $T100a;
 				$PL7['total_toa'] += $range['toa_value'];
 
-				$range['tot_value'] = $A100t - $B110t - $B120t - $B130t - $C100t - $D100t;
+				$range['tot_value'] = $A100t - $B110t - $B120t - $B130t - $C100t - $D100t - $T100t;
 				$PL7['total_tot'] += $range['tot_value'];
 
 				$PL7['data'][$point] = $range;

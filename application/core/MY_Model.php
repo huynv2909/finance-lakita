@@ -196,6 +196,11 @@
 			if (isset($input['like']) && $input['like']) {
 				$this->db->like($input['like'][0], $input['like'][1]);
 			}
+
+			if (isset($input['not_like']) && $input['not_like']) {
+				$this->db->not_like($input['not_like'][0], $input['not_like'][1]);
+			}
+
 			// 'order' => 'active desc, id desc'
 			if (isset($input['order']) && $input['order']) {
 				$this->db->order_by($input['order']);

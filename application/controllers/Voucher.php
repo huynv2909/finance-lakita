@@ -69,7 +69,11 @@
 					// to pop up go to accounting entry create
 					$this->session->set_flashdata('latest_id', $voucher_id);
 
+					$this->data['log_info']['row_id'] = $voucher_id;
+					$this->data['log_info']['info'] = $this->input->post('content') . ' : ' . str_replace(".","",$this->input->post('value')) . ' d';
+
 					if ($this->input->post('auto_distribution') != 0) {
+						$this->data['log_info']['info'] .= ' [AUTO phân bổ]';
 						$this->data['all_dimen'] = $this->DetailDimension_model->get_list();
 
 						if ($this->input->post('income') == 1) {
@@ -158,6 +162,8 @@
 					}
 
 					$this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
+					$this->Log_model->create($this->data['log_info']);
+
 					redirect($this->routes['voucher_create']);
 				}
 				else {
@@ -167,7 +173,7 @@
 			}
 
 			$filter = array(
-				'where' => array('approved' => 1)
+				'where' => array('approved' => 1, 'deleted' => 0)
 			);
 
 			if ($this->input->get()) {
@@ -193,6 +199,18 @@
 
 				if ($this->input->get('executor')) {
 					$filter['where']['executor'] = $this->input->get('executor');
+				}
+
+				if ($this->input->get('auto')) {
+					$auto = $this->input->get('auto');
+
+					if ($auto == '1') {
+						$filter['like'] = array('content', '[AUTO-FROM-CRM]');
+					}
+
+					if ($auto == '2') {
+						$filter['not_like'] = array('content', '[AUTO-FROM-CRM]');
+					}
 				}
 
 				if ($this->input->get('income') == '0' || $this->input->get('income') == '1') {
@@ -230,7 +248,8 @@
 			$input = array(
 				'where' => array(
 					'dimen_id' => 120,
-					'active' => 1
+					'active' => 1,
+					'deleted' => 0
 				),
 				'order' => 'name asc'
 			);
@@ -265,13 +284,13 @@
 
 		public function approve()
 		{
-			$this->data['title'] = "Duyệt chứng từ tự động thêm từ CRM";
+			$this->data['title'] = "Duyệt chứng từ thu tự động thêm từ CRM";
 			$this->data['template'] = 'voucher/approve';
 			$this->data['active'] = 'voucher';
 			$this->data['js_files'] = array('voucher_approve');
 
 			$filter = array(
-				'where' => array('approved' => 0)
+				'where' => array('approved' => 0, 'income' => 1, 'deleted' => 0)
 			);
 
 			if ($this->input->get()) {
@@ -296,19 +315,26 @@
 				$this->load->model('Crm_model');
 				foreach ($vc_news as $vc) {
 					$parts = explode('-', $vc->content);
-					$id_contact = $parts[3];
-					$vc->{"course_code"} = $parts[5];
 
-					$input = array(
-						'where' => array('id_contact' => $id_contact)
-					);
+					if (count($parts) > 5) {
+						$id_contact = $parts[3];
+						$vc->{"course_code"} = $parts[5];
 
-					$contact_info = $this->Crm_model->get_list($input);
-					if (count($contact_info) > 0) {
-						$vc->{"crm_note"} = $contact_info[0]->note;
+						$input = array(
+							'where' => array('id_contact' => $id_contact)
+						);
+
+						$contact_info = $this->Crm_model->get_list($input);
+						if (count($contact_info) > 0) {
+							$vc->{"crm_note"} = $contact_info[0]->note;
+						} else {
+							$vc->{"crm_note"} = '';
+						}
 					} else {
+						$vc->{"course_code"} = '';
 						$vc->{"crm_note"} = '';
 					}
+
 
 
 				}
@@ -327,17 +353,71 @@
 					'order' => 'name ASC'
 				);
 				$this->data['courses'] = $this->DetailDimension_model->get_list($input);
+
+				$this->load->model('User_model');
+				$this->data['users'] = $this->User_model->get_list();
+
+				$this->load->model('Provider_model');
+				$input = array('order' => 'name ASC');
+				$this->data['providers'] = $this->Provider_model->get_list($input);
+
+				$this->load->model('Method_model');
+				$this->data['methods'] = $this->Method_model->get_list();
 			}
 
-			$this->load->model('User_model');
-			$this->data['users'] = $this->User_model->get_list();
+			$this->load->view('layout', $this->data);
+		}
 
-			$this->load->model('Provider_model');
-			$input = array('order' => 'name ASC');
-			$this->data['providers'] = $this->Provider_model->get_list($input);
+		public function approve2()
+		{
+			$this->data['title'] = "Duyệt chứng từ chi";
+			$this->data['template'] = 'voucher/approve2';
+			$this->data['active'] = 'voucher';
+			$this->data['js_files'] = array('voucher_approve');
 
-			$this->load->model('Method_model');
-			$this->data['methods'] = $this->Method_model->get_list();
+			$filter = array(
+				'where' => array('approved' => 0, 'income' => 0, 'deleted' => 0)
+			);
+
+			if ($this->input->get()) {
+				if ($this->input->get('method')) {
+					$filter['where']['method'] = $this->input->get('method');
+				}
+
+				if ($this->input->get('provider')) {
+					$filter['where']['provider'] = $this->input->get('provider');
+				}
+
+				if ($this->input->get('voucher_type')) {
+					$filter['where']['type_id'] = $this->input->get('voucher_type');
+				}
+
+			}
+
+			$vc_news = $this->Voucher_model->get_list($filter);
+			$this->data['vc_news'] = array();
+
+			if (count($vc_news) > 0) {
+				$this->data['vc_news'] = $vc_news;
+
+				$this->load->model('VoucherType_model');
+				$input = array(
+					'where' => array('active' => 1),
+					'order' => 'income DESC'
+				);
+				$this->data['types'] = $this->VoucherType_model->get_list($input);
+
+				$this->load->model('User_model');
+				$this->data['users'] = $this->User_model->get_list();
+
+				$this->load->model('Provider_model');
+				$input = array('order' => 'name ASC');
+				$this->data['providers'] = $this->Provider_model->get_list($input);
+
+				$this->load->model('Method_model');
+				$this->data['methods'] = $this->Method_model->get_list();
+
+			}
 
 			$this->load->view('layout', $this->data);
 		}
@@ -366,7 +446,12 @@
 					redirect($this->routes['voucher_approve']);
 				}
 
+				$this->data['log_info']['row_id'] = $id;
+				$this->data['log_info']['info'] = $data['content'] . ' : ' . $data['value'] . ' d';
+
 				if ($this->input->post('auto') == 1) {
+					$this->data['log_info']['info'] .= ' [AUTO phân bổ]';
+
 					$this->load->model('DetailDimension_model');
 					$this->data['all_dimen'] = $this->DetailDimension_model->get_list();
 
@@ -442,6 +527,71 @@
 					}
 				}
 
+				$this->Log_model->create($this->data['log_info']);
+
+				die('Thao tác thành công!');
+			}
+		}
+
+		public function approveOne2() {
+			if ($this->input->post()) {
+				$value = str_replace(".","",$this->input->post('value'));
+				$id = $this->input->post('id');
+				$tot = $this->input->post('tot');
+
+				$data = array(
+					'type_id' => $this->input->post('type_id'),
+					'content' => $this->input->post('content'),
+					'TOT' => $tot,
+					'TOA' => $tot,
+					'executor' => $this->input->post('executor'),
+					'value' => $value,
+					'owner' => $this->user->id,
+					'method' => $this->input->post('method'),
+					'provider' => $this->input->post('provider'),
+					'approved' => 1
+				);
+
+				if (!$this->Voucher_model->update($id, $data)) {
+					$this->session->set_flashdata('message_errors', 'Thao tác thất bại :(');
+					redirect($this->routes['voucher_approve']);
+				}
+
+				$this->data['log_info']['row_id'] = $id;
+				$this->data['log_info']['info'] = $data['content'] . ' : ' . $data['value'] . ' d';
+
+				if ($this->input->post('auto') == 1) {
+					$this->data['log_info']['info'] .= ' [AUTO phân bổ]';
+					$this->load->model('DetailDimension_model');
+					$this->data['all_dimen'] = $this->DetailDimension_model->get_list();
+
+					$this->load->model('VoucherType_model');
+					$type_info = $this->VoucherType_model->get_info($data['type_id']);
+
+					if ($dimen_selected = $type_info->first_dimen != 0) {
+						$data_acc = array(
+							'voucher_id' => $id,
+							'TOT' => $tot,
+							'TOA' => $tot,
+							'value' => $value,
+							'debit_acc' => $type_info->debit_def,
+							'credit_acc' => $type_info->credit_def
+						);
+
+						if (!$this->createAccountingAndDistribution($data_acc, $dimen_selected, false)) {
+							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra trong quá trình phân bổ!');
+							redirect($this->routes['voucher_approve']);
+						}
+					} else {
+						$this->session->set_flashdata('message_errors', 'Hãy cập nhật phân bổ mặc định cho loại chứng từ để dùng được tính năng tự động phân bổ!');
+						redirect($this->routes['voucher_approve']);
+					}
+
+
+				}
+
+				$this->Log_model->create($this->data['log_info']);
+
 				die('Thao tác thành công!');
 			}
 		}
@@ -450,10 +600,15 @@
 			if ($this->input->post()) {
 				$id = $this->input->post('id');
 
-				if (!$this->Voucher_model->delete($id)) {
+				if (!$this->Voucher_model->update($id, array('deleted' => 1))) {
 					$this->session->set_flashdata('message_errors', 'Thao tác thất bại :(');
 					redirect($this->routes['voucher_approve']);
 				}
+
+				$info = $this->Voucher_model->get_info($id);
+				$this->data['log_info']['row_id'] = $id;
+				$this->data['log_info']['info'] = $info->content . ' : ' . $info->value . ' d [APPROVING]';
+				$this->Log_model->create($this->data['log_info']);
 
 				die('Thao tác thành công!');
 			}
@@ -473,7 +628,8 @@
 
 				$input = array(
 					'where' => array(
-						'voucher_id' => $id
+						'voucher_id' => $id,
+						'deleted' => 0
 					)
 				);
 				$this->load->model('AccountingEntry_model');
@@ -551,7 +707,10 @@
 		}
 
 		public function distributionOneTime() {
-			$voucher_list = $this->Voucher_model->get_list();
+			$input = array(
+				'where' => array('approved' => 1, 'deleted' => 0)
+			);
+			$voucher_list = $this->Voucher_model->get_list($input);
 			$this->load->model('VoucherType_model');
 			$this->load->model('AccountingEntry_model');
 			$this->load->model('Distribution_model');
@@ -658,6 +817,12 @@
 							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 5!');
 							redirect($this->routes['voucher_create']);
 						}
+
+						$this->data['log_info']['row_id'] = $voucher->id;
+   					$this->data['log_info']['info'] = $voucher->content . ' : ' . $voucher->value . ' d';
+                  $this->Log_model->create($this->data['log_info']);
+
+
 					} else {
 						// Not income voucher
 						$data_acc = array(
@@ -673,6 +838,10 @@
 							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 6!');
 							redirect($this->routes['voucher_create']);
 						}
+
+						$this->data['log_info']['row_id'] = $voucher->id;
+   					$this->data['log_info']['info'] = $voucher->content . ' : ' . $voucher->value . ' d';
+                  $this->Log_model->create($this->data['log_info']);
 					}
 				}
 			}
@@ -688,9 +857,15 @@
 
             $response = array();
 
-            if ($this->Voucher_model->delete($id)) {
+            if ($this->Voucher_model->update($id, array('deleted' => 1))) {
                $response['success'] = true;
                $response['message'] = "Đã xóa!";
+
+					$info = $this->Voucher_model->get_info($id);
+					$this->data['log_info']['row_id'] = $id;
+					$this->data['log_info']['info'] = $info->content . ' : ' . $info->value . ' d';
+
+					$this->Log_model->create($this->data['log_info']);
             } else {
                $response['success'] = false;
                $response['message'] = "Không thể xóa!";
@@ -716,11 +891,11 @@
 					 redirect($this->routes['voucher_create']);
 	          }
 
-				 $this->fileToSystem($targetFile);
+				 $this->fileToSystem($targetFile, $this->input->post('type'));
 			}
 		}
 
-		private function fileToSystem($path) {
+		private function fileToSystem($path, $type) {
 			$this->load->library('PHPExcel');
 
 			$objPHPExcel = PHPExcel_IOFactory::load($path);
@@ -738,43 +913,86 @@
 			$this->load->model('Voucher_model');
 			$all_types = $this->VoucherType_model->get_list($input);
 
-			for ($i=1; $i < $total; $i++) {
+			// Thu
+			if ($type == '1') {
+				for ($i=1; $i < $total; $i++) {
 
-				$code = 'NONE';
-				foreach ($all_types as $type) {
-					if ($type->id == $data[$i][1]) {
-						$code = $this->GenerateCode($type->code);
-						break;
+					$code = $this->GenerateCode('PCF');
+
+					$info = array(
+						'code' => $code . 'f' . $i,
+						'code_real' => '',
+						'type_id' => 23,
+						'content' => $data[$i][2],
+						'income' => 1,
+						'TOT' => $data[$i][0],
+						'TOA' => $data[$i][1],
+						'executor' => 6,
+						'value' => $data[$i][3],
+						'owner' => $this->user->id,
+						'note' => 'input from files',
+						'method' => 0,
+						'provider' => 0,
+						'approved' => 0
+					);
+
+					if (!$this->Voucher_model->create($info)) {
+						if ($i > 1) {
+							$this->session->set_flashdata('message_errors', 'Đã thêm ' . ($i - 1) . ', có lỗi tại dòng ' . $i . ' :(');
+							redirect($this->routes['voucher_create']);
+						} else {
+							$this->session->set_flashdata('message_errors', 'Có lỗi xảy ra, quá trình thất bại! :(');
+							redirect($this->routes['voucher_create']);
+						}
 					}
+
+					$this->data['log_info']['row_id'] = $this->Voucher_model->get_insert_id();
+					$this->data['log_info']['info'] = $info['content'] . ' : ' . $info['value'] . ' d [FROM FILE]';
+               $this->Log_model->create($this->data['log_info']);
+
 				}
 
-				$info = array(
-					'code' => $code . 'f' . $i,
-					'code_real' => $data[$i][0],
-					'type_id' => $data[$i][1],
-					'content' => $data[$i][2],
-					'income' => $data[$i][3],
-					'TOT' => $data[$i][4],
-					'TOA' => $data[$i][5],
-					'executor' => $data[$i][6],
-					'value' => $data[$i][7],
-					'owner' => $this->user->id,
-					'note' => $data[$i][8],
-					'method' => $data[$i][9],
-					'provider' => $data[$i][10]
-				);
+			} else { // Chi
+				for ($i=1; $i < $total; $i++) {
 
-				if (!$this->Voucher_model->create($info)) {
-					if ($i > 1) {
-						$this->session->set_flashdata('message_errors', 'Đã thêm ' . ($i - 1) . ', có lỗi tại dòng ' . $i . ' :(');
-						redirect($this->routes['voucher_create']);
-					} else {
-						$this->session->set_flashdata('message_errors', 'Có lỗi xảy ra, quá trình thất bại! :(');
-						redirect($this->routes['voucher_create']);
+					$code = $this->GenerateCode('PCF');
+
+					$info = array(
+						'code' => $code . 'f' . $i,
+						'code_real' => '',
+						'type_id' => 10,
+						'content' => $data[$i][2],
+						'income' => 0,
+						'TOT' => $data[$i][0],
+						'TOA' => $data[$i][1],
+						'executor' => 6,
+						'value' => $data[$i][3],
+						'owner' => $this->user->id,
+						'note' => 'input from files',
+						'method' => 0,
+						'provider' => 0,
+						'approved' => 0
+					);
+
+					if (!$this->Voucher_model->create($info)) {
+						if ($i > 1) {
+							$this->session->set_flashdata('message_errors', 'Đã thêm ' . ($i - 1) . ', có lỗi tại dòng ' . $i . ' :(');
+							redirect($this->routes['voucher_create']);
+						} else {
+							$this->session->set_flashdata('message_errors', 'Có lỗi xảy ra, quá trình thất bại! :(');
+							redirect($this->routes['voucher_create']);
+						}
 					}
+
+					$this->data['log_info']['row_id'] = $this->Voucher_model->get_insert_id();
+					$this->data['log_info']['info'] = $info['content'] . ' : ' . $info['value'] . ' d [FROM FILE]';
+               $this->Log_model->create($this->data['log_info']);
+
 				}
+
 
 			}
+
 
 			$this->session->set_flashdata('message_success', 'Thêm thành công ' . ($total - 1) . ' chứng từ mới!');
 			redirect($this->routes['voucher_create']);

@@ -53,6 +53,11 @@
 
             if ($this->VoucherType_model->create($data)) {
                $this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
+
+               $this->data['log_info']['row_id'] = $this->VoucherType_model->get_insert_id();
+					$this->data['log_info']['info'] = $name;
+               $this->Log_model->create($this->data['log_info']);
+
                redirect($this->routes['vouchertype_index']);
             } else {
                $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
@@ -76,6 +81,15 @@
             );
 
             if ($this->VoucherType_model->update($id, $new_update)) {
+
+               $this->data['log_info']['row_id'] = $id;
+               if ($new_update['active'] == 1) {
+                  $this->data['log_info']['info'] = 'change to Active' ;
+               } else {
+                  $this->data['log_info']['info'] = 'change to Deactive' ;
+               }
+
+               $this->Log_model->create($this->data['log_info']);
                echo "Changed";
             } else {
                echo "Errors";
@@ -90,9 +104,15 @@
 
             $response = array();
 
-            if ($this->VoucherType_model->delete($id)) {
+            if ($this->VoucherType_model->update($id, array('deleted' => 1))) {
                $response['success'] = true;
                $response['message'] = "Đã xóa!";
+
+               $info = $this->VoucherType_model->get_info($id);
+					$this->data['log_info']['row_id'] = $id;
+					$this->data['log_info']['info'] = $info->name;
+
+               $this->Log_model->create($this->data['log_info']);
             } else {
                $response['success'] = false;
                $response['message'] = "Không thể xóa!";
@@ -109,11 +129,11 @@
          $this->data['js_files'] = array('voucher-type_set-default');
 
          $input = array(
-            'where' => array('income' => 0)
+            'where' => array('income' => 0, 'deleted' => 0)
          );
          $this->data['types'] = $this->VoucherType_model->get_list($input);
          $input = array(
-            'where' => array('income' => 1)
+            'where' => array('income' => 1, 'deleted' => 0)
          );
          $this->data['in_types'] = $this->VoucherType_model->get_list($input);
 
@@ -186,6 +206,11 @@
                   $this->session->set_flashdata('message_errors', 'Thao tác thất bại!');
    					redirect($this->routes['vouchertype_setdefault']);
                }
+
+               $this->data['log_info']['row_id'] = $type_id;
+               $this->data['log_info']['info'] = 'Thay đổi';
+               $this->Log_model->create($this->data['log_info']);
+
             }
 
             $this->session->set_flashdata('message_success', 'Cập nhật thành công!');

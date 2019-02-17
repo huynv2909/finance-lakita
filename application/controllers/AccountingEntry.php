@@ -22,6 +22,7 @@
          $input = array(
             'select' => array($this->AccountingEntry_model->table . '.*', $this->Voucher_model->table . '.code'),
             'join' => array($this->Voucher_model->table => $this->Voucher_model->table . '.id = ' . $this->AccountingEntry_model->table . '.voucher_id'),
+            'where' => array($this->AccountingEntry_model->table . '.deleted' => 0),
             'order' => 'TOA desc',
             'limit' => array($this->data['limit_loading'], 0)
          );
@@ -110,6 +111,11 @@
                   $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra 2!');
                   redirect($this->routes['accountingentry_index']);
                }
+
+               $this->data['log_info']['row_id'] = $id;
+					$this->data['log_info']['info'] = $data_update['content'] . ' : ' . $data_update['value'] . ' d';
+               $this->Log_model->create($this->data['log_info']);
+
             } else {
                $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
                redirect($this->routes['accountingentry_index']);
@@ -151,6 +157,11 @@
                      'success' => true,
                      'message' => 'Cập nhật thành công!'
                   );
+
+                  $this->data['log_info']['row_id'] = $this->AccountingEntry_model->get_insert_id();
+   					$this->data['log_info']['info'] = $this->input->post('content') . ' : ' . $data['value'] . ' d';
+
+                  $this->Log_model->create($this->data['log_info']);
                } else {
                   $response = array(
                      'success' => false,
@@ -241,9 +252,15 @@
 
             $response = array();
 
-            if ($this->AccountingEntry_model->delete($id)) {
+            if ($this->AccountingEntry_model->update($id, array('deleted' => 1))) {
                $response['success'] = true;
                $response['message'] = "Đã xóa!";
+
+               $info = $this->AccountingEntry_model->get_info($id);
+					$this->data['log_info']['row_id'] = $id;
+					$this->data['log_info']['info'] = $info->content . ' : ' . $info->value . ' d';
+
+               $this->Log_model->create($this->data['log_info']);
             } else {
                $response['success'] = false;
                $response['message'] = "Không thể xóa!";
@@ -423,7 +440,7 @@
       private function getUncompletedVoucher() {
          $this->load->model('Voucher_model');
          $input = array(
-            'where' => array('approved' => 1),
+            'where' => array('approved' => 1, 'deleted' => 0),
             'order' => 'date desc'
          );
 

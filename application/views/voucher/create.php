@@ -258,6 +258,7 @@
 <?php endif; ?>>
 	<label for="files">Thêm từ file</label>
 	<input type="file" name="files" accept=".csv, .xlsx, .xls" id="voucher-files">
+	<input type="hidden" name="type" id="type" value="">
 	<input type="submit" class="btn btn-warning btn-sm" name="ok" id="upload-btn" value="Thêm" style="margin-top: 4px;" disabled>
 </form>
 
@@ -369,6 +370,18 @@
 				<button type="button" name="button" class="btn btn-success" id="lets-filter"><i class="fa fa-fw" aria-hidden="true" title="Lọc ngay"></i> Lọc ngay</button>
 				<a id="reset-filter-link" href="<?php echo $this->routes['voucher_create']; ?>" class="text-center" style="display: inherit;"><i class="fa fa-fw" aria-hidden="true" title="Bỏ lọc"></i> Bỏ lọc</a>
 			</div>
+			<div class="col-md-4 col-lg-3">
+				<p class="text-center">Được duyệt:</p>
+				<select id="fil-auto" class="form-control filter-field" name=""
+				<?php if (null !== $this->input->get('auto')): ?>
+					style="background-color: antiquewhite;"
+				<?php endif; ?>
+				>
+					<option value="0">Tất cả</option>
+					<option value="1" <?php if ($this->input->get('auto') == '1') echo 'selected'; ?>>Được thêm tự động</option>
+					<option value="2" <?php if ($this->input->get('auto') == '2') echo 'selected'; ?>>Thêm thủ công</option>
+				</select>
+			</div>
 			<div class="clearfix"></div>
 		</div>
 		<div class="row">
@@ -402,7 +415,7 @@
 				<?php foreach ($vouchers as $item): ?>
 					<?php if ($get_uncompleted || !$item->completed): ?>
 					<tr role="row" id="row-<?php echo $item->id; ?>" data-url="<?php echo $this->routes['voucher_viewmore']; ?>" data-id="<?php echo $item->id; ?>" class="voucher-row <?php if ($item->income == 1) echo 'success'; ?>">
-						 <td><?php echo $item->date; ?></td>
+						 <td class="text-center"><?php echo $item->date; ?></td>
 						 <td>
 							 <?php
 								foreach ($voucher_type as $type) {
@@ -433,7 +446,7 @@
 								}
 							  ?>
 						 </td>
-						 <td><?php echo $item->TOT; ?></td>
+						 <td class="text-center"><?php echo $item->TOT; ?></td>
 						 <?php if (in_array('voucher_delete', explode(',', $this->role->permission_list))): ?>
 						 	<td class="text-center"><button type="button" class="btn btn-circle del-btn" title="Xóa" data-url="<?php echo $this->routes['voucher_delete']; ?>" data-id="<?php echo $item->id; ?>"><i class="fa fa-times"></i></button></td>
 						<?php endif; ?>
@@ -446,6 +459,15 @@
 		<script type="text/javascript">
 			$('#voucher_table').DataTable({
 					  responsive: true,
+					  "columns" : [
+						 { "width" : "13%" },
+						 { "width" : "20%" },
+						 { "width" : "12%" },
+						 { "width" : "32%" },
+						 { "width" : "8%" },
+						 { "width" : "10%" },
+						 { "width" : "5%" }
+					 ],
 					  "order" : [[0, 'desc'], [5, 'desc']]
 			});
 

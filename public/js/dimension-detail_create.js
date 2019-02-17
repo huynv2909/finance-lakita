@@ -74,15 +74,22 @@ $(document).ready(function(){
 									 id : id
 								 },
 								 success : function(result) {
+                            $('.alert').html(result.message);
 									 if (result.success) {
 									 	 var table = $('#detail_dimen_table').DataTable();
 						 				 var row = current_btn.parent().parent();
 						 				 table.row(row).remove().draw();
 
-										 // console.log(result.message);
+										 $('.alert').addClass('alert-success');
 									 } else {
-										 $.alert(result.message);
+										 $('.alert').addClass('alert-danger');
 									 }
+                            $('.alert').fadeIn();
+                				setTimeout(function(){
+                					$('.alert').fadeOut();
+                					$('.alert').removeClass('alert-success alert-danger');
+                				}, 3000);
+
 								 }
 							 });
 						}
