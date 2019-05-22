@@ -568,7 +568,7 @@
 					$this->load->model('VoucherType_model');
 					$type_info = $this->VoucherType_model->get_info($data['type_id']);
 
-					if ($dimen_selected = $type_info->first_dimen != 0) {
+					if ($type_info->first_dimen != 0) {
 						$data_acc = array(
 							'voucher_id' => $id,
 							'TOT' => $tot,
@@ -577,6 +577,7 @@
 							'debit_acc' => $type_info->debit_def,
 							'credit_acc' => $type_info->credit_def
 						);
+						$dimen_selected = $type_info->first_dimen;
 
 						if (!$this->createAccountingAndDistribution($data_acc, $dimen_selected, false)) {
 							$this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra trong quá trình phân bổ!');
@@ -857,7 +858,7 @@
 
             $response = array();
 
-            if ($this->Voucher_model->update($id, array('deleted' => 1))) {
+            if ($this->Voucher_model->update($id, array('deleted' => 1)) && $this->deleteDetail($id)) {
                $response['success'] = true;
                $response['message'] = "Đã xóa!";
 
@@ -1149,6 +1150,28 @@
 
 			return true;
 		}
+
+		private function deleteDetail($id) {
+			$this->load->model('AccountingEntry_model');
+			$list_act = $this->AccountingEntry_model->get_list(array('where' => array('voucher_id' => $id)));
+			if (count($list_act) == 0) {
+				return true;
+			}
+
+			$this->load->model('Distribution_model');
+			foreach ($list_act as $act) {
+				if (!$this->Distribution_model->update_rule(array('entry_id' => $act->id), array('deleted' => 1)) ) {
+					return false;
+				}
+
+				if (!$this->AccountingEntry_model->update($act->id, array('deleted' => 1)) ) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+
 
 
 	}

@@ -108,7 +108,7 @@
    vertical-align: middle;
 }
 
-.voucher-row {
+.voucher-row, .log-row {
    cursor: pointer;
 }
 

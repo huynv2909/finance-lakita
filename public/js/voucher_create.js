@@ -381,17 +381,24 @@ $(document).ready(function(){
 									 id : id
 								 },
 								 success : function(result) {
+                            $('.alert').html(result.message);
 									 if (result.success) {
 									 	 var table = $('#voucher_table').DataTable();
 						 				 var row = $('#row-' + id.toString());
 						 				 table.row(row).remove().draw();
                                $('#view-modal').modal('hide');
                                $('#uncompleted_amount').html(parseInt($('#uncompleted_amount').html()) - 1);
-										 // console.log(result.message);
+										 $('.alert').addClass('alert-success');
 									 } else {
                                $('#view-modal').modal('hide');
-										 $.alert(result.message);
+										 $('.alert').addClass('alert-danger');
 									 }
+
+                            $('.alert').fadeIn();
+                				setTimeout(function(){
+                					$('.alert').fadeOut();
+                					$('.alert').removeClass('alert-success alert-danger');
+                				}, 3000);
 								 }
 							 });
 						}

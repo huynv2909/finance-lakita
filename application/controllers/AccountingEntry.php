@@ -28,7 +28,7 @@
          );
 
          if ($this->input->get('code')) {
-            $input['where'] = array($this->Voucher_model->table . '.code' => $this->input->get('code'));
+            $input['where'] = array($this->Voucher_model->table . '.code' => $this->input->get('code'), $this->AccountingEntry_model->table . '.deleted' => 0);
          }
 
          $this->data['entries'] = $this->AccountingEntry_model->get_list($input);
@@ -253,6 +253,12 @@
             $response = array();
 
             if ($this->AccountingEntry_model->update($id, array('deleted' => 1))) {
+               $this->load->model('Distribution_model');
+               if (!$this->Distribution_model->update_rule(array('entry_id' => $id), array('deleted' => 1))) {
+                  $response['success'] = false;
+                  $response['message'] = "Có lỗi xảy ra!";
+               }
+
                $response['success'] = true;
                $response['message'] = "Đã xóa!";
 

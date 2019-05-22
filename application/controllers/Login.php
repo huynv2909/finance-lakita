@@ -34,7 +34,8 @@
 			if ($this->form_validation->run()) {
 				$user_info = array(
 					'username' => $this->input->post('username'),
-					'password' => $this->input->post('password')
+					'password' => $this->input->post('password'),
+					'deleted' => 0
 					);
 
 				$this->load->model('User_model');

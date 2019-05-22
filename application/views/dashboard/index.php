@@ -78,6 +78,49 @@
         chart.draw(data, options);
       }
     </script>
+
+    <div class="panel panel-yellow" style="margin-top: 20px;">
+      <div class="panel-heading">
+         Lịch sử hoạt động
+       </div>
+        <div class="panel-body">
+           <div class="table-responsive">
+               <table class="table table-hover">
+                   <thead>
+                       <tr>
+                           <th>Time</th>
+                           <th>Action</th>
+                           <th>User</th>
+                       </tr>
+                   </thead>
+                   <tbody>
+                      <?php foreach ($logs as $log): ?>
+                        <tr title="<?php echo $log->info; ?>">
+                            <td><?php echo $log->time; ?></td>
+                            <td><?php echo $log->description; ?></td>
+                            <td><?php
+                              foreach ($users as $user) {
+                                 if ($log->user_id == $user->id) {
+                                    echo $user->name;
+                                    break;
+                                 }
+                              }
+                             ?></td>
+                        </tr>
+                      <?php endforeach; ?>
+                   </tbody>
+               </table>
+           </div>
+        </div>
+        <a href="<?php echo $this->routes['log_index']; ?>">
+          <div class="panel-footer">
+                <span class="pull-left">Xem thêm</span>
+                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                <div class="clearfix"></div>
+          </div>
+        </a>
+    </div>
+
    </div>
    <div class="col-lg-9">
       <div class="row">

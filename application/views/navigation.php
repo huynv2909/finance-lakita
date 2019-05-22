@@ -78,9 +78,9 @@
                 <i class="fa fa-user fa-fw"></i><?php echo $this->user->name; ?><b class="caret"></b>
             </a>
             <ul class="dropdown-menu dropdown-user">
-                <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                <li><a href="<?php echo $this->routes['user_profile']; ?>"><i class="fa fa-user fa-fw"></i> User Profile</a>
                 </li>
-                <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                <li><a href="<?php echo $this->routes['config_index']; ?>"><i class="fa fa-gear fa-fw"></i> Settings</a>
                 </li>
                 <li class="divider"></li>
                 <li><a href="<?php echo base_url('logout'); ?>"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
@@ -113,6 +113,7 @@
                    <?php else: ?>
                       <li>
                          <a href="#"><?php
+                              $name = strtolower($name);
                               if ($name == 'voucher') {
                                  echo '<i class="fa fa-file-text-o fa-fw"></i> Hóa đơn/Chứng từ';
                               }
@@ -131,7 +132,7 @@
                               if ($name == 'dashboard') {
                                  echo '<i class="fa fa-fw" aria-hidden="true" title="Dashboard"></i> Dashboard';
                               }
-                              if ($name == 'dimensiondetail') {
+                              if ($name == 'detaildimension') {
                                  echo '<i class="fa fa-sitemap fa-fw"></i> Chi tiết chiều quản trị';
                               }
                               if ($name == 'distribution') {

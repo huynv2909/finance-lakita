@@ -101,9 +101,131 @@
       }
 
       public function manager() {
+			$this->data['title'] = "Quản trị người dùng";
+			$this->data['template'] = 'user/manager';
+			$this->data['active'] = 'user';
+         $this->data['js_files'] = array('user_manager');
 
+			$this->data['users'] = $this->User_model->get_list(array('where' => array('deleted' => 0, 'id !=' => 0)));
+
+			if ($this->input->post()) {
+				$data = array(
+					'name' => $this->input->post('name'),
+					'permission' => $this->input->post('permission'),
+					'username' => $this->input->post('username'),
+					'password' => $this->input->post('password')
+				);
+
+				if (!$this->User_model->create($data)) {
+					$this->session->set_flashdata('message_errors', 'Thao tác thất bại :(');
+					redirect($this->routes['user_manager']);
+				}
+
+				$this->data['log_info']['row_id'] = $this->User_model->get_insert_id();
+				$this->data['log_info']['info'] = $data['name'];
+
+				$this->Log_model->create($this->data['log_info']);
+
+				$this->session->set_flashdata('message_success', 'Thao tác thành công!');
+				redirect($this->routes['user_manager']);
+			}
+
+			$this->load->view('layout', $this->data);
       }
 
+		public function edit() {
+			if ($this->input->post()) {
+				$id = $this->input->post('id');
+
+				$this->data['info'] = $this->User_model->get_info($id);
+
+				$this->load->view('user/edit', $this->data);
+			}
+		}
+
+		public function delete() {
+			if ($this->input->post()) {
+            $id = $this->input->post('id');
+
+            $response = array();
+
+            if ($this->User_model->update($id, array('deleted' => 1))) {
+               $response['success'] = true;
+               $response['message'] = "Đã xóa!";
+
+               $info = $this->User_model->get_info($id);
+					$this->data['log_info']['row_id'] = $id;
+					$this->data['log_info']['info'] = $info->name;
+
+               $this->Log_model->create($this->data['log_info']);
+            } else {
+               $response['success'] = false;
+               $response['message'] = "Không thể xóa!";
+            }
+
+            die(json_encode($response));
+         }
+		}
+
+		public function profile() {
+			$this->data['title'] = "Thông tin cá nhân";
+			$this->data['template'] = 'user/profile';
+			$this->data['active'] = 'user';
+         $this->data['js_files'] = array('user_profile');
+
+			$this->data['info'] = $this->User_model->get_info($this->user->id);
+
+			if ($this->input->post()) {
+				if ($this->data['info']->password != $this->input->post('password')) {
+					$this->session->set_flashdata('message_errors', 'Mật khẩu không chính xác, thao tác thất bại :(');
+					redirect($this->routes['user_profile']);
+				}
+
+				if (!$this->User_model->update($this->user->id, array('password' => $this->input->post('new_password')))) {
+					$this->session->set_flashdata('message_errors', 'Thao tác thất bại :(');
+					redirect($this->routes['user_profile']);
+				}
+
+				$this->data['log_info']['row_id'] = $this->user->id;
+				$this->data['log_info']['info'] = $this->data['info']->name . ' : tự đổi mật khẩu';
+
+				$this->Log_model->create($this->data['log_info']);
+
+				$this->session->set_flashdata('message_success', 'Thao tác thành công!');
+				redirect($this->routes['user_profile']);
+			}
+
+			$this->load->view('layout', $this->data);
+		}
+
+		public function editSubmit() {
+			if ($this->input->post()) {
+				$id = $this->input->post('id');
+
+				$data = array(
+					'name' => $this->input->post('name'),
+					'permission' => $this->input->post('permission')
+				);
+
+				if ($this->input->post('change') == 1) {
+					$data['password'] = $this->input->post('password');
+				}
+
+				if (!$this->User_model->update($id, $data)) {
+					$this->session->set_flashdata('message_errors', 'Thao tác thất bại :(');
+					redirect($this->routes['user_manager']);
+				}
+
+				$this->data['log_info']['row_id'] = $id;
+				$this->data['log_info']['info'] = $data['name'];
+
+				$this->Log_model->create($this->data['log_info']);
+
+				$this->session->set_flashdata('message_success', 'Thao tác thành công!');
+
+				redirect($this->routes['user_manager']);
+			}
+		}
 
 	}
  ?>

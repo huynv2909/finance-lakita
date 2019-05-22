@@ -56,7 +56,9 @@
 
 			$input = array(
 				'select' => array('COUNT(`id`) AS quantity'),
-				'where' => array('approved' => 0)
+				'where' => array('approved' => 0,
+					'deleted' => 0
+				)
 			);
 			$this->data['unapproved'] = $this->Voucher_model->get_list($input)[0]->quantity;
 
@@ -79,7 +81,7 @@
 
 			if ($this->input->get('date_range')) {
 				$date_range_default = $this->input->get('date_range');
-				$this->transformRangeToDate($min_date, $max_date, $date_range_default);
+				transformRangeToDate($min_date, $max_date, $date_range_default);
 			}
 
 			if ($this->input->get('from')) {
@@ -100,6 +102,7 @@
 				'select' => array('SUM(value) AS revenue'),
 				'where' => array(
 					'dimensional_id' => 210,
+					'deleted' => 0,
 					'TOA >=' => $min_date,
 					'TOA <=' => $max_date
 				)
@@ -113,6 +116,7 @@
 			// New records;
 			$input = array(
 				'where' => array(
+					'deleted' => 0,
 					'date >=' => $min_date . ' 00:00:00',
 					'date <=' => $max_date . ' 23:59:59'
 				)
@@ -125,6 +129,7 @@
 			$input = array(
 				'select' => array('SUM(value) AS cost'),
 				'where' => array(
+					'deleted' => 0,
 					'TOA >=' => $min_date,
 					'TOA <=' => $max_date
 				),
@@ -136,7 +141,7 @@
 
 			// trend revenue
 			$input = array(
-				'where' => array('dimensional_id' => $id_revenue_dimension),
+				'where' => array('dimensional_id' => $id_revenue_dimension, 'deleted' => 0),
 				'order' => 'TOA asc'
 			);
 			$revenue_dis = $this->Distribution_model->get_list($input);
@@ -158,6 +163,7 @@
 					'select' => array('SUM(value) AS revenue'),
 					'where' => array(
 						'dimensional_id' => $id_revenue_dimension,
+						'deleted' => 0,
 						'TOA >=' => $value['from'],
 						'TOA <=' => $value['to']
 					)
@@ -192,6 +198,7 @@
 					'select' => array('SUM(value) AS revenue'),
 					'where' => array(
 						'dimensional_id' => $dimen->id,
+						'deleted' => 0,
 						'TOA >=' => $min_date,
 						'TOA <=' => $max_date
 					)
@@ -215,6 +222,7 @@
 					'select' => array('SUM(value) AS revenue'),
 					'where' => array(
 						'dimensional_id' => $product->id,
+						'deleted' => 0,
 						'TOA >=' => $min_date,
 						'TOA <=' => $max_date
 					)
@@ -239,36 +247,23 @@
 			}
 			$this->data['trees'] = $trees;
 
+			// Get logs
+			$this->load->model('Log_model');
+			$input = array(
+            'select' => array($this->Log_model->table . '.*', $this->Operation_model->table . '.description'),
+            'join' => array($this->Operation_model->table => $this->Operation_model->table . '.name = ' . $this->Log_model->table . '.action'),
+            'order' => 'time desc',
+            'limit' => array(5, 0)
+         );
+
+			$logs = $this->Log_model->get_list($input);
+
+			$this->data['logs'] = $logs;
+
+			$this->load->model('User_model');
+			$this->data['users'] = $this->User_model->get_list();
+
 			$this->load->view('layout', $this->data);
-		}
-
-		private function transformRangeToDate(&$min_date, &$max_date, $range_type) {
-			// Current month
-			if ($range_type == 1) {
-				$min_date = date('Y-m-01');
-				$max_date = date('Y-m-d');
-			}
-
-			// before month
-			if ($range_type == 2) {
-				$before_month = date('m') - 1;
-				$min_date = date('Y-' . $before_month . '-01');
-				if ($before_month == 0) {
-					$before_month = 12;
-					$before_year = date('Y') - 1;
-					$min_date = date($before_year . '-' . $before_month . '-01');
-				};
-
-				$before_time = new DateTime( $min_date );
-				$before_time->modify('last day of this month');
-				$max_date = $before_time->format('Y-m-d');
-			}
-
-			// current year
-			if ($range_type == 3) {
-				$min_date = date('Y-01-01');
-				$max_date = date('Y-m-d');
-			}
 		}
 
 

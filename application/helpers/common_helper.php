@@ -93,5 +93,34 @@
 	    return $d && $d->format($format) == $date;
 	}
 
+	function transformRangeToDate(&$min_date, &$max_date, $range_type) {
+		// Current month
+		if ($range_type == 1) {
+			$min_date = date('Y-m-01');
+			$max_date = date('Y-m-d');
+		}
+
+		// before month
+		if ($range_type == 2) {
+			$before_month = date('m') - 1;
+			$min_date = date('Y-' . $before_month . '-01');
+			if ($before_month == 0) {
+				$before_month = 12;
+				$before_year = date('Y') - 1;
+				$min_date = date($before_year . '-' . $before_month . '-01');
+			};
+
+			$before_time = new DateTime( $min_date );
+			$before_time->modify('last day of this month');
+			$max_date = $before_time->format('Y-m-d');
+		}
+
+		// current year
+		if ($range_type == 3) {
+			$min_date = date('Y-01-01');
+			$max_date = date('Y-m-d');
+		}
+	}
+
 
  ?>

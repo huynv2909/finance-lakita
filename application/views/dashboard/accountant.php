@@ -1,4 +1,4 @@
-<div class="row">
+<!-- <div class="row">
    <div class="col-xs-12">
       <h4>Số liệu: <select id="date_choose" class="input-transparent" name="date_range">
          <option value="4" <?php if ($date_range == 4) echo 'selected'; ?>>Hôm nay</option>
@@ -11,7 +11,7 @@
        ?></h4>
       <input type="hidden" id="dashboard_url" value="<?php echo base_url('dashboard.html'); ?>">
    </div>
-</div>
+</div> -->
 
 <div class="row">
    <div class="col-md-4">

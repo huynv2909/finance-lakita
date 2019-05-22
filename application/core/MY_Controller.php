@@ -83,7 +83,6 @@
 
 			$this->data['save_log'] = false;
 			if ($action[0]->save_log == '1') {
-				
 				$this->data['log_info'] = array(
 					'action' => $action[0]->name,
 					'user_id' => $this->user->id,

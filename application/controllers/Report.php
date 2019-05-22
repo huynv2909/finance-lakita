@@ -44,6 +44,7 @@
 			} else {
 				// Default get all
 				$input = array(
+					'deleted' => 0,
 					'order' => 'TOA asc'
 				);
 				// default date
@@ -54,6 +55,7 @@
 				}
 
 				$input = array(
+					'deleted' => 0,
 					'order' => 'TOT asc'
 				);
 				$distribution = $this->Distribution_model->get_list($input);
@@ -63,6 +65,7 @@
 				}
 				// Merge time
 				$min_date = ($toa_min_date < $tot_min_date)?$toa_min_date:$tot_min_date;
+				$min_date = substr($min_date, 0, 8) . '01';
 			}
 
 			if ($this->input->get('to') && validateDate($this->input->get('to'))) {
@@ -108,6 +111,7 @@
 						'select' => array('SUM(value) AS total'),
 						'where' => array(
 							'dimensional_id' => $detail->id,
+							'deleted' => 0,
 							'TOA  >=' => $range['from'],
 							'TOA  <=' => $range['to']
 						)
@@ -119,6 +123,7 @@
 						'select' => array('SUM(value) AS total'),
 						'where' => array(
 							'dimensional_id' => $detail->id,
+							'deleted' => 0,
 							'TOT  >=' => $range['from'],
 							'TOT  <=' => $range['to']
 						)
@@ -386,6 +391,7 @@
 			} else {
 				// Default get all
 				$input = array(
+					'deleted' => 0,
 					'order' => 'TOA asc'
 				);
 				// default date
@@ -396,6 +402,7 @@
 				}
 
 				$input = array(
+					'deleted' => 0,
 					'order' => 'TOT asc'
 				);
 				$distribution = $this->Distribution_model->get_list($input);
@@ -405,6 +412,7 @@
 				}
 				// Merge time
 				$min_date = ($toa_min_date < $tot_min_date)?$toa_min_date:$tot_min_date;
+				$min_date = substr($min_date, 0, 8) . '01';
 			}
 
 			if ($this->input->get('to') && validateDate($this->input->get('to'))) {
@@ -443,6 +451,7 @@
 						'select' => array('SUM(value) AS total'),
 						'where' => array(
 							'dimensional_id' => $detail->id,
+							'deleted' => 0,
 							'TOA  >=' => $range['from'],
 							'TOA  <=' => $range['to']
 						)
@@ -454,6 +463,7 @@
 						'select' => array('SUM(value) AS total'),
 						'where' => array(
 							'dimensional_id' => $detail->id,
+							'deleted' => 0,
 							'TOT  >=' => $range['from'],
 							'TOT  <=' => $range['to']
 						)
@@ -508,6 +518,7 @@
 					),
 					'where' => array(
 						$this->Distribution_model->table . '.dimensional_id' => $id,
+						$this->Distribution_model->table . '.deleted' => 0,
 						$this->Distribution_model->table . '.' . $type . ' >=' => $from,
 						$this->Distribution_model->table . '.' . $type . ' <=' => $to
 					),
@@ -518,6 +529,181 @@
 
 				$this->load->view('report/data', $this->data);
 			}
+		}
+
+		public function generalReport() {
+			$this->data['title'] = "BÁO CÁO TỔNG HỢP";
+			$this->data['active'] = 'Report';
+			$this->data['js_files'] = array('dashboard_index');
+
+			// 1: current month, 2: month before, 3: current year
+			$date_range_default = 1;
+			$min_date = date('Y-m-01');
+			$max_date = date('Y-m-d');
+
+			if ($this->input->get('date_range')) {
+				$date_range_default = $this->input->get('date_range');
+				transformRangeToDate($min_date, $max_date, $date_range_default);
+			}
+
+			if ($this->input->get('from')) {
+				$min_date = $this->input->get('from');
+				$date_range_default = 0;
+			}
+
+			if ($this->input->get('to')) {
+				$max_date = $this->input->get('to');
+				$date_range_default = 0;
+			}
+
+			$this->data['min_date'] = $min_date;
+			$this->data['max_date'] = $max_date;
+			$this->data['date_range'] = $date_range_default;
+
+			if ($this->user->permission == 1) {
+				$this->generalForManager();
+			} else {
+				$this->generalForAccountant();
+			}
+		}
+
+		private function generalForManager() {
+       $this->data['template'] = "report/general-manager.php";
+
+			 $input = array(
+ 				'where' => array(
+ 					'dimen_code' => 'HD1',
+ 					'id !=' => 210
+ 				)
+ 			);
+ 			$dimens = $this->DetailDimension_model->get_list($input);
+ 			$ratio_in_layer_1 = array();
+ 			foreach ($dimens as $dimen) {
+ 				$temp_arr = array(
+ 					'id' => $dimen->id,
+ 					'name' => $dimen->name
+ 				);
+ 				$input = array(
+ 					'select' => array('SUM(value) AS revenue'),
+ 					'where' => array(
+ 						'dimensional_id' => $dimen->id,
+ 						'deleted' => 0,
+ 						'TOA >=' => $this->data['min_date'],
+ 						'TOA <=' => $this->data['max_date']
+ 					)
+ 				);
+ 				$temp_arr['revenue'] = intval($this->Distribution_model->get_list($input)[0]->revenue);
+ 				array_push($ratio_in_layer_1, $temp_arr);
+ 			}
+ 			$this->data['revenue_in_1'] = $ratio_in_layer_1;
+
+			// cost
+			$input = array(
+				'select' => array('SUM(value) AS cost'),
+				'where' => array(
+					'deleted' => 0,
+					'TOA >=' => $this->data['min_date'],
+					'TOA <=' => $this->data['max_date']
+				),
+				'where_in' => array('dimensional_id', array(310,320,330,340,250,350) )
+			);
+
+			$cost = $this->Distribution_model->get_list($input)[0]->cost;
+			$this->data['cost'] = $cost;
+
+			// revenue detail
+			$input = array(
+				'where_in' => array('dimen_code', array('NSP1'))
+			);
+			$all_product = $this->DetailDimension_model->get_list($input);
+
+			$revenue_detail = array();
+
+			foreach ($all_product as $product) {
+					$input = array(
+						'select' => array('SUM(value) AS revenue'),
+						'where' => array(
+							'dimensional_id' => $product->id,
+							'deleted' => 0,
+							'TOA >=' => $this->data['min_date'],
+							'TOA <=' => $this->data['max_date']
+						)
+					);
+					$revenue_detail[$product->name] = $this->Distribution_model->get_list($input)[0]->revenue;
+			}
+			$this->data['revenue_detail'] = $revenue_detail;
+
+			// revenue
+			$input = array(
+				'select' => array('SUM(value) AS revenue'),
+				'where' => array(
+					'dimensional_id' => 210,
+					'deleted' => 0,
+					'TOA >=' => $this->data['min_date'],
+					'TOA <=' => $this->data['max_date']
+				)
+			);
+
+			$revenue = $this->Distribution_model->get_list($input)[0]->revenue;
+
+			$this->data['revenue'] = $revenue;
+
+			// New records;
+			$input = array(
+				'select' => array('id', 'approved', 'deleted'),
+				'where' => array(
+					'date >=' => $this->data['min_date'] . ' 00:00:00',
+					'date <=' => $this->data['max_date'] . ' 23:59:59'
+				)
+			);
+			$this->load->model('Voucher_model');
+			$new_records = $this->Voucher_model->get_list($input);
+			$this->data['new_records'] = count($new_records);
+
+			$this->data['approved'] = 0;
+			$this->data['deleted'] = 0;
+			foreach ($new_records as $item) {
+				if ($item->approved == 1) {
+					$this->data['approved'] += 1;
+				}
+
+				if ($item->deleted == 1) {
+					$this->data['deleted'] += 1;
+				}
+			}
+
+ 			 $this->load->view('layout', $this->data);
+		}
+
+		private function generalForAccountant() {
+	     $this->data['template'] = "report/general-accountant.php";
+
+			 // New records;
+ 			$input = array(
+ 				'select' => array('id', 'approved', 'deleted'),
+ 				'where' => array(
+ 					'date >=' => $this->data['min_date'] . ' 00:00:00',
+ 					'date <=' => $this->data['max_date'] . ' 23:59:59'
+ 				)
+ 			);
+ 			$this->load->model('Voucher_model');
+ 			$new_records = $this->Voucher_model->get_list($input);
+ 			$this->data['new_records'] = count($new_records);
+
+ 			$this->data['approved'] = 0;
+ 			$this->data['deleted'] = 0;
+ 			foreach ($new_records as $item) {
+ 				if ($item->approved == 1) {
+ 					$this->data['approved'] += 1;
+ 				}
+
+ 				if ($item->deleted == 1) {
+ 					$this->data['deleted'] += 1;
+ 				}
+ 			}
+ 			$new_records = $this->Voucher_model->get_list($input);
+
+			 $this->load->view('layout', $this->data);
 		}
 
       private function sort(&$new_arr, $origin, $trace_temp) {
