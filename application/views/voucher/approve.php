@@ -3,6 +3,23 @@
    <div class="filter-box" <?php if (!$this->input->get()): ?>
       style="display: none";
    <?php endif; ?>>
+     <div class="col-md-4 col-lg-3">
+       <p class="text-center">TOT</p>
+       <div class="filter-subbox">
+         <label for="from">Từ:</label>
+         <input id="fil-from" class="form-control filter-field" type="date" name="from" value="<?php if (null !== $this->input->get('from')) echo $this->input->get('from'); ?>"
+         <?php if (null !== $this->input->get('from')): ?>
+           style="background-color: antiquewhite;"
+         <?php endif; ?>
+         >
+         <label for="to">Đến:</label>
+         <input id="fil-to" class="form-control filter-field" type="date" name="to" value="<?php if (null !== $this->input->get('to')) echo $this->input->get('to'); ?>"
+         <?php if (null !== $this->input->get('to')): ?>
+           style="background-color: antiquewhite;"
+         <?php endif; ?>
+         >
+       </div>
+     </div>
       <div class="col-md-4 col-lg-3">
          <p class="text-center">Phương thức:</p>
          <select id="fil-method" class="form-control filter-field" name=""
@@ -50,10 +67,12 @@
    </div>
 
    <div class="row">
-      <h4 class="pull-left">Hệ thống còn <span id="remaining"><?php echo count($vc_news); ?></span> chứng từ cần xét duyệt</h4>
+
       <?php if ($this->input->get()): ?>
+        <h4 class="pull-left">Hệ thống còn <span id="remaining"><?php echo count($vc_news); ?></span> chứng từ cần xét duyệt</h4>
          <i class="fa fa-fw fa-2x pull-right slide-filter" data-hidden="0" aria-hidden="true" title="Hide"></i>
       <?php else: ?>
+        <h4 class="pull-left">Hệ thống còn <span id="remaining"><?php echo $total; ?></span> chứng từ cần xét duyệt</h4>
          <i class="fa fa-fw fa-2x pull-right slide-filter" data-hidden="1" aria-hidden="true" title="Lọc"></i>
       <?php endif; ?>
    </div>
@@ -86,7 +105,7 @@
                      <textarea id="content_<?php echo $vc->id; ?>" name="content_<?php echo $vc->id; ?>" rows="3" class="info-100"><?php echo $vc->content; ?></textarea>
                      <select class="info-100" id="course_<?php echo $vc->id; ?>" name="course_<?php echo $vc->id; ?>">
                         <option value="0">(Lựa chọn)</option>
-                        <?php $parts = explode('-', $vc->content); $course_name = $parts[5]; ?>
+                        <?php $parts = explode('~', $vc->content); $course_name = $parts[5]; ?>
                         <?php foreach ($courses as $course): ?>
                            <option value="<?php echo $course->id; ?>" <?php if ($course->name == $course_name) echo "selected"; ?>><?php echo $course->name; ?></option>
                         <?php endforeach; ?>
@@ -96,10 +115,10 @@
                      <input class="info-30" type="text" id="value_<?php echo $vc->id; ?>" name="value_<?php echo $vc->id; ?>" value="<?php echo number_format($vc->value, 0, ",", ".") ?>">
                      <input class="info-70" type="date" id="tot_<?php echo $vc->id; ?>" name="tot_<?php echo $vc->id; ?>" value="<?php echo $vc->TOT; ?>">
 
-                     <span>VAT: <input type="checkbox" class="have-vat" data-id="<?php echo $vc->id; ?>" id="vat_<?php echo $vc->id; ?>" name="vat_<?php echo $vc->id; ?>" value=""></span>
+                     <span style="color: red">VAT: <input type="checkbox" class="have-vat" data-id="<?php echo $vc->id; ?>" id="vat_<?php echo $vc->id; ?>" name="vat_<?php echo $vc->id; ?>" value=""></span>
                      <input class="info-25" type="number" id="vat_value_<?php echo $vc->id; ?>" name="vat_value_<?php echo $vc->id; ?>" min="0" value="<?php echo round($vc->value/11); ?>" disabled>
 
-                     <span>COD: <input type="checkbox" class="have-cod" data-id="<?php echo $vc->id; ?>" id="cod_<?php echo $vc->id; ?>" name="cod_<?php echo $vc->id; ?>" value=""></span>
+                     <span style="color: red">COD: <input type="checkbox" class="have-cod" data-id="<?php echo $vc->id; ?>" id="cod_<?php echo $vc->id; ?>" name="cod_<?php echo $vc->id; ?>" value=""></span>
                      <input class="info-25" type="number" id="cod_value_<?php echo $vc->id; ?>" name="cod_value_<?php echo $vc->id; ?>" min="0" value="30000" disabled>
 
                      <select class="info-100" id="executor_<?php echo $vc->id; ?>" name="executor_<?php echo $vc->id; ?>">
@@ -109,19 +128,21 @@
                      </select>
                   </div>
                   <div class="col-md-4">
-                     <select class="info-100" id="method_<?php echo $vc->id; ?>" name="method_<?php echo $vc->id; ?>">
+                     <select class="info-100 method" id="method_<?php echo $vc->id; ?>" name="method_<?php echo $vc->id; ?>" data-id="<?php echo $vc->id; ?>" data-url="<?php echo $this->routes['provider_listbymethodid']; ?>">
                         <?php foreach ($methods as $method): ?>
                            <option value="<?php echo $method->id; ?>" <?php if ($method->id == $vc->method) echo "selected"; ?>><?php echo $method->name; ?></option>
                         <?php endforeach; ?>
                      </select>
                      <select class="info-100" id="provider_<?php echo $vc->id; ?>" name="provider_<?php echo $vc->id; ?>">
                         <?php foreach ($providers as $provider): ?>
+                          <?php if ($provider->in_id == $vc->method || $provider->id == 0): ?>
                            <option value="<?php echo $provider->id; ?>" <?php if ($provider->id == $vc->provider) echo "selected"; ?>><?php echo $provider->name; ?></option>
+                           <?php endif; ?>
                         <?php endforeach; ?>
                      </select>
                      <p>Tự động phân bổ: <input type="checkbox" id="auto_<?php echo $vc->id; ?>" name="auto_<?php echo $vc->id; ?>" value="" checked></p>
 
-                     <span title="<?php echo $vc->crm_note; ?>">Ghi chú từ CRM</span>
+                     <input type="text" name="note_crm" value="<?php echo $vc->crm_note; ?>" title="Ghi chú từ CRM" style="border: none; background: none;" disabled>
 
                   </div>
                </div>
@@ -140,6 +161,12 @@
 
    <input type="hidden" id="url-approve-one" value="<?php echo $this->routes['voucher_approveone']; ?>">
    <input type="hidden" id="url-deny-one" value="<?php echo $this->routes['voucher_denyone']; ?>">
+
+   <?php if (!$this->input->get()): ?>
+   <div class="alert-warning">
+   	<strong>Lưu ý: </strong>Để tăng tốc độ tải trang, bảng trên giới hạn <?php echo $limit_loading; ?> bản ghi gần nhất, bạn có thể <a href="<?php echo $this->routes['config_index']; ?>">điều chỉnh</a> hoặc F5 nếu cần hiển thị thêm!!
+   </div>
+   <?php endif; ?>
 <?php else: ?>
    <h3 class="text-center">Các chứng từ đã được duyệt hết!</h3>
 <?php endif; ?>

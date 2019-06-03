@@ -294,6 +294,14 @@
 			);
 
 			if ($this->input->get()) {
+				if ($this->input->get('from')) {
+					$filter['where']['TOT >='] = $this->input->get('from');
+				}
+
+				if ($this->input->get('to')) {
+					$filter['where']['TOT <='] = $this->input->get('to');
+				}
+
 				if ($this->input->get('method')) {
 					$filter['where']['method'] = $this->input->get('method');
 				}
@@ -306,6 +314,10 @@
 					$filter['where']['type_id'] = $this->input->get('voucher_type');
 				}
 
+			} else {
+				$this->data['limit_loading'] = json_decode($this->data['configs'])->NUMBER_LOADING;
+				$this->data['total'] = $this->Voucher_model->get_total($filter);
+				$filter['limit'] = array($this->data['limit_loading'],0);
 			}
 
 			$vc_news = $this->Voucher_model->get_list($filter);
@@ -314,7 +326,7 @@
 			if (count($vc_news) > 0) {
 				$this->load->model('Crm_model');
 				foreach ($vc_news as $vc) {
-					$parts = explode('-', $vc->content);
+					$parts = explode('~', $vc->content);
 
 					if (count($parts) > 5) {
 						$id_contact = $parts[3];

@@ -203,6 +203,16 @@ $(document).ready(function(){
       var extension = '?';
       var flag = false;
 
+      if ($('#fil-from').val() != '') {
+         flag = true;
+         extension += 'from=' + $('#fil-from').val() + '&';
+      }
+
+      if ($('#fil-to').val() != '') {
+         flag = true;
+         extension += 'to=' + $('#fil-to').val() + '&';
+      }
+
       if ($('#fil-method').val() != '0') {
          flag = true;
          extension += 'method=' + $('#fil-method').val() + '&';
@@ -231,6 +241,45 @@ $(document).ready(function(){
       } else {
          $(this).css('background-color', '#fff');
       }
+   });
+
+   $('select.info-100').each(function() {
+     if ($(this).val() == '0') {
+       $(this).css({"background-color": "indianred", "color": "#fff"});
+     }
+   });
+
+   $('select.info-100').change(function() {
+     if ($(this).val() == '0') {
+       $(this).css({"background-color": "indianred", "color": "#fff"});
+     } else {
+       $(this).css({"background-color": "buttonface", "color": "inherit"});
+     }
+   });
+
+   $('.method').change(function(){
+      var id = $(this).val();
+      var id_item = $(this).data('id');
+      var url = $(this).data('url');
+
+      $.ajax({
+         url: url,
+         method : "POST",
+         dataType : "JSON",
+         data : {
+            id : id
+         },
+         success : function(result){
+            var html = '<option value="0">Chưa xác định</option>';
+            for (var i = 0; i < result.length; i++) {
+               html += '<option value="' + result[i]['id'] + '">' + result[i]['name'] + ' : ' + result[i]['description'] + '</option>'
+            }
+
+            $('#provider_' + id_item).html(html);
+            $('#provider').prop('disabled', false);
+
+         }
+      })
    });
 
 

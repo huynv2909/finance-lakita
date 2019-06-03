@@ -385,8 +385,8 @@
 			<div class="clearfix"></div>
 		</div>
 		<div class="row">
-			<h4 class="pull-left">Tổng số: <span id="total-money"></span> đ</h4>
 			<?php if ($this->input->get()): ?>
+				<h4 class="pull-left">Tổng số: <span id="total-money"></span> đ</h4>
 				<i class="fa fa-fw fa-2x pull-right slide-filter" data-hidden="0" aria-hidden="true" title="Hide"></i>
 			<?php else: ?>
 				<i class="fa fa-fw fa-2x pull-right slide-filter" data-hidden="1" aria-hidden="true" title="Lọc"></i>

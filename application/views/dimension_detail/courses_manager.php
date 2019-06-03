@@ -24,7 +24,7 @@
       <div class="col-xs-4 col-xs-6 col-md-2 col-lg-2">
          <div class="form-group">
             <div class="col-xs-12">
-               <select class="form-control" name="income">
+               <select class="form-control" name="income" id="group">
                   <option value="0" selected class="hidden">(Lựa chọn)</option>
                   <?php foreach ($groups as $group): ?>
                      <option value="<?php echo $group->id; ?>"><?php echo $group->name; ?></option>
@@ -71,7 +71,7 @@
    						 <td class="text-center">
    							 <?php
    								foreach ($groups as $group) {
-                              if ($item->id == $group->id) {
+                              if ($item->parent_id == $group->id) {
                                  echo $group->name;
                                  break;
                               }

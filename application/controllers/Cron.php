@@ -5,8 +5,13 @@ require_once APPPATH . "libraries/Rest_Client.php";
 
 class Cron extends CI_Controller {
    public function voucherFromCRM() {
-      $today = date('d-m-Y');
-   	// $today = date('d-m-Y', mktime(0,0,0,12,24,2018));
+      // $today = date('d-m-Y');
+
+    // $timestamp = mktime(0,0,0,1,2,2019);
+   	// $today = date('d-m-Y', $timestamp);
+
+    $date_from_file = file_get_contents(FCPATH . 'tmp.txt');
+    $today = date('d-m-Y', strtotime($date_from_file));
 
    	$config = array(
    	    'server' => 'https://crm.lakita.vn/',
@@ -20,12 +25,37 @@ class Cron extends CI_Controller {
    	$rs = json_decode($result);
 
    	$index = 0;
+    $error = false;
+    $courses_arr = array();
+    $course_missing = array();
    	if (is_array($rs)) {
          $this->load->model('Crm_model');
          $this->load->model('Voucher_model');
+         $this->load->model('DetailDimension_model');
 
+         // get list courses
+         $input = array(
+           'select' => 'name',
+           'where' => array(
+             'dimen_code' => 'SP'
+           )
+         );
+
+         $rs_query = $this->DetailDimension_model->get_list($input);
+         foreach ($rs_query as $rs_obj) {
+           $courses_arr[] = $rs_obj->name;
+         }
+
+      // loop $rs;
    		foreach ($rs as $contact) {
    			$index++;
+
+        // check if the system have a new course
+        if (!in_array($contact->course_code, $courses_arr)) {
+          if (!in_array($contact->course_code, $course_missing)) {
+            $course_missing[] = $contact->course_code;
+          }
+        }
 
 		      $contact_info = array(
                'id_contact'         => $contact->id,
@@ -57,9 +87,9 @@ class Cron extends CI_Controller {
    				$type_id = 23;
    			}
 
-   			$content = '[AUTO-FROM-CRM]-' . $contact->id . '-' . $contact->name . '-' . $contact->course_code . '-' . $contact->phone;
+   			$content = '[AUTO~FROM~CRM]~' . $contact->id . '~' . $contact->name . '~' . $contact->course_code . '~' . $contact->phone;
 
-   			$provider = 1;
+   			$provider = 0;
    			switch ($contact->provider_id) {
    			    case "1":
    			        $provider = 4;
@@ -86,35 +116,91 @@ class Cron extends CI_Controller {
    			        $provider = 5;
    			        break;
    			    default:
-   			        $provider = 1;
+   			        $provider = 0;
    			}
 
-   			$date = date('Y-m-d');
+   			// $date = date('Y-m-d');
+        // $date = date('Y-m-d', $timestamp);
+        $date = date('Y-m-d', strtotime($today));
 
-            $voucher_info = array(
-               'code'      => $code,
-               'type_id'   => $type_id,
-               'content'   => $content,
-               'income'    => 1,
-               'TOT'       => $date,
-               'TOA'       => $date,
-               'executor'  => 0,
-               'value'     => $contact->price_purchase,
-               'owner'     => 0,
-               'method'    => $method,
-               'provider'  => $provider,
-               'is_new'    => 1,
-               'approved'  => 0
-            );
+        $voucher_info = array(
+           'code'      => $code,
+           'type_id'   => $type_id,
+           'content'   => $content,
+           'income'    => 1,
+           'TOT'       => $date,
+           'TOA'       => $date,
+           'executor'  => 0,
+           'value'     => $contact->price_purchase,
+           'owner'     => 0,
+           'method'    => $method,
+           'provider'  => $provider,
+           'approved'  => 0
+        );
 
-   			$this->Voucher_model->create($voucher_info);
-
+   			if (!$this->Voucher_model->create($voucher_info)) {
+          $error = true;
+        }
    		}
-
-
 
    	}
 
-       echo 'its worked in ' . $today . '!|';
+    if ($error) {
+      echo 'its worked in ' . $today . ' with some error!';
+    } else {
+      echo 'its worked in ' . $today . '!';
+    }
+
+    if (count($course_missing) > 0) {
+      // sent a warning to accountant
+      echo ' missing courses: ';
+      foreach ($course_missing as $item) {
+        echo $item . ', ';
+      }
+    }
+
+    echo '|';
+
+    $today = date('d-m-Y', strtotime($date_from_file . "+1 days"));
+    file_put_contents(FCPATH . 'tmp.txt', $today);
    }
+
+   public function autoApprove() {
+     $this->load->model('Voucher_model');
+     $filter = array(
+       'where' => array('approved' => 0, 'income' => 1, 'deleted' => 0)
+     );
+
+     $vc_news = $this->Voucher_model->get_list($filter);
+
+     if (count($vc_news) > 0) {
+       $this->load->model('Crm_model');
+       foreach ($vc_news as $vc) {
+         $parts = explode('-', $vc->content);
+
+         if (count($parts) > 5) {
+           $id_contact = $parts[3];
+           $vc->{"course_code"} = $parts[5];
+
+           $input = array(
+             'where' => array('id_contact' => $id_contact)
+           );
+
+           $contact_info = $this->Crm_model->get_list($input);
+           if (count($contact_info) > 0) {
+             $vc->{"crm_note"} = $contact_info[0]->note;
+           } else {
+             $vc->{"crm_note"} = '';
+           }
+         } else {
+           $vc->{"course_code"} = '';
+           $vc->{"crm_note"} = '';
+         }
+
+
+       }
+       pre($vc_news);
+     }
+   }
+
 }

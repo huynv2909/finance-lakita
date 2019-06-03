@@ -37,7 +37,7 @@
       public function coursesManager() {
          $this->data['title'] = "Quản trị khóa học";
          $this->data['template'] = "dimension_detail/courses_manager";
-         $this->data['js_files'] = array('voucher-type_create');
+         $this->data['js_files'] = array('dimension-detail_course-manager');
 
          $input = array(
             'where' => array('dimen_code' => 'SP'),
@@ -48,7 +48,8 @@
          $this->data['courses'] = $courses;
 
          $input = array(
-            'where' => array('dimen_code' => 'NSP2')
+            'where' => array('dimen_code' => 'NSP2'),
+            'order' => 'name asc'
          );
          $groups = $this->DetailDimension_model->get_list($input);
          $this->data['groups'] = $groups;
