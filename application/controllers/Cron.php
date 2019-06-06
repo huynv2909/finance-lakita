@@ -146,20 +146,20 @@ class Cron extends CI_Controller {
    	}
 
     if ($error) {
-      echo 'its worked in ' . $today . ' with some error!';
+      echo "its worked in " . $today . " with some error!";
     } else {
-      echo 'its worked in ' . $today . '!';
+      echo "its worked in " . $today . "!";
     }
 
     if (count($course_missing) > 0) {
       // sent a warning to accountant
-      echo ' missing courses: ';
+      echo " missing courses: ";
       foreach ($course_missing as $item) {
-        echo $item . ', ';
+        echo $item . ", ";
       }
     }
 
-    echo '|';
+    echo "\n";
 
     $today = date('d-m-Y', strtotime($date_from_file . "+1 days"));
     file_put_contents(FCPATH . 'tmp.txt', $today);

@@ -488,6 +488,252 @@
 			$this->load->view('layout', $this->data);
 		}
 
+		public function methodReport() {
+			 $this->data['title'] = "BÁO CÁO THEO PHƯƠNG THỨC THANH TOÁN";
+       $this->data['active'] = "Report";
+       $this->data['template'] = "report/payment";
+       $this->data['js_files'] = array('report_payment');
+
+			 $this->load->model('Voucher_model');
+			 $this->load->model('Method_model');
+
+			 // 1: current month, 2: month before, 3: current year
+ 			$date_range_default = 1;
+ 			$min_date = date('Y-m-01');
+ 			$max_date = date('Y-m-d');
+
+ 			if ($this->input->get('date_range')) {
+ 				$date_range_default = $this->input->get('date_range');
+ 				transformRangeToDate($min_date, $max_date, $date_range_default);
+ 			}
+
+ 			if ($this->input->get('from')) {
+ 				$min_date = $this->input->get('from');
+ 				$date_range_default = 0;
+ 			}
+
+ 			if ($this->input->get('to')) {
+ 				$max_date = $this->input->get('to');
+ 				$date_range_default = 0;
+ 			}
+
+ 			$this->data['min_date'] = $min_date;
+ 			$this->data['max_date'] = $max_date;
+ 			$this->data['date_range'] = $date_range_default;
+
+			$input = array(
+				'select' => array('name', 'COUNT(*) AS amount'),
+				'where' => array(
+					'income' => 1,
+					'deleted' => 0,
+					'approved' => 1,
+					'date >=' => $min_date . ' 00:00:00',
+					'date <=' => $max_date . ' 23:59:59'
+				),
+				'join' => array($this->Method_model->table => $this->Voucher_model->table . '.method = ' . $this->Method_model->table . '.id'),
+				'group' => array('method'),
+				'order' => 'amount DESC'
+			);
+			$this->data['income_amount'] = $this->Voucher_model->get_list($input);
+
+			$input['select'] = array('name', 'SUM(value) AS val');
+			$input['order'] = 'val DESC';
+
+			$this->data['income_value'] = $this->Voucher_model->get_list($input);
+
+			$input['select'] = array('name', 'COUNT(*) AS amount');
+			$input['where']['income'] = 0;
+			$input['order'] = 'amount DESC';
+
+			$this->data['expenses_amount'] = $this->Voucher_model->get_list($input);
+
+			$input['select'] = array('name', 'SUM(value) AS val');
+			$input['order'] = 'val DESC';
+
+			$this->data['expenses_value'] = $this->Voucher_model->get_list($input);
+
+			$input = array(
+				'select' => array('name', 'COUNT(*) AS amount'),
+				'where' => array(
+					'deleted' => 0,
+					'approved' => 1,
+					'date >=' => $min_date . ' 00:00:00',
+					'date <=' => $max_date . ' 23:59:59'
+				),
+				'join' => array($this->Method_model->table => $this->Voucher_model->table . '.method = ' . $this->Method_model->table . '.id'),
+				'group' => array('method'),
+				'order' => 'amount DESC'
+			);
+
+			$this->data['total_amount'] = $this->Voucher_model->get_list($input);
+			$input['select'] = array('name', 'SUM(value) AS val');
+			$input['order'] = 'val DESC';
+
+			$this->data['total_value'] = $this->Voucher_model->get_list($input);
+
+			// Column chart
+			$this->data['methods'] = $this->Method_model->get_list(array('select' => array('name'), 'order' => 'name ASC'));
+
+			$input = array(
+				'select_min' => 'date'
+			);
+			$from_date = substr($this->Voucher_model->get_list($input)[0]->date, 0, 10);
+
+			$to_date = date('Y-m-d');
+			$date_range = split_date($from_date, $to_date, 2);
+
+			$amount_array = array();
+			foreach ($date_range as $month => $value) {
+				$ele = explode('-', $month);
+				$value['month'] = $ele[0];
+				$value['year'] = $ele[1];
+
+				$input = array(
+					'select' => array('name', 'COUNT(*) AS amount'),
+					'where' => array(
+						'income' => 1,
+						'deleted' => 0,
+						'approved' => 1,
+						'date >=' => $value['from'] . ' 00:00:00',
+						'date <=' => $value['to'] . ' 23:59:59'
+					),
+					'join' => array($this->Method_model->table => $this->Voucher_model->table . '.method = ' . $this->Method_model->table . '.id'),
+					'group' => array('method'),
+					'order' => 'name ASC'
+				);
+				$value['amount'] = $this->Voucher_model->get_list($input);
+				$amount_array[] = $value;
+			}
+			$this->data['amount_array'] = $amount_array;
+
+			 $this->load->view('layout', $this->data);
+		}
+
+		public function providerReport() {
+			$this->data['title'] = "BÁO CÁO THEO NHÀ CUNG CẤP";
+			$this->data['active'] = "Report";
+			$this->data['template'] = "report/provider";
+			$this->data['js_files'] = array('report_provider');
+			$this->load->model('Provider_model');
+			$this->load->model('Voucher_model');
+
+			// defaut op
+			$from = date('Y-m-01');
+			$to = date('Y-m-d');
+			$method = 2;
+
+			if ($this->input->post()) {
+				$from = $this->input->post('from');
+				$to = $this->input->post('to');
+				$method = $this->input->post('method');
+			}
+
+			// begin set data
+			$input = array(
+				'select' => array('name', 'COUNT(*) AS amount'),
+				'where' => array(
+					'income' => 1,
+					'deleted' => 0,
+					'approved' => 1,
+					'in_id' => $method,
+					'date >=' => $from . ' 00:00:00',
+					'date <=' => $to . ' 23:59:59'
+				),
+				'join' => array($this->Provider_model->table => $this->Voucher_model->table . '.provider = ' . $this->Provider_model->table . '.id'),
+				'group' => array('provider'),
+				'order' => 'amount DESC'
+			);
+			$this->data['income_amount'] = $this->Voucher_model->get_list($input);
+
+			$input['select'] = array('name', 'SUM(value) AS val');
+			$input['order'] = 'val DESC';
+
+			$this->data['income_value'] = $this->Voucher_model->get_list($input);
+
+			$input['select'] = array('name', 'COUNT(*) AS amount');
+			$input['where']['income'] = 0;
+			$input['order'] = 'amount DESC';
+
+			$this->data['expenses_amount'] = $this->Voucher_model->get_list($input);
+
+			$input['select'] = array('name', 'SUM(value) AS val');
+			$input['order'] = 'val DESC';
+
+			$this->data['expenses_value'] = $this->Voucher_model->get_list($input);
+
+			$input = array(
+				'select' => array('name', 'COUNT(*) AS amount'),
+				'where' => array(
+					'deleted' => 0,
+					'approved' => 1,
+					'in_id' => $method,
+					'date >=' => $from . ' 00:00:00',
+					'date <=' => $to . ' 23:59:59'
+				),
+				'join' => array($this->Provider_model->table => $this->Voucher_model->table . '.provider = ' . $this->Provider_model->table . '.id'),
+				'group' => array('provider'),
+				'order' => 'amount DESC'
+			);
+
+			$this->data['total_amount'] = $this->Voucher_model->get_list($input);
+
+			$input['select'] = array('name', 'SUM(value) AS val');
+			$input['order'] = 'val DESC';
+
+			$this->data['total_value'] = $this->Voucher_model->get_list($input);
+
+			$this->data['method_chosen'] = $method;
+			$this->data['from_chosen'] = $from;
+			$this->data['to_chosen'] = $to;
+
+			$this->load->model('Method_model');
+			$this->data['methods'] = $this->Method_model->get_list();
+
+			// Stack bar chart
+			$input = array(
+				'select_min' => 'date'
+			);
+			$this->data['providers'] = $this->Provider_model->get_list(
+				array(
+					'select' => array('name'),
+					'where' => array('in_id' => $method),
+					'order' => 'name ASC'
+				)
+			);
+
+			$from_date = substr($this->Voucher_model->get_list($input)[0]->date, 0, 10);
+
+			$to_date = date('Y-m-d');
+			$date_range = split_date($from_date, $to_date, 2);
+
+			$amount_array = array();
+			foreach ($date_range as $month => $value) {
+				$ele = explode('-', $month);
+				$value['month'] = $ele[0];
+				$value['year'] = $ele[1];
+
+				$input = array(
+					'select' => array('name', 'COUNT(*) AS amount'),
+					'where' => array(
+						'deleted' => 0,
+						'approved' => 1,
+						'in_id' => $method,
+						'date >=' => $value['from'] . ' 00:00:00',
+						'date <=' => $value['to'] . ' 23:59:59'
+					),
+					'join' => array($this->Provider_model->table => $this->Voucher_model->table . '.provider = ' . $this->Provider_model->table . '.id'),
+					'group' => array('provider'),
+					'order' => 'name ASC'
+				);
+				$value['amount'] = $this->Voucher_model->get_list($input);
+				$amount_array[] = $value;
+			}
+
+			$this->data['amount_array'] = $amount_array;
+
+			$this->load->view('layout', $this->data);
+		}
+
 		public function viewData() {
 			if ($this->input->post()) {
 				$type = $this->input->post('type');

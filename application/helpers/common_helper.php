@@ -38,11 +38,13 @@
 	// 3 : day
 	function split_date($from, $to, $type) {
 		$begin = (new DateTime( $from ));
+
 		$end = (new DateTime( $to ));
 		$end->setTime(0,0,1);
 		$time_arr = array();
 
 		if ($type == 1) {
+			$begin = (new DateTime(explode("-",$from)[0] . '-01-01'));
 
 			$interval = new DateInterval('P1Y');
 			$daterange = new DatePeriod($begin, $interval ,$end);
@@ -57,6 +59,7 @@
 		}
 
 		if ($type == 2) {
+			$begin->modify('first day of this month');
 			$interval = new DateInterval('P1M');
 			$daterange = new DatePeriod($begin, $interval ,$end);
 
@@ -79,6 +82,7 @@
 				);
 			}
 		}
+
 		reset($time_arr);
 		$time_arr[key($time_arr)]['from'] = $from;
 		end($time_arr);
@@ -122,5 +126,13 @@
 		}
 	}
 
+	function valueInPointTime($name_obj, $arr) {
+		foreach ($arr as $obj) {
+			if ($obj->name == $name_obj) {
+				return $obj->amount;
+			}
+		}
+		return 0;
+	}
 
  ?>

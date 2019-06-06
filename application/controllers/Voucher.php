@@ -414,7 +414,7 @@
 
 				$this->load->model('VoucherType_model');
 				$input = array(
-					'where' => array('active' => 1),
+					'where' => array('active' => 1, 'income' => 0),
 					'order' => 'income DESC'
 				);
 				$this->data['types'] = $this->VoucherType_model->get_list($input);

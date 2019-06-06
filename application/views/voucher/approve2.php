@@ -47,7 +47,7 @@
                      </select>
                   </div>
                   <div class="col-md-4">
-                     <select class="info-100" id="method_<?php echo $vc->id; ?>" name="method_<?php echo $vc->id; ?>">
+                     <select class="info-100 method" id="method_<?php echo $vc->id; ?>" name="method_<?php echo $vc->id; ?>" data-id="<?php echo $vc->id; ?>" data-url="<?php echo $this->routes['provider_listbymethodid']; ?>">
                         <?php foreach ($methods as $method): ?>
                            <option value="<?php echo $method->id; ?>" <?php if ($method->id == $vc->method) echo "selected"; ?>><?php echo $method->name; ?></option>
                         <?php endforeach; ?>

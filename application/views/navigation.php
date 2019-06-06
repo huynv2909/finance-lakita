@@ -2,7 +2,7 @@
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="navbar-header">
         <a class="navbar-brand" href="<?php echo base_url(); ?>">
-           Lakita Finance 2018
+           Lakita Finance Management
         </a>
     </div>
 
@@ -165,10 +165,10 @@
                             <a href="https://docs.google.com/spreadsheets/d/1hnh3QEPCHI_Gq1Rubx7aslFKsQ569Q2bPea3oOrb5Tk/edit?usp=sharing">Quy tắc phân bổ</a>
                         </li>
                         <li>
-                            <a href="https://drive.google.com/open?id=1GYKm1KhzdoAqjkRxla4xvPUBISiWpbRk">A&D system document</a>
+                            <a href="https://drive.google.com/open?id=1WWZqmgyjM1vVI7h8ApmXNGYHaIlpBsW6">A&D system document</a>
                         </li>
                         <li>
-                            <a href="https://drive.google.com/open?id=1A9_MNnwTiglz2WjLYgvHGLSoSfoG2ODv">Chiều quản trị</a>
+                            <a href="https://drive.google.com/open?id=15pMJgQrxl9VYOVE155DsEVY1KEIZWknJ">Chiều quản trị</a>
                         </li>
                     </ul>
                     <!-- /.nav-second-level -->

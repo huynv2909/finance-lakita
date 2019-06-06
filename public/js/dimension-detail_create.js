@@ -162,6 +162,7 @@ $(document).ready(function(){
       var html_dimen_id = '<input type="hidden" name="dimen_id" value="' + $('#dimen_id').val() + '">';
       var html_dimen_code = '<input type="hidden" name="dimen_code" value="' + $('#dimen_code').val() + '">';
       var html_dimen_layer = '<input type="hidden" name="dimen_layer" value="' + $('#dimen_layer').val() + '">';
+      console.log(html_dimen_layer);
 
       var list_parent = $('#list_parent').val().split('|');
       var html_parent_start = '<select class="form-control" name="parent_id" disabled="true"><option value="0" selected>Không có</option>';

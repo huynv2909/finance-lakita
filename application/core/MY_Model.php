@@ -171,6 +171,10 @@
 				$this->db->select($input['select']);
 			}
 
+			if (isset($input['select_min'])) {
+				$this->db->select_min($input['select_min']);
+			}
+
 			if (isset($input['where']) && $input['where']) {
 				$this->db->where($input['where']);
 			}
@@ -211,6 +215,10 @@
 
 			if (isset($input['limit'][0]) && isset($input['limit'][1])) {
 				$this->db->limit($input['limit'][0], $input['limit'][1]);
+			}
+
+			if (isset($input['group']) && $input['group']) {
+				$this->db->group_by($input['group']);
 			}
 		}
 	}

@@ -73,7 +73,7 @@
 
             if (!flag) {
                $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra khi nhập dữ liệu!');
-					redirect($this->routes['dimensiondetail_coursesmanager']);
+			          redirect($this->routes['dimensiondetail_coursesmanager']);
             }
 
             $data = array(
@@ -82,7 +82,7 @@
                'name' => $code,
                'note' => $name,
                'parent_id' => $income,
-               'layer' => 2
+               'layer' => 3
             );
 
             if ($this->DetailDimension_model->create($data)) {
@@ -175,9 +175,9 @@
                'name'=> $this->input->post('name'),
                'note'=> $this->input->post('note'),
                'parent_id'=> $this->input->post('parent_id'),
-               'layer'=> $this->input->post('layer')
+               'layer'=> $this->input->post('dimen_layer')
             );
-
+            
             if ($this->DetailDimension_model->create($data)) {
 
                $this->data['log_info']['row_id'] = $this->DetailDimension_model->get_insert_id();

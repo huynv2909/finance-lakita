@@ -336,9 +336,21 @@
 				<?php endif; ?>
 				>
 					<option value="0" class="hidden">(Lựa chọn)</option>
-					<?php foreach ($voucher_type as $item): ?>
-						<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->get('voucher_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")"; ?></option>
-					<?php endforeach ?>
+					<optgroup label="Phiếu thu">
+						<?php foreach ($voucher_type as $item): ?>
+							<?php if ($item->income == 1): ?>
+								<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('voucher_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")"; ?></option>
+							<?php endif; ?>
+						<?php endforeach ?>
+					</optgroup>
+
+					<optgroup label="Phiếu chi">
+						<?php foreach ($voucher_type as $item): ?>
+							<?php if ($item->income == 0): ?>
+								<option value="<?php echo $item->id; ?>" <?php if ($item->id == $this->input->post('voucher_type')) echo 'selected'; ?> ><?php echo $item->code . " (" . $item->name . ")";?></option>
+							<?php endif; ?>
+						<?php endforeach ?>
+					</optgroup>
 				</select>
 			</div>
 			<div class="col-md-4 col-lg-3">
