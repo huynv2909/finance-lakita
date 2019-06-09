@@ -8,11 +8,14 @@
          }
 
       body {
-         background-image: url('<?php echo base_url('public/pedro-lastra-157071-unsplash.jpg'); ?>');
+         background-image: url('<?php echo base_url('public/banking-business.jpg'); ?>');
+         background-size: cover;
+         background-position: center;
       }
     </style>
-    <body>
-
+    <body id="body">
+      <div id="particle" style="height: 100%; width: 100%; background: rgba(0,0,0,0.5); position: absolute;">
+        </div>
         <div class="container">
             <div class="row">
                 <div class="col-md-4 col-md-offset-4">
@@ -58,8 +61,13 @@
         <!-- Metis Menu Plugin JavaScript -->
         <script src="<?php echo public_url(); ?>/js/metisMenu.min.js"></script>
 
-        <!-- Custom Theme JavaScript -->
-        <script src="<?php echo public_url(); ?>/js/startmin.js"></script>
+        <script src="<?php echo public_url(); ?>/js/particles.js-master/particles.js"></script>
+
+        <script type="text/javascript">
+          particlesJS.load('particle', '<?php echo public_url(); ?>/js/particles.js-master/demo/particles.json', function() {
+            console.log('callback - particles.js config loaded');
+            });
+        </script>
 
     </body>
 </html>

@@ -142,8 +142,7 @@
                      </select>
                      <p>Tự động phân bổ: <input type="checkbox" id="auto_<?php echo $vc->id; ?>" name="auto_<?php echo $vc->id; ?>" value="" checked></p>
 
-                     <input type="text" name="note_crm" value="<?php echo $vc->crm_note; ?>" title="Ghi chú từ CRM" style="border: none; background: none;" disabled>
-
+                     <textarea name="note_crm" rows="2" title="Ghi chú từ CRM" style="border: none; background: none; font-size: 13px; width: 100%;" disabled><?php echo $vc->crm_note; ?></textarea>
                   </div>
                </div>
                <input type="hidden" name="choosen_<?php echo $vc->id; ?>" value="1">

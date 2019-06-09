@@ -372,11 +372,10 @@
             'where' => array('active' => 1),
             'where_in' => array('dimen_id', $dimension_id),
 				'or_where_in' => array('id', array(1515,1516)),
-            'order' => 'layer asc'
+            'order' => 'layer asc, sequence asc'
          );
 
          $detail_objects = $this->DetailDimension_model->get_list($input);
-			//pre($this->db->last_query());
 
          $list_detail = array();
          $trace_temp = array(); // temporory array to sort $list_detail

@@ -4,14 +4,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . "libraries/Rest_Client.php";
 
 class Cron extends CI_Controller {
+  var $accountant_emails = array('iuiut0203@gmail.com','huynv2909@gmail.com');
+  var $manager_emails = array('huynv2909@gmail.com');
+
    public function voucherFromCRM() {
       // $today = date('d-m-Y');
 
-    // $timestamp = mktime(0,0,0,1,2,2019);
-   	// $today = date('d-m-Y', $timestamp);
+    // mktime(H,i,s,m,d,y)
+    $timestamp = mktime(0,0,0,6,7,2019);
+   	$today = date('d-m-Y', $timestamp);
 
-    $date_from_file = file_get_contents(FCPATH . 'tmp.txt');
-    $today = date('d-m-Y', strtotime($date_from_file));
+    // $date_from_file = file_get_contents(FCPATH . 'tmp.txt');
+    // $today = date('d-m-Y', strtotime($date_from_file));
 
    	$config = array(
    	    'server' => 'https://crm.lakita.vn/',
@@ -120,8 +124,8 @@ class Cron extends CI_Controller {
    			}
 
    			// $date = date('Y-m-d');
-        // $date = date('Y-m-d', $timestamp);
-        $date = date('Y-m-d', strtotime($today));
+        $date = date('Y-m-d', $timestamp);
+        // $date = date('Y-m-d', strtotime($today));
 
         $voucher_info = array(
            'code'      => $code,
@@ -153,54 +157,138 @@ class Cron extends CI_Controller {
 
     if (count($course_missing) > 0) {
       // sent a warning to accountant
+      $list_missing = '';
       echo " missing courses: ";
       foreach ($course_missing as $item) {
         echo $item . ", ";
+        $list_missing .= $item . ", ";
       }
+
+      $this->missingCourseEmail($list_missing);
     }
 
     echo "\n";
 
-    $today = date('d-m-Y', strtotime($date_from_file . "+1 days"));
-    file_put_contents(FCPATH . 'tmp.txt', $today);
+    // $today = date('d-m-Y', strtotime($date_from_file . "+1 days"));
+    // file_put_contents(FCPATH . 'tmp.txt', $today);
    }
 
-   public function autoApprove() {
-     $this->load->model('Voucher_model');
-     $filter = array(
-       'where' => array('approved' => 0, 'income' => 1, 'deleted' => 0)
-     );
+   private function initSentMail() {
+     //Load email library
+     $this->load->library('email');
 
-     $vc_news = $this->Voucher_model->get_list($filter);
+     $config = array();
+     $config['protocol']     = 'smtp';
+     $config['smtp_host']    = 'ssl://smtp.googlemail.com'; //neu sử dụng gmail
+     $config['smtp_user']    = 'kenshiner96@gmail.com';
+     $config['smtp_pass']    = 'nguyenhuyy';
+     $config['smtp_port']    = '465'; //nếu sử dụng gmail
+     $config['mailtype'] = 'html';
 
-     if (count($vc_news) > 0) {
-       $this->load->model('Crm_model');
-       foreach ($vc_news as $vc) {
-         $parts = explode('-', $vc->content);
+     $this->email->initialize($config);
 
-         if (count($parts) > 5) {
-           $id_contact = $parts[3];
-           $vc->{"course_code"} = $parts[5];
+     $this->email->set_newline("\r\n");
 
-           $input = array(
-             'where' => array('id_contact' => $id_contact)
-           );
+     $this->email->from('kenshiner96@gmail.com', 'Finance Management System');
 
-           $contact_info = $this->Crm_model->get_list($input);
-           if (count($contact_info) > 0) {
-             $vc->{"crm_note"} = $contact_info[0]->note;
-           } else {
-             $vc->{"crm_note"} = '';
-           }
-         } else {
-           $vc->{"course_code"} = '';
-           $vc->{"crm_note"} = '';
-         }
+     $this->email->subject('Lakita - Hệ thống quản trị tài chính thông báo');
+   }
 
+   public function missingCourseEmail($list_missing = '') {
+     if (count($this->accountant_emails) > 0 && $list_missing != '') {
+       $this->initSentMail();
+       $data = array(
+         'missing_course' => $list_missing
+       );
+       $this->email->to($this->accountant_emails);
+       $this->email->message($this->load->view('email/warning-course-missing-min', $data, true));
 
-       }
-       pre($vc_news);
+       $this->email->send();
      }
+
+   }
+
+   public function approveNotify() {
+     $this->load->model('Voucher_model');
+
+     $amount = $this->Voucher_model->get_total(array('where' => array('approved' => 0, 'deleted' => 0) ));
+
+     if (count($this->accountant_emails) > 0 && $amount > 0) {
+       $this->initSentMail();
+       $data = array(
+         'amount' => $amount
+       );
+       $this->email->to($this->accountant_emails);
+       $this->email->message($this->load->view('email/approve-notify-min', $data, true));
+
+       $this->email->send();
+       echo date('d-m-Y H:i:s') . ", sent approve notify." . "\n";
+
+     }
+   }
+
+   public function autoReportManager() {
+     if (count($this->manager_emails) > 0) {
+       $this->initSentMail();
+       $this->email->to($this->manager_emails);
+       $this->email->message($this->totalReportContent());
+
+       $this->email->send();
+       echo date('d-m-Y H:i:s') . ", sent report to manager." . "\n";
+
+     }
+
+   }
+
+   public function totalReportContent() {
+     $data = array();
+     $data['min_date'] = date('Y-05-01');
+     $data['max_date'] = date('Y-05-31');
+
+     $this->load->model('Distribution_model');
+
+    // cost
+    $input = array(
+      'select' => array('SUM(value) AS cost'),
+      'where' => array(
+        'deleted' => 0,
+        'TOA >=' => $data['min_date'],
+        'TOA <=' => $data['max_date']
+      ),
+      'where_in' => array('dimensional_id', array(310,320,330,340,250,350) )
+    );
+
+    $cost = $this->Distribution_model->get_list($input)[0]->cost;
+    $data['cost'] = $cost;
+
+    // revenue
+    $input = array(
+      'select' => array('SUM(value) AS revenue'),
+      'where' => array(
+        'dimensional_id' => 210,
+        'deleted' => 0,
+        'TOA >=' => $data['min_date'],
+        'TOA <=' => $data['max_date']
+      )
+    );
+
+    $revenue = $this->Distribution_model->get_list($input)[0]->revenue;
+
+    $data['revenue'] = $revenue;
+
+    // New records;
+    $input = array(
+      'select' => array('id', 'approved', 'deleted'),
+      'where' => array(
+        'date >=' => $data['min_date'] . ' 00:00:00',
+        'date <=' => $data['max_date'] . ' 23:59:59'
+      )
+    );
+    $this->load->model('Voucher_model');
+    $new_records = $this->Voucher_model->get_list($input);
+    $data['new_records'] = count($new_records);
+
+     return $this->load->view('email/general-report-sent', $data, true);
    }
 
 }

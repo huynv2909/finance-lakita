@@ -21,8 +21,8 @@
 
       public function permission() {
          $this->data['title'] = "Vai trò và quyền hạn";
-			$this->data['template'] = 'user/permission';
-			$this->data['active'] = 'user';
+				$this->data['template'] = 'user/permission';
+				$this->data['active'] = 'user';
          $this->data['js_files'] = array('user_permission');
 
          $this->load->model('Operation_model');
@@ -113,7 +113,7 @@
 					'name' => $this->input->post('name'),
 					'permission' => $this->input->post('permission'),
 					'username' => $this->input->post('username'),
-					'password' => $this->input->post('password')
+					'password' => md5($this->input->post('password'))
 				);
 
 				if (!$this->User_model->create($data)) {
@@ -171,17 +171,16 @@
 			$this->data['title'] = "Thông tin cá nhân";
 			$this->data['template'] = 'user/profile';
 			$this->data['active'] = 'user';
-         $this->data['js_files'] = array('user_profile');
 
 			$this->data['info'] = $this->User_model->get_info($this->user->id);
 
 			if ($this->input->post()) {
-				if ($this->data['info']->password != $this->input->post('password')) {
+				if ($this->data['info']->password != md5($this->input->post('password'))) {
 					$this->session->set_flashdata('message_errors', 'Mật khẩu không chính xác, thao tác thất bại :(');
 					redirect($this->routes['user_profile']);
 				}
 
-				if (!$this->User_model->update($this->user->id, array('password' => $this->input->post('new_password')))) {
+				if (!$this->User_model->update($this->user->id, array('password' => md5($this->input->post('new_password'))))) {
 					$this->session->set_flashdata('message_errors', 'Thao tác thất bại :(');
 					redirect($this->routes['user_profile']);
 				}

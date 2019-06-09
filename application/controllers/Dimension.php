@@ -85,13 +85,22 @@
                   $detail->{"parent_name"} = "";
                }
 
-               if ($detail->active) {
-                  $detail->{"exchange"} = '<i class="fa fa-fw fa-2x vertical-middle active-color exchange-btn" data-url="' . $this->routes['dimensiondetail_changestatus'] . '" data-id="' . $detail->id . '" data-active="1" aria-hidden="true" title="Click to change!"></i>';
+               if (in_array('dimensiondetail_changestatus', explode(',', $this->role->permission_list))) {
+                 if ($detail->active) {
+                    $detail->{"exchange"} = '<i class="fa fa-fw fa-2x vertical-middle active-color exchange-btn" data-url="' . $this->routes['dimensiondetail_changestatus'] . '" data-id="' . $detail->id . '" data-active="1" aria-hidden="true" title="Click to change!"></i>';
+                 } else {
+                    $detail->{"exchange"} = '<i class="fa fa-fw fa-2x vertical-middle exchange-btn" data-url="' . $this->routes['dimensiondetail_changestatus'] . '" data-id="' . $detail->id . '" data-active="0" aria-hidden="true" title="Click to change!"></i>';
+                 }
                } else {
-                  $detail->{"exchange"} = '<i class="fa fa-fw fa-2x vertical-middle exchange-btn" data-url="' . $this->routes['dimensiondetail_changestatus'] . '" data-id="' . $detail->id . '" data-active="0" aria-hidden="true" title="Click to change!"></i>';
+                 $detail->{"exchange"} = '';
                }
 
-               $detail->{"delete"} = '<button type="button" class="btn btn-circle del-btn" data-url="' . $this->routes['dimensiondetail_delete'] . '" data-id="' . $detail->id . '"><i class="fa fa-times"></i></button>';
+               if (in_array('dimensiondetail_delete', explode(',', $this->role->permission_list))) {
+                 $detail->{"delete"} = '<button type="button" class="btn btn-circle del-btn" data-url="' . $this->routes['dimensiondetail_delete'] . '" data-id="' . $detail->id . '"><i class="fa fa-times"></i></button>';
+               } else {
+                 $detail->{"delete"} = '';
+               }
+
             }
 
             $this->load->model('Dimension_model');

@@ -12,8 +12,8 @@
 
       public function index() {
          $this->data['title'] = "Loại chứng từ";
-			$this->data['template'] = "voucher_type/index";
-			$this->data['active'] = 'voucher';
+		      $this->data['template'] = "voucher_type/index";
+          $this->data['active'] = 'voucher';
          $this->data['js_files'] = array('voucher-type_create');
 
          $input = array(
@@ -42,7 +42,7 @@
 
             if (!flag) {
                $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra khi nhập dữ liệu!');
-					redirect($this->routes['vouchertype_index']);
+			         redirect($this->routes['vouchertype_index']);
             }
 
             $data = array(
@@ -55,13 +55,13 @@
                $this->session->set_flashdata('message_success', 'Thêm dữ liệu thành công!');
 
                $this->data['log_info']['row_id'] = $this->VoucherType_model->get_insert_id();
-					$this->data['log_info']['info'] = $name;
+		           $this->data['log_info']['info'] = $name;
                $this->Log_model->create($this->data['log_info']);
 
                redirect($this->routes['vouchertype_index']);
             } else {
                $this->session->set_flashdata('message_errors', 'Đã có lỗi xảy ra!');
-					redirect($this->routes['vouchertype_index']);
+			          redirect($this->routes['vouchertype_index']);
             }
 
          }

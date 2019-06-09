@@ -18,7 +18,6 @@
 <script src="<?php echo public_url(); ?>js/startmin.js"></script>
 
 <!-- My Js file -->
-<!-- <script type="text/javascript" src="<?php echo public_url(); ?>js/myscript.js"></script> -->
 <script type="text/javascript" src="<?php echo public_url(); ?>js/common.js"></script>
 <?php if (isset($js_files) && $js_files): ?>
    <?php foreach ($js_files as $js_name): ?>

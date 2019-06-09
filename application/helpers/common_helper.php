@@ -135,4 +135,15 @@
 		return 0;
 	}
 
+	function checkShow($controller, $method, $permission) {
+		if (!array_key_exists($controller, $permission)) {
+			return false;
+		}
+
+		if (in_array($method, $permission[$controller])) {
+			return true;
+		}
+		return false;
+	}
+
  ?>

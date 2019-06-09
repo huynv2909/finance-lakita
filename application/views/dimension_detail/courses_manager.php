@@ -79,14 +79,17 @@
    							  ?>
    						 </td>
    						 <td class="text-center">
+                 <?php if (in_array('dimensiondetail_changestatus', explode(',', $this->role->permission_list))): ?>
                         <?php if ($item->active == 1): ?>
                            <i class="fa fa-fw fa-2x vertical-middle active-color exchange-btn" data-url="<?php echo $this->routes['dimensiondetail_changestatus']; ?>" data-id="<?php echo $item->id; ?>" data-active="<?php echo $item->active; ?>" aria-hidden="true" title="Click to change!"></i>
                         <?php else: ?>
                            <i class="fa fa-fw fa-2x vertical-middle exchange-btn" data-url="<?php echo $this->routes['dimensiondetail_changestatus']; ?>" data-id="<?php echo $item->id; ?>" data-active="<?php echo $item->active; ?>" aria-hidden="true" title="Click to change!"></i>
                         <?php endif; ?>
-
+                  <?php endif; ?>
+                  <?php if (in_array('dimensiondetail_delete', explode(',', $this->role->permission_list))): ?>
                          <button type="button" class="btn btn-circle del-btn" data-url="<?php echo $this->routes['dimensiondetail_delete']; ?>" data-id="<?php echo $item->id; ?>"><i class="fa fa-times"></i></button>
-                      </td>
+                  <?php endif; ?>
+                </td>
    					</tr>
    				<?php endforeach; ?>
             <?php endif; ?>

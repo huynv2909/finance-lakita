@@ -17,10 +17,10 @@
 		{
 			$this->data['title'] = "Dashboard";
 			$this->data['active'] = 'dashboard';
-			if ($this->user->permission == 1) {
-				$this->manager();
-			} else {
+			if ($this->user->permission == 3) {
 				$this->accountant();
+			} else {
+				$this->manager();
 			}
 
 		}
