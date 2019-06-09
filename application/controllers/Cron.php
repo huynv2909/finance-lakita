@@ -11,7 +11,7 @@ class Cron extends CI_Controller {
       // $today = date('d-m-Y');
 
     // mktime(H,i,s,m,d,y)
-    $timestamp = mktime(0,0,0,6,7,2019);
+    $timestamp = mktime(0,0,0,12,11,2018);
    	$today = date('d-m-Y', $timestamp);
 
     // $date_from_file = file_get_contents(FCPATH . 'tmp.txt');
@@ -242,8 +242,8 @@ class Cron extends CI_Controller {
 
    public function totalReportContent() {
      $data = array();
-     $data['min_date'] = date('Y-05-01');
-     $data['max_date'] = date('Y-05-31');
+     $data['min_date'] = date('Y-m-01');
+     $data['max_date'] = date('Y-m-d');
 
      $this->load->model('Distribution_model');
 

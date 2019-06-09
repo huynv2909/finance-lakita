@@ -619,7 +619,7 @@
 			// defaut op
 			$from = date('Y-m-01');
 			$to = date('Y-m-d');
-			$method = 2;
+			$method = 1;
 
 			if ($this->input->post()) {
 				$from = $this->input->post('from');
@@ -805,10 +805,10 @@
 			$this->data['max_date'] = $max_date;
 			$this->data['date_range'] = $date_range_default;
 
-			if ($this->user->permission == 1) {
-				$this->generalForManager();
-			} else {
+			if ($this->user->permission == 3) {
 				$this->generalForAccountant();
+			} else {
+				$this->generalForManager();
 			}
 		}
 
@@ -903,6 +903,7 @@
 			);
 			$this->load->model('Voucher_model');
 			$new_records = $this->Voucher_model->get_list($input);
+			die($this->db->last_query());
 			$this->data['new_records'] = count($new_records);
 
 			$this->data['approved'] = 0;
