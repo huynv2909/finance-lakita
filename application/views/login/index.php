@@ -11,13 +11,21 @@
          background-image: url('<?php echo base_url('public/banking-business.jpg'); ?>');
          background-size: cover;
          background-position: center;
+         overflow:hidden;
       }
     </style>
-    <body id="body">
+    <body>
       <div id="particle" style="height: 100%; width: 100%; background: rgba(0,0,0,0.5); position: absolute;">
         </div>
         <div class="container">
-            <div class="row">
+            <img src="https://crm.lakita.vn/style/img/logo5.png" alt="Lakita logo" style="width: 200px; padding: 10px;">
+            <div class="row" style="margin-top: 50px;">
+
+
+                <div class="col-xs-12">
+                  <p class="text-center" style="font-size: 50px; color: blanchedalmond; font-weight: bold;">HỆ THỐNG QUẢN TRỊ TÀI CHÍNH</p>
+                </div>
+
                 <div class="col-md-4 col-md-offset-4">
                     <div class="login-panel panel panel-default">
                         <div class="panel-heading">
@@ -49,8 +57,11 @@
                         </div>
                     </div>
                 </div>
+
+
             </div>
         </div>
+        <p style="position: absolute; bottom: 10px; right: 20px; font-size: 20px; color: aliceblue;">Developed by <a href="mailto:kenshiner96@gmail.com">HuyNV</a> - 2019</p>
 
         <!-- jQuery -->
         <script src="<?php echo public_url(); ?>/js/jquery.min.js"></script>

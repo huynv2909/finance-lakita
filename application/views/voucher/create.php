@@ -476,9 +476,14 @@
 						 { "width" : "20%" },
 						 { "width" : "12%" },
 						 { "width" : "32%" },
+						 <?php if (in_array('voucher_delete', explode(',', $this->role->permission_list))): ?>
 						 { "width" : "8%" },
 						 { "width" : "10%" },
 						 { "width" : "5%" }
+						 <?php else: ?>
+						 { "width" : "13%" },
+				 			{ "width" : "10%" }
+				 		<?php endif; ?>
 					 ],
 					  "order" : [[0, 'desc'], [5, 'desc']]
 			});

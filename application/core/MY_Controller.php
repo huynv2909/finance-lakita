@@ -97,7 +97,7 @@
 		private function preProcessPermission() {
 			$this->load->model('Permission_model');
 			$role = $this->Permission_model->get_info($this->user->permission);
-
+			
 			$per_str = $role->permission_list;
 			$per_arr = array();
 

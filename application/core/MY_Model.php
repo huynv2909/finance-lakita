@@ -97,7 +97,7 @@
 		// Get row
 		function get_info($id, $field = '')
 		{
-			if (!$id) {
+			if ($id == '') {
 				return false;
 			}
 

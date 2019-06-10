@@ -805,7 +805,7 @@
 			$this->data['max_date'] = $max_date;
 			$this->data['date_range'] = $date_range_default;
 
-			if ($this->user->permission == 3) {
+			if ($this->user->permission == 2) {
 				$this->generalForAccountant();
 			} else {
 				$this->generalForManager();
@@ -903,13 +903,13 @@
 			);
 			$this->load->model('Voucher_model');
 			$new_records = $this->Voucher_model->get_list($input);
-			die($this->db->last_query());
+
 			$this->data['new_records'] = count($new_records);
 
 			$this->data['approved'] = 0;
 			$this->data['deleted'] = 0;
 			foreach ($new_records as $item) {
-				if ($item->approved == 1) {
+				if ($item->approved == 1 && $item->deleted == 0) {
 					$this->data['approved'] += 1;
 				}
 
@@ -917,7 +917,6 @@
 					$this->data['deleted'] += 1;
 				}
 			}
-
  			 $this->load->view('layout', $this->data);
 		}
 
@@ -939,7 +938,7 @@
  			$this->data['approved'] = 0;
  			$this->data['deleted'] = 0;
  			foreach ($new_records as $item) {
- 				if ($item->approved == 1) {
+ 				if ($item->approved == 1 && $item->deleted == 0) {
  					$this->data['approved'] += 1;
  				}
 

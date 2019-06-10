@@ -86,7 +86,7 @@
 			}
 			$this->data['operations'] = $ope_arr;
 
-			$roles = $this->Permission_model->get_list();
+			$roles = $this->Permission_model->get_list(array('where' => array('id !=' => 0)));
 			foreach ($roles as $role) {
 				$permission_arr = explode(',', $role->permission_list);
 				$arr_temp = array();
