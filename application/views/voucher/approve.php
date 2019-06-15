@@ -77,15 +77,17 @@
       <?php endif; ?>
    </div>
    <div class="clearfix"></div>
-   <form action="" method="post">
+   <input type="hidden" name="action" id="action-index" value="1">
+   <input type="hidden" name="allowed" id="allowed-check" value="0">
      <table class="table" id="new-vouchers">
        <thead>
          <tr>
            <th class="col-xs-9 col-md-10 text-center">Thông tin</th>
            <th class="col-xs-3 col-md-2 text-center">
-              <input type="submit" class="btn btn-success" value="Duyệt hết">
-              <input type="submit" class="btn btn-danger" value="Xóa hết">
-              <input type="hidden" name="action" id="action" value="1">
+              <input type="button" class="btn btn-success approve-multiple" value="Duyệt hết">
+              <input type="button" class="btn btn-danger deny-multiple" value="Xóa hết">
+              <input type="button" class="btn btn-success confirm-action" value="Xác nhận">
+              <input type="button" class="btn btn-danger cancel-action" value="Hủy">
            </th>
          </tr>
        </thead>
@@ -149,14 +151,14 @@
 
             </td>
             <td class="text-center">
-               <button type="button" class="btn btn-info btn-circle approve" data-id="<?php echo $vc->id; ?>" title="Duyệt"><i class="fa fa-check"></i></button>
-               <button type="button" class="btn btn-warning btn-circle deny" data-id="<?php echo $vc->id; ?>" title="Xóa"><i class="fa fa-times"></i></button>
+               <button type="button" class="btn btn-info btn-circle approve" id="approve_<?php echo $vc->id; ?>" data-id="<?php echo $vc->id; ?>" title="Duyệt"><i class="fa fa-check"></i></button>
+               <button type="button" class="btn btn-warning btn-circle deny" id="deny_<?php echo $vc->id; ?>" data-id="<?php echo $vc->id; ?>" title="Xóa"><i class="fa fa-times"></i></button>
+               <input type="checkbox" class="choose_check" name="chosen" value="" data-id="<?php echo $vc->id; ?>" checked>
             </td>
          </tr>
          <?php endforeach; ?>
        </tbody>
      </table>
-   </form>
 
    <input type="hidden" id="url-approve-one" value="<?php echo $this->routes['voucher_approveone']; ?>">
    <input type="hidden" id="url-deny-one" value="<?php echo $this->routes['voucher_denyone']; ?>">

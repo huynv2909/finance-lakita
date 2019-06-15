@@ -493,3 +493,7 @@ thead tr th {
 .data-unit td {
    padding: 10px;
 }
+
+.confirm-action, .cancel-action, .choose_check {
+  display: none;
+}

@@ -8,11 +8,11 @@ class Cron extends CI_Controller {
   var $manager_emails = array('huynv2909@gmail.com');
 
    public function voucherFromCRM() {
-      // $today = date('d-m-Y');
+      $today = date('d-m-Y');
 
     // mktime(H,i,s,m,d,y)
-    $timestamp = mktime(0,0,0,12,11,2018);
-   	$today = date('d-m-Y', $timestamp);
+    // $timestamp = mktime(0,0,0,6,14,2018);
+   	// $today = date('d-m-Y', $timestamp);
 
     // $date_from_file = file_get_contents(FCPATH . 'tmp.txt');
     // $today = date('d-m-Y', strtotime($date_from_file));
@@ -123,8 +123,8 @@ class Cron extends CI_Controller {
    			        $provider = 0;
    			}
 
-   			// $date = date('Y-m-d');
-        $date = date('Y-m-d', $timestamp);
+   			$date = date('Y-m-d');
+        // $date = date('Y-m-d', $timestamp);
         // $date = date('Y-m-d', strtotime($today));
 
         $voucher_info = array(

@@ -282,5 +282,87 @@ $(document).ready(function(){
       })
    });
 
+   $('.approve-multiple').click(function(){
+     $('.approve-multiple').css('display', 'none');
+     $('.deny-multiple').css('display', 'none');
+     $('.approve').css('display', 'none');
+     $('.deny').css('display', 'none');
+
+     $('#allowed-check').val("1");
+     $('#action-index').val("1");
+
+     $('.confirm-action').css('display', 'inline-block');
+     $('.cancel-action').css('display', 'inline-block');
+     $('.choose_check').css('display', 'inline-block');
+   });
+
+   $('.deny-multiple').click(function(){
+     $('.approve-multiple').css('display', 'none');
+     $('.deny-multiple').css('display', 'none');
+     $('.approve').css('display', 'none');
+     $('.deny').css('display', 'none');
+
+     $('#allowed-check').val("1");
+     $('#action-index').val("0");
+
+     $('.confirm-action').css('display', 'inline-block');
+     $('.cancel-action').css('display', 'inline-block');
+     $('.choose_check').css('display', 'inline-block');
+   });
+
+
+   $('.cancel-action').click(function(){
+     $('.confirm-action').css('display', 'none');
+     $('.cancel-action').css('display', 'none');
+     $('.choose_check').css('display', 'none');
+
+     $('#allowed-check').val("0");
+
+     $('.approve-multiple').css('display', 'inline-block');
+     $('.deny-multiple').css('display', 'inline-block');
+     $('.approve').css('display', 'inline-block');
+     $('.deny').css('display', 'inline-block');
+   });
+
+   $('.confirm-action').click(function(){
+
+     // Approve all
+     if ($('#allowed-check').val() == "1" && $('#action-index').val() == "1") {
+       var time = 500;
+       $('.choose_check:checked').each(function(index){
+         var chosen_checkbox = $(this);
+         setTimeout(function(){
+           $('#approve_' + chosen_checkbox.data('id')).trigger( "click" );
+         }, time);
+
+         time += 500;
+       });
+     }
+
+     // Delete all
+     if ($('#allowed-check').val() == "1" && $('#action-index').val() == "0") {
+       var time = 500;
+       $('.choose_check:checked').each(function(index){
+         var chosen_checkbox = $(this);
+         setTimeout(function(){
+           $('#deny_' + chosen_checkbox.data('id')).trigger( "click" );
+         }, time);
+
+         time += 500;
+       });
+     }
+
+     $('.confirm-action').css('display', 'none');
+     $('.cancel-action').css('display', 'none');
+     $('.choose_check').css('display', 'none');
+
+     $('#allowed-check').val("0");
+     $('.choose_check').prop('checked', true);
+
+     $('.approve-multiple').css('display', 'inline-block');
+     $('.deny-multiple').css('display', 'inline-block');
+     $('.approve').css('display', 'inline-block');
+     $('.deny').css('display', 'inline-block');
+   });
 
 });
